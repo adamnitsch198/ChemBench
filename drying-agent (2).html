@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drying Agent Selector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap"></noscript>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #faf9ff;
+  --bg3: #f3f0ff;
+  --border: rgba(109,40,217,0.1);
+  --border2: rgba(109,40,217,0.18);
+  --text: #18103a;
+  --muted: #6b5f8a;
+  --dim: #b0a4cc;
+  --accent: #6d28d9;
+  --accent-light: #8b5cf6;
+  --accent-bg: rgba(109,40,217,0.06);
+  --accent-border: rgba(109,40,217,0.25);
+  --green: #065f46; --green-bg: rgba(6,95,70,0.07);
+  --amber: #78350f; --amber-bg: rgba(120,53,15,0.07);
+  --red: #7f1d1d;   --red-bg: rgba(127,29,29,0.07);
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+/* HEADER */
+header { background: #fff; border-bottom: 1.5px solid var(--border); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.header-left h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+.header-left p { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 300; }
+.header-right { display: flex; gap: 8px; align-items: center; }
+.ref-badge { font-size: 10px; color: var(--dim); font-family: var(--mono); border: 1px solid var(--border2); padding: 3px 9px; border-radius: 4px; }
+.btn-print { font-size: 11px; font-family: var(--mono); background: var(--accent); color: #fff; border: none; padding: 5px 13px; border-radius: 5px; cursor: pointer; transition: opacity .15s; }
+.btn-print:hover { opacity: .85; }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 68px); }
+
+/* SIDEBAR */
+.sidebar { background: var(--bg2); border-right: 1.5px solid var(--border); padding: 20px 16px; overflow-y: auto; }
+.section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); font-family: var(--mono); margin-bottom: 8px; margin-top: 18px; }
+.section-label:first-child { margin-top: 0; }
+
+.sidebar select { width: 100%; padding: 7px 10px; background: #fff; border: 1.5px solid var(--border2); color: var(--text); border-radius: 7px; font-family: var(--sans); font-size: 13px; cursor: pointer; outline: none; transition: border-color .15s; }
+.sidebar select:focus { border-color: var(--accent); }
+.sidebar select option { background: #fff; color: var(--text); }
+
+.solvent-water-note { font-size: 11px; font-family: var(--mono); color: var(--accent); background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 6px; padding: 6px 10px; margin-top: 6px; display: none; }
+
+/* WETNESS */
+.wetness-row { display: flex; gap: 5px; margin-top: 0; }
+.wet-btn { flex: 1; padding: 6px 4px; font-size: 11px; font-family: var(--mono); background: #fff; border: 1.5px solid var(--border2); color: var(--muted); border-radius: 6px; cursor: pointer; transition: all .13s; text-align: center; }
+.wet-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+
+/* VOLUME */
+.volume-row { display: flex; gap: 7px; align-items: center; margin-top: 0; }
+.volume-row input[type=number] { flex: 1; padding: 7px 10px; background: #fff; border: 1.5px solid var(--border2); color: var(--text); border-radius: 7px; font-family: var(--mono); font-size: 13px; outline: none; transition: border-color .15s; }
+.volume-row input[type=number]:focus { border-color: var(--accent); }
+.volume-row select { width: 70px; padding: 7px 6px; }
+
+/* TEMP */
+.temp-row { display: flex; gap: 5px; }
+.temp-btn { flex: 1; padding: 6px 4px; font-size: 11px; font-family: var(--mono); background: #fff; border: 1.5px solid var(--border2); color: var(--muted); border-radius: 6px; cursor: pointer; transition: all .13s; text-align: center; }
+.temp-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+
+/* FG CHIPS */
+.fg-grid { display: grid; grid-template-columns: 1fr; gap: 4px; }
+.chip { display: flex; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 6px; border: 1.5px solid var(--border); background: #fff; cursor: pointer; font-size: 12px; color: var(--muted); transition: all .13s; user-select: none; }
+.chip:hover { border-color: var(--accent-border); color: var(--text); }
+.chip.selected { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); flex-shrink: 0; transition: background .13s; }
+.chip.selected .dot { background: var(--accent); }
+
+.clear-btn { width: 100%; margin-top: 8px; padding: 7px; background: #fff; border: 1.5px solid var(--border2); color: var(--dim); border-radius: 6px; font-family: var(--sans); font-size: 12px; cursor: pointer; transition: all .13s; }
+.clear-btn:hover { border-color: var(--accent-border); color: var(--accent); }
+
+/* PINNED */
+.pin-section { margin-top: 10px; }
+.pinned-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; min-height: 28px; }
+.pin-tag { display: flex; align-items: center; gap: 5px; font-size: 11px; font-family: var(--mono); background: var(--accent); color: #fff; border-radius: 12px; padding: 2px 10px; }
+.pin-tag button { background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 13px; line-height: 1; padding: 0; }
+.pin-tag button:hover { color: #fff; }
+.no-pins { font-size: 11px; color: var(--dim); font-family: var(--mono); }
+
+/* MAIN */
+.main { padding: 24px 28px; overflow-y: auto; background: var(--bg); }
+
+/* TABS */
+.tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 8px 16px; font-size: 12px; font-family: var(--mono); color: var(--dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all .13s; background: none; border-top: none; border-left: none; border-right: none; }
+.tab:hover { color: var(--accent); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+/* RESULTS HEADER */
+.results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.results-header h2 { font-size: 11px; font-weight: 500; color: var(--dim); font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.count-pill { font-size: 11px; font-family: var(--mono); color: var(--muted); background: var(--bg3); border: 1px solid var(--border); padding: 3px 10px; border-radius: 20px; }
+
+/* BOXES */
+.warn-box { background: var(--amber-bg); border: 1px solid rgba(120,53,15,0.15); border-radius: 10px; padding: 11px 14px; font-size: 12px; color: var(--amber); margin-bottom: 10px; line-height: 1.6; }
+.info-box  { background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 10px; padding: 11px 14px; font-size: 12px; color: var(--accent); margin-bottom: 10px; line-height: 1.6; }
+.temp-warn { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 11px 14px; font-size: 12px; color: #1e40af; margin-bottom: 10px; line-height: 1.6; }
+
+/* AGENT CARDS */
+.agent-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; transition: border-color .15s, box-shadow .15s; }
+.agent-card.best { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(109,40,217,0.05); }
+.agent-card.pinned-card { border-color: var(--accent-light); }
+.agent-card:hover { border-color: var(--accent-border); }
+
+.agent-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.agent-title-row { display: flex; align-items: flex-start; gap: 10px; flex: 1; }
+.agent-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.agent-formula { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 2px; }
+.agent-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.badge { font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; font-family: var(--mono); }
+.badge-best   { background: var(--accent); color: #fff; }
+.badge-good   { background: var(--green-bg); color: var(--green); border: 1px solid rgba(6,95,70,0.18); }
+.badge-ok     { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(120,53,15,0.18); }
+.badge-hazard { background: var(--red-bg); color: var(--red); border: 1px solid rgba(127,29,29,0.18); }
+.badge-pinned { background: var(--accent-light); color: #fff; }
+
+.btn-pin { font-size: 11px; font-family: var(--mono); background: none; border: 1px solid var(--border2); color: var(--dim); padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all .13s; }
+.btn-pin:hover { border-color: var(--accent-border); color: var(--accent); }
+.btn-pin.pinned { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+.btn-compare { font-size: 11px; font-family: var(--mono); background: none; border: 1px solid var(--border2); color: var(--dim); padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all .13s; }
+.btn-compare:hover { border-color: var(--accent-border); color: var(--accent); }
+.btn-compare.in-compare { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 11px; }
+.stat-block { background: var(--bg3); border-radius: 7px; padding: 8px 10px; }
+.stat-label { font-size: 9px; color: var(--dim); font-family: var(--mono); text-transform: uppercase; letter-spacing: .07em; display: block; margin-bottom: 3px; }
+.stat-value { font-size: 12px; font-weight: 500; color: var(--text); font-family: var(--mono); }
+.stat-block.highlight { background: var(--accent-bg); }
+.stat-block.highlight .stat-value { color: var(--accent); }
+
+/* AMOUNT */
+.amount-box { background: var(--green-bg); border: 1px solid rgba(6,95,70,0.15); border-radius: 8px; padding: 9px 12px; margin-bottom: 10px; font-size: 12px; color: var(--green); font-family: var(--mono); display: none; }
+
+/* PROCEDURE */
+.procedure-toggle { font-size: 11px; font-family: var(--mono); color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 8px; text-decoration: underline; text-underline-offset: 2px; }
+.procedure-steps { display: none; background: var(--bg2); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid var(--border); }
+.procedure-steps ol { padding-left: 18px; }
+.procedure-steps li { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.procedure-steps li + li { margin-top: 4px; }
+.procedure-steps.open { display: block; }
+
+/* SUCCESSIVE */
+.successive-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 13px; margin-bottom: 10px; font-size: 12px; color: #166534; display: none; }
+
+/* INCOMPATIBILITY */
+.incompat-box { background: var(--red-bg); border: 1px solid rgba(127,29,29,0.15); border-radius: 8px; padding: 9px 12px; margin-bottom: 10px; font-size: 12px; color: var(--red); }
+.incompat-reason { margin-top: 3px; font-family: var(--mono); font-size: 11px; }
+
+.agent-note { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 4px; }
+.tag-neutral { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+.tag-warn    { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(120,53,15,0.15); }
+.tag-danger  { background: var(--red-bg); color: var(--red); border: 1px solid rgba(127,29,29,0.15); }
+
+.empty-state { text-align: center; padding: 70px 20px; color: var(--dim); font-family: var(--mono); font-size: 13px; line-height: 2.2; }
+.solvent-note { font-size: 11px; font-family: var(--mono); color: var(--dim); padding: 9px 13px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px; line-height: 1.6; }
+.solvent-note span { color: var(--accent); font-weight: 500; }
+
+/* COMPARE PANEL */
+.compare-panel { display: none; background: #fff; border: 1.5px solid var(--accent); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.compare-panel.open { display: block; }
+.compare-panel h3 { font-size: 13px; font-weight: 500; color: var(--accent); font-family: var(--mono); margin-bottom: 14px; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.compare-table th { text-align: left; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--dim); padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.compare-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text); font-family: var(--mono); font-size: 12px; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child { font-weight: 500; color: var(--muted); font-size: 11px; }
+.compare-clear { font-size: 11px; font-family: var(--mono); background: none; border: 1px solid var(--border2); color: var(--dim); padding: 3px 9px; border-radius: 4px; cursor: pointer; margin-top: 12px; }
+.compare-clear:hover { color: var(--red); border-color: var(--red); }
+
+/* SOLVENT TABLE TAB */
+.solvent-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.solvent-table th { text-align: left; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--dim); padding: 8px 12px; border-bottom: 1.5px solid var(--border); background: var(--bg2); }
+.solvent-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.solvent-table tr:hover td { background: var(--bg2); }
+.solvent-table td:nth-child(2) { font-family: var(--mono); color: var(--accent); }
+.water-bar { height: 6px; background: var(--accent-bg); border-radius: 3px; }
+.water-fill { height: 6px; background: var(--accent); border-radius: 3px; transition: width .3s; }
+
+/* REGEN GUIDE TAB */
+.regen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.regen-card { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.regen-agent { font-size: 13px; font-weight: 500; color: var(--text); }
+.regen-formula { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 1px; }
+.regen-temp { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-top: 8px; font-weight: 500; }
+.regen-note { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+
+/* MISCIBILITY MATRIX */
+#miscibility-wrap { overflow: auto; max-height: calc(100vh - 220px); border: 1.5px solid var(--border); border-radius: 10px; }
+.misc-table { border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+.misc-table th, .misc-table td { border: 1px solid #111; padding: 0; }
+
+/* Sticky row headers */
+.misc-table th.row-header {
+  position: sticky; left: 0; z-index: 3;
+  text-align: right; padding: 0 10px 0 14px;
+  font-family: var(--mono); font-weight: 400; font-size: 11px;
+  color: var(--text); background: #fff;
+  min-width: 140px; height: 36px;
+  cursor: pointer; transition: background .13s, color .13s;
+  border-right: 2px solid #111;
+  border-bottom: 1px solid #111;
+}
+.misc-table tbody tr:nth-child(even) th.row-header { background: #fafafa; }
+.misc-table th.row-header:hover { background: var(--bg3); color: var(--accent); }
+
+/* Sticky col headers */
+.misc-table th.col-header {
+  position: sticky; top: 0; z-index: 2;
+  background: #fff;
+  cursor: pointer;
+  transition: background .13s, color .13s;
+  border-bottom: 2px solid #111;
+  border-right: 1px solid #111;
+  padding: 0;
+  height: 130px; width: 36px; min-width: 36px;
+}
+.misc-table th.col-header:hover { background: var(--bg3); }
+.misc-table th.col-header:hover .col-label { color: var(--accent); }
+.col-label {
+  display: block;
+  transform: rotate(-45deg) translateX(-10px);
+  transform-origin: center center;
+  white-space: nowrap;
+  font-family: var(--mono); font-weight: 400; font-size: 11px;
+  color: var(--text);
+  width: 36px;
+  margin-top: 80px;
+}
+
+/* Sticky corner */
+.misc-table th.corner {
+  position: sticky; top: 0; left: 0; z-index: 4;
+  background: var(--bg2);
+  border-right: 2px solid #111;
+  border-bottom: 2px solid #111;
+  min-width: 140px;
+}
+
+/* Cells */
+.misc-cell {
+  width: 36px; height: 36px; min-width: 36px;
+  text-align: center; vertical-align: middle;
+  cursor: pointer; transition: filter .1s;
+  font-size: 13px;
+  border: 1px solid #111;
+  box-shadow: inset 1px 0 0 #111, inset 0 1px 0 #111;
+}
+.misc-cell:hover { filter: brightness(0.88); }
+.misc-table tbody tr:nth-child(even) .misc-cell { filter: brightness(0.97); }
+.misc-table tbody tr:nth-child(even) .misc-cell:hover { filter: brightness(0.88); }
+.misc-cell.miscible   { background: #ef4444; }
+.misc-cell.immiscible { background: #22c55e; }
+.misc-cell.same       { background: #d1d5db; }
+.misc-cell.partial    { background: #f97316; }
+
+/* Highlight states */
+.misc-table tr.row-active th.row-header { background: var(--bg3) !important; color: var(--accent) !important; }
+.misc-table tr.row-active .misc-cell { outline: 1px solid rgba(109,40,217,0.25); }
+th.col-header.col-active { background: var(--bg3) !important; }
+th.col-header.col-active .col-label { color: var(--accent) !important; }
+td.col-active-cell { outline: 1px solid rgba(109,40,217,0.25); }
+
+/* Summary panel */
+.misc-summary {
+  margin-top: 14px; padding: 13px 16px;
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 12px; display: none;
+}
+.misc-summary h3 { font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 8px; font-family: var(--mono); }
+.misc-summary-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.misc-summary-label { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 8px; display: block; }
+
+.misc-legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+.misc-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.misc-legend-swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--border2); flex-shrink: 0; }
+
+/* SEARCH BAR */
+.search-wrap { margin-bottom: 14px; }
+.search-wrap input { width: 100%; padding: 8px 12px; background: #fff; border: 1.5px solid var(--border2); color: var(--text); border-radius: 8px; font-family: var(--sans); font-size: 13px; outline: none; transition: border-color .15s; }
+.search-wrap input:focus { border-color: var(--accent); }
+.search-wrap input::placeholder { color: var(--dim); }
+
+/* PRINT */
+@media print {
+  .sidebar, .tabs, .btn-print, .agent-actions, .search-wrap, .compare-panel { display: none !important; }
+  .layout { grid-template-columns: 1fr; }
+  .agent-card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
+  header { border-bottom: 1px solid #ccc; }
+}
+
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1.5px solid var(--border); }
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Drying Agent Selector</h1>
+    <p>Select solvent, wetness, and functional groups — agents ranked and explained.</p>
+  </div>
+  <div class="header-right">
+    <span class="ref-badge">Gottlieb · Armarego · Isomerdesign</span>
+    <button class="btn-print" onclick="window.print()">Print / PDF</button>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="section-label">Solvent</div>
+    <select id="solvent">
+      <option value="">— select solvent —</option>
+      <optgroup label="Hydrocarbons">
+        <option value="hexane">Hexane</option>
+        <option value="pentane">Pentane</option>
+        <option value="petroleum_ether">Petroleum ether</option>
+        <option value="cyclohexane">Cyclohexane</option>
+        <option value="toluene">Toluene</option>
+        <option value="benzene">Benzene</option>
+      </optgroup>
+      <optgroup label="Halogenated">
+        <option value="dcm">Dichloromethane (DCM)</option>
+        <option value="chloroform">Chloroform</option>
+        <option value="ccl4">Carbon tetrachloride</option>
+      </optgroup>
+      <optgroup label="Ethers">
+        <option value="diethyl_ether">Diethyl ether</option>
+        <option value="thf">THF</option>
+        <option value="dme">DME</option>
+        <option value="dioxane">1,4-Dioxane</option>
+        <option value="mtbe">MTBE</option>
+      </optgroup>
+      <optgroup label="Esters / Ketones">
+        <option value="ethyl_acetate">Ethyl acetate</option>
+        <option value="acetone">Acetone</option>
+        <option value="mek">MEK</option>
+      </optgroup>
+      <optgroup label="Nitriles / Amides">
+        <option value="acetonitrile">Acetonitrile</option>
+        <option value="dmf">DMF</option>
+        <option value="dmso">DMSO</option>
+        <option value="nmp">NMP</option>
+      </optgroup>
+      <optgroup label="Alcohols">
+        <option value="methanol">Methanol</option>
+        <option value="ethanol">Ethanol</option>
+        <option value="isopropanol">Isopropanol</option>
+      </optgroup>
+      <optgroup label="Other">
+        <option value="pyridine">Pyridine</option>
+        <option value="acetic_acid">Acetic acid</option>
+        <option value="water">Water</option>
+      </optgroup>
+    </select>
+    <div class="solvent-water-note" id="solvent-water-note"></div>
+
+    <div class="section-label">How wet is the solution?</div>
+    <div class="wetness-row">
+      <button class="wet-btn active" data-wet="traces">Traces</button>
+      <button class="wet-btn" data-wet="moderate">Moderate</button>
+      <button class="wet-btn" data-wet="very">Very wet</button>
+    </div>
+
+    <div class="section-label">Solution volume</div>
+    <div class="volume-row">
+      <input type="number" id="volume" placeholder="e.g. 50" min="0" step="1">
+      <select id="volume-unit">
+        <option value="mL">mL</option>
+        <option value="L">L</option>
+      </select>
+    </div>
+
+    <div class="section-label">Working temperature</div>
+    <div class="temp-row">
+      <button class="temp-btn active" data-temp="rt">RT</button>
+      <button class="temp-btn" data-temp="cold">0 °C</button>
+      <button class="temp-btn" data-temp="subzero">&lt;0 °C</button>
+    </div>
+
+    <div class="section-label">Functional groups on molecule</div>
+    <div class="fg-grid" id="fg-grid"></div>
+    <button class="clear-btn" id="clear-btn">Clear all</button>
+
+    <div class="pin-section">
+      <div class="section-label">Pinned agents</div>
+      <div class="pinned-list" id="pinned-list"><span class="no-pins">None pinned yet</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" data-tab="results">Results</button>
+      <button class="tab" data-tab="compare">Compare</button>
+      <button class="tab" data-tab="miscibility">Miscibility</button>    </div>
+
+    <!-- RESULTS TAB -->
+    <div id="tab-results">
+      <div class="search-wrap"><input type="text" id="agent-search" placeholder="Search agents by name…"></div>
+      <div id="results-content"><div class="empty-state">Select a solvent<br>to get started.</div></div>
+    </div>
+
+    <!-- COMPARE TAB -->
+    <div id="tab-compare" style="display:none">
+      <div class="results-header"><h2>Side-by-side comparison</h2><span class="count-pill" id="compare-count">0 agents selected</span></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Click "Compare" on any agent card in the Results tab to add it here.</p>
+      <div id="compare-content"><p style="font-size:13px;color:var(--dim);font-family:var(--mono)">No agents selected for comparison.</p></div>
+    </div>
+
+    <!-- SOLVENT TABLE TAB -->
+    <div id="tab-solvents" style="display:none">
+      <div class="results-header"><h2>Water dissolved in common solvents</h2></div>
+      <table class="solvent-table" id="solvent-water-table"></table>
+    </div>
+
+    <!-- REGEN GUIDE TAB -->
+    <div id="tab-regen" style="display:none;visibility:hidden">
+      <div class="results-header"><h2>Regeneration guide</h2></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Protocols for reactivating spent drying agents for reuse.</p>
+      <div class="regen-grid" id="regen-grid"></div>
+    </div>
+
+    <!-- MISCIBILITY TAB -->
+    <div id="tab-miscibility" style="display:none">
+      <div class="results-header"><h2>Solvent miscibility — separatory funnel work-ups</h2></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Click any row or column header to highlight and see a summary. <strong style="color:var(--text)">Yellow</strong> = immiscible (good for extraction). <strong style="color:#6d28d9">Purple</strong> = miscible (won't separate).</p>
+      <div id="miscibility-wrap"></div>
+      <div class="misc-legend">
+        <div class="misc-legend-item"><div class="misc-legend-swatch" style="background:#ef4444;border-color:#dc2626"></div>Miscible — will not separate</div>
+        <div class="misc-legend-item"><div class="misc-legend-swatch" style="background:#f97316;border-color:#ea580c"></div>Partially miscible</div>
+        <div class="misc-legend-item"><div class="misc-legend-swatch" style="background:#22c55e;border-color:#16a34a"></div>Immiscible — use for extraction</div>
+        <div class="misc-legend-item"><div class="misc-legend-swatch" style="background:#d1d5db;border-color:#9ca3af"></div>Same solvent</div>
+      </div>
+      <div class="misc-summary" id="misc-summary"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const FGS = [
+  {id:"alcohol",label:"Alcohol (–OH)"},{id:"phenol",label:"Phenol"},
+  {id:"amine_1_2",label:"1° / 2° amine"},{id:"amine_3",label:"3° amine"},
+  {id:"aldehyde",label:"Aldehyde"},{id:"ketone",label:"Ketone"},
+  {id:"carboxylic_acid",label:"Carboxylic acid"},{id:"ester",label:"Ester"},
+  {id:"amide",label:"Amide"},{id:"epoxide",label:"Epoxide"},
+  {id:"alkene",label:"Alkene"},{id:"alkyne",label:"Alkyne"},
+  {id:"thiol",label:"Thiol / Sulfide"},{id:"acid_sensitive",label:"Acid-sensitive"},
+  {id:"base_sensitive",label:"Base-sensitive"},{id:"organometallic",label:"Organometallic"},
+  {id:"peroxide",label:"Peroxide / Anhydride"},{id:"nitro",label:"Nitro group"},
+];
+
+const SOLVENT_WATER = {
+  hexane:{g:0.007,label:"Hexane"},pentane:{g:0.006,label:"Pentane"},
+  petroleum_ether:{g:0.010,label:"Petroleum ether"},cyclohexane:{g:0.010,label:"Cyclohexane"},
+  toluene:{g:0.048,label:"Toluene"},benzene:{g:0.180,label:"Benzene"},
+  dcm:{g:0.320,label:"DCM"},chloroform:{g:0.080,label:"Chloroform"},
+  ccl4:{g:0.010,label:"CCl₄"},diethyl_ether:{g:1.240,label:"Diethyl ether"},
+  thf:{g:"∞",label:"THF (miscible)"},dme:{g:0.500,label:"DME"},
+  dioxane:{g:"∞",label:"Dioxane (miscible)"},mtbe:{g:0.620,label:"MTBE"},
+  ethyl_acetate:{g:2.920,label:"Ethyl acetate"},acetone:{g:"∞",label:"Acetone (miscible)"},
+  mek:{g:3.500,label:"MEK"},acetonitrile:{g:"∞",label:"MeCN (miscible)"},
+  dmf:{g:"∞",label:"DMF (miscible)"},dmso:{g:"∞",label:"DMSO (miscible)"},
+  nmp:{g:"∞",label:"NMP (miscible)"},methanol:{g:"∞",label:"MeOH (miscible)"},
+  ethanol:{g:"∞",label:"EtOH (miscible)"},isopropanol:{g:"∞",label:"iPrOH (miscible)"},
+  pyridine:{g:"∞",label:"Pyridine (miscible)"},acetic_acid:{g:"∞",label:"AcOH (miscible)"},
+  water:{g:"—",label:"Water"},
+};
+
+const AGENTS = [
+  {
+    id:"mgso4",name:"Magnesium sulfate",formula:"MgSO₄",
+    nature:"slightly acidic",residual:"1.0 mg/L",capacity:"0.15–0.75",
+    speed:"fast",convenience:"medium",regen:"200 °C",mechanism:"Hydration",
+    notes:"The go-to drying agent for most organic workups. Fast acting, high capacity, clumps visibly when wet. Fine powder must be gravity filtered; rinse well.",
+    incompatible_fg:["organometallic"],
+    incompatible_solvent:["water","methanol","ethanol","isopropanol","acetic_acid"],
+    caution_fg:["acid_sensitive"],
+    hazard:false,
+    g_per_ml:0.15,
+    procedure:["Transfer organic layer to Erlenmeyer flask.","Add MgSO₄ (pea-sized portion, ~0.5 g per 10 mL solution). Add more if all clumps immediately.","Swirl 1–2 min. Solution should be clear; fine particles visible rather than clumps.","Gravity filter through fluted filter paper into round-bottomed flask.","Rinse solid with a small portion of fresh solvent (1–2 mL).","Evaporate solvent carefully."],
+    successive:null,
+    regen_detail:"Spread on a watch glass; dry in oven at 200–300 °C for 1 h. Cool in desiccator before use.",
+  },
+  {
+    id:"na2so4",name:"Sodium sulfate",formula:"Na₂SO₄",
+    nature:"neutral",residual:"12 mg/L",capacity:"1.25",
+    speed:"slow",convenience:"medium",regen:"150 °C",mechanism:"Hydration",
+    notes:"Very high water capacity — ideal for very wet solutions. Neutral and gentle. Allow ≥5 min contact. Granules can be decanted. Poor at drying Et₂O unless brine wash used first.",
+    incompatible_fg:[],
+    incompatible_solvent:["water","methanol","ethanol","isopropanol","acetic_acid"],
+    caution_fg:[],
+    hazard:false,
+    g_per_ml:0.10,
+    procedure:["Transfer organic layer to Erlenmeyer flask.","Add Na₂SO₄ generously (~1 g per 10 mL). It forms clumps when wet.","Allow to stand ≥5 min, swirling occasionally.","Decant or filter the solution away from the solid.","Rinse solid with fresh solvent. Evaporate."],
+    successive:"For very wet solutions: use Na₂SO₄ first to absorb bulk water, then transfer to fresh MgSO₄ for final drying.",
+    regen_detail:"Dry at 150 °C for 1–2 h. Note: the decahydrate is unstable above 32 °C — store anhydrous material sealed.",
+  },
+  {
+    id:"cacl2",name:"Calcium chloride",formula:"CaCl₂",
+    nature:"neutral",residual:"0.14–0.25 mg/L",capacity:"0.30",
+    speed:"fast",convenience:"high",regen:"250 °C",mechanism:"Hydration",
+    notes:"Cheap, fast, and effective for inert substrates. Forms stable complexes with alcohols, amines, phenols, amides, ketones — do NOT use with these. Pellets can be decanted.",
+    incompatible_fg:["alcohol","phenol","amine_1_2","amine_3","ketone","aldehyde","amide"],
+    incompatible_solvent:["water","methanol","ethanol","isopropanol","acetic_acid","acetone","mek"],
+    caution_fg:["ester"],
+    hazard:false,
+    g_per_ml:0.12,
+    procedure:["Add CaCl₂ pellets to organic solution (~1–2 g per 10 mL).","Swirl 2–3 min; allow to sit 5 min.","If using pellets, carefully decant solution away from solid.","If using powder, gravity filter. Rinse solid.","Evaporate solvent."],
+    successive:null,
+    regen_detail:"Heat at 250 °C for 2 h. The hexahydrate is unstable above 30 °C — store dessicated.",
+  },
+  {
+    id:"caso4",name:"Calcium sulfate (Drierite)",formula:"CaSO₄·½H₂O",
+    nature:"neutral",residual:"0.005 mg/L",capacity:"0.066",
+    speed:"very fast",convenience:"high",regen:"235 °C",mechanism:"Absorption",
+    notes:"Excellent drying intensity but very low capacity — use large quantities. Indicator Drierite turns blue → pink when wet. Best in desiccators and drying tubes.",
+    incompatible_fg:[],
+    incompatible_solvent:["water","acetic_acid"],
+    caution_fg:[],
+    hazard:false,
+    g_per_ml:0.40,
+    procedure:["Add Drierite rocks/pellets in excess to organic solution.","Wait 5–10 min (very fast uptake).","Decant solution away from solid.","For final traces of water, place solution over fresh Drierite in drying tube."],
+    successive:null,
+    regen_detail:"Indicator Drierite: spread on watch glass, oven-dry at 235 °C for 1 h. Blue colour returns when dry. White Drierite: same protocol.",
+  },
+  {
+    id:"k2co3",name:"Potassium carbonate",formula:"K₂CO₃",
+    nature:"mildly basic",residual:"~5 mg/L",capacity:"0.2",
+    speed:"moderate",convenience:"medium",regen:"300 °C",mechanism:"Hydrate formation",
+    notes:"Mildly basic — excellent for amines. Compatible with alcohols, nitriles, ketones, esters. Neutralises trace acid impurities. Do NOT use with carboxylic acids or phenols.",
+    incompatible_fg:["carboxylic_acid","phenol","acid_sensitive","epoxide"],
+    incompatible_solvent:["water","acetic_acid"],
+    caution_fg:["alcohol","ester"],
+    hazard:false,
+    g_per_ml:0.12,
+    procedure:["Add K₂CO₃ (~1 g per 10 mL) to organic solution.","Swirl; allow ≥5 min contact.","Decant solution from granules.","Rinse solid with fresh solvent.","Evaporate."],
+    successive:null,
+    regen_detail:"Heat at 300 °C for 2 h. Will absorb CO₂ from air — store sealed.",
+  },
+  {
+    id:"koh",name:"KOH / NaOH pellets",formula:"KOH or NaOH",
+    nature:"strongly basic",residual:"0.16–0.3 mg/L",capacity:"high",
+    speed:"fast",convenience:"low",regen:"Not recommended",mechanism:"Hydration + solution",
+    notes:"Strongly basic — use only for amines and organic bases. Destroys esters, amides, epoxides, and acid-sensitive groups.",
+    incompatible_fg:["carboxylic_acid","ester","epoxide","acid_sensitive","thiol","aldehyde","ketone","amide","phenol","peroxide","nitro"],
+    incompatible_solvent:["water","acetic_acid","ethyl_acetate","acetone","mek","dcm","chloroform","ccl4"],
+    caution_fg:["alcohol","alkene","alkyne"],
+    hazard:true,
+    g_per_ml:0.10,
+    procedure:["WEAR GLOVES AND EYE PROTECTION.","Add KOH/NaOH pellets sparingly to the amine solution.","Swirl 2–3 min; let stand 5 min.","Carefully decant solution from pellets.","Do not rinse — pellets are reactive.","Evaporate carefully."],
+    successive:null,
+    regen_detail:"Not recommended — pellets absorb CO₂ and water irreversibly from air. Use fresh material.",
+  },
+  {
+    id:"cao",name:"Calcium oxide",formula:"CaO",
+    nature:"basic",residual:"0.007 mg/L",capacity:"0.3",
+    speed:"slow",convenience:"low",regen:"~1000 °C",mechanism:"Chemisorption",
+    notes:"Basic — suitable for alcohols, amines, ammonia. Reacts with acidic compounds and CO₂. Generates heat with large amounts of water.",
+    incompatible_fg:["carboxylic_acid","ester","acid_sensitive","thiol","epoxide","peroxide"],
+    incompatible_solvent:["water","acetic_acid","ethyl_acetate"],
+    caution_fg:["alcohol","phenol"],
+    hazard:false,
+    g_per_ml:0.20,
+    procedure:["Add CaO lumps cautiously — generates heat with water.","Allow to stand 30–60 min with occasional swirling.","Decant solution from solid.","For ethanol drying: reflux with CaO, then distill."],
+    successive:null,
+    regen_detail:"Regeneration requires >1000 °C — not practical in most labs. Use fresh CaO from a sealed container.",
+  },
+  {
+    id:"bao",name:"Barium oxide",formula:"BaO",
+    nature:"strongly basic",residual:"~0.001 mg/L",capacity:"0.1",
+    speed:"moderate",convenience:"low",regen:"Not recommended",mechanism:"Absorption + adsorption",
+    notes:"Strongly basic; dries ketones and esters without NaOH's side reactions. TOXIC — handle with appropriate precautions.",
+    incompatible_fg:["carboxylic_acid","acid_sensitive","thiol","epoxide","peroxide"],
+    incompatible_solvent:["water","acetic_acid"],
+    caution_fg:["alcohol","ester","phenol"],
+    hazard:true,
+    g_per_ml:0.15,
+    procedure:["TOXIC: use fume hood, gloves, eye protection.","Add BaO to solution and swirl.","Allow 15–30 min contact.","Decant solution carefully.","Dispose of BaO waste appropriately — barium compounds are toxic."],
+    successive:null,
+    regen_detail:"Not recommended. Dispose of as toxic waste.",
+  },
+  {
+    id:"mol_sieves_3a",name:"Molecular sieves 3 Å",formula:"Aluminosilicate (3 Å)",
+    nature:"neutral",residual:"~0.001 mg/L",capacity:"0.18",
+    speed:"slow",convenience:"medium",regen:"175–260 °C",mechanism:"Adsorption",
+    notes:"Adsorbs molecules ≤3 Å (water, NH₃). Ideal for methanol, ethanol. Must be activated before use. Best for pre-drying and storage.",
+    incompatible_fg:["organometallic"],
+    incompatible_solvent:["acetic_acid","water"],
+    caution_fg:[],
+    hazard:false,
+    g_per_ml:0.12,
+    procedure:["Activate sieves at 250 °C for ≥4 h before use; cool in desiccator.","Add sieves (~100 mg/mL) to solvent or solution.","Cap and allow to stand overnight for best results.","Filter sieves from solution before use in reactions.","Store solvent over sieves to maintain dryness."],
+    successive:null,
+    regen_detail:"Heat at 175–260 °C under vacuum for ≥4 h. Cool in desiccator. Activated sieves stored in sealed container maintain activity for months.",
+  },
+  {
+    id:"mol_sieves_4a",name:"Molecular sieves 4 Å",formula:"Aluminosilicate (4 Å)",
+    nature:"neutral",residual:"0.001 mg/L",capacity:"0.18",
+    speed:"slow",convenience:"medium",regen:"250 °C",mechanism:"Adsorption",
+    notes:"Standard sieves for THF, DCM, toluene, MeCN, DMF. Must be activated. Excellent for maintaining anhydrous conditions during reactions.",
+    incompatible_fg:[],
+    incompatible_solvent:["acetic_acid","water","ethanol","methanol"],
+    caution_fg:[],
+    hazard:false,
+    g_per_ml:0.12,
+    procedure:["Activate sieves at 300 °C under vacuum for ≥4 h; cool in desiccator.","Add to solvent (~100 mg/mL). Store solvent over sieves.","For reactions: add sieves directly to flask before adding reagents.","Filter off sieves before workup or analysis."],
+    successive:null,
+    regen_detail:"Heat at 250–300 °C under vacuum for ≥4 h. Repeat if used heavily. Discard if visibly powdered or heavily contaminated.",
+  },
+  {
+    id:"p2o5",name:"Phosphorus pentoxide",formula:"P₂O₅",
+    nature:"strongly acidic",residual:"3×10⁻⁵ mg/L",capacity:"0.5",
+    speed:"fast",convenience:"very low",regen:"No",mechanism:"Chemisorption → H₃PO₄",
+    notes:"Most powerful common desiccant. Use ONLY in vacuum desiccators — NEVER add to solution. Destroys alcohols, acids, amines, ketones.",
+    incompatible_fg:["alcohol","phenol","amine_1_2","amine_3","aldehyde","ketone","carboxylic_acid","epoxide","thiol","acid_sensitive","amide","peroxide"],
+    incompatible_solvent:["water","methanol","ethanol","isopropanol","acetic_acid","acetone","mek","dmso","dmf"],
+    caution_fg:["ester","nitro"],
+    hazard:true,
+    g_per_ml:null,
+    procedure:["Place P₂O₅ in a desiccator dish — do not add to liquid.","Place sample (solid or in closed vessel) in desiccator.","Evacuate and seal. Leave overnight.","Dispose of spent P₂O₅ carefully (reacts violently with water if dumped neat)."],
+    successive:null,
+    regen_detail:"Cannot be regenerated — forms H₃PO₄ on water uptake. Dispose as corrosive waste.",
+  },
+  {
+    id:"na_metal",name:"Sodium metal / benzophenone",formula:"Na⁰ + Ph₂CO",
+    nature:"strongly basic/reductive",residual:"<0.001 mg/L",capacity:"high",
+    speed:"moderate",convenience:"very low",regen:"Not recommended",mechanism:"Na + H₂O → NaOH + H₂",
+    notes:"Benzophenone ketyl indicator turns blue/purple when rigorously dry. FIRE HAZARD — violent reaction with water, halogenated and protic solvents. Never use with organochlorides.",
+    incompatible_fg:["alcohol","phenol","amine_1_2","aldehyde","carboxylic_acid","ester","epoxide","thiol","acid_sensitive","amide","peroxide","nitro"],
+    incompatible_solvent:["dcm","chloroform","ccl4","methanol","ethanol","isopropanol","water","acetic_acid","acetone","mek","ethyl_acetate","dmso","dmf"],
+    caution_fg:["alkene","alkyne"],
+    hazard:true,
+    g_per_ml:null,
+    procedure:["FIRE HAZARD — conduct under inert atmosphere, away from water sources.","Add Na metal (cut, oil-free) and catalytic benzophenone to dry solvent under N₂/Ar.","Reflux until solution turns deep blue/purple (ketyl radical — indicates <10 ppm water).","Distill solvent under inert gas directly into dry reaction flask.","Never quench Na residue with water — quench with iPrOH slowly, then water."],
+    successive:null,
+    regen_detail:"Not applicable — Na is consumed. Quench spent Na residue with isopropanol slowly, then water, before disposal.",
+  },
+  {
+    id:"al2o3",name:"Aluminium oxide",formula:"Al₂O₃ (activated)",
+    nature:"neutral",residual:"0.003 mg/L",capacity:"0.2",
+    speed:"moderate",convenience:"medium",regen:"175 °C",mechanism:"Chemisorption + adsorption",
+    notes:"Good for hydrocarbons, inert gases. Very low residual water. Can adsorb polar compounds — use with care. Common in drying columns.",
+    incompatible_fg:["acid_sensitive","base_sensitive"],
+    incompatible_solvent:["water","acetic_acid"],
+    caution_fg:["alcohol","amine_1_2","amine_3","ester"],
+    hazard:false,
+    g_per_ml:0.20,
+    procedure:["Pack alumina in a column or add directly to solution.","For column drying: pass solvent through slowly.","For batch: add ~200 mg per mL, swirl, stand 10 min, filter.","Activated alumina columns can process large volumes efficiently."],
+    successive:null,
+    regen_detail:"Heat at 175–300 °C for 4–12 h. Activity grade I requires strict drying — use vacuum oven if available.",
+  },
+  {
+    id:"silica_gel",name:"Silica gel",formula:"SiO₂·xH₂O",
+    nature:"mildly acidic",residual:"0.03 mg/L",capacity:"0.2",
+    speed:"moderate",convenience:"high",regen:"200–350 °C",mechanism:"Adsorption",
+    notes:"Widely used in desiccators and drying tubes. Mildly acidic — not ideal for base-sensitive compounds. Self-indicating grades turn blue → pink when saturated.",
+    incompatible_fg:["organometallic"],
+    incompatible_solvent:["water","acetic_acid"],
+    caution_fg:["base_sensitive","acid_sensitive","amine_1_2"],
+    hazard:false,
+    g_per_ml:0.15,
+    procedure:["Best used in desiccators and drying tubes, not directly in solution.","For desiccator: place open sample container over fresh silica gel.","For drying tube: pack loosely with cotton plug at each end.","Replace when indicator colour changes to pink."],
+    successive:null,
+    regen_detail:"Spread on tray; dry at 200–350 °C for 2–4 h until blue colour returns (indicator type). White silica gel: dry at 150–200 °C. Reusable indefinitely if not chemically contaminated.",
+  },
+  {
+    id:"cuso4",name:"Copper(II) sulfate",formula:"CuSO₄",
+    nature:"neutral",residual:"1.4 mg/L",capacity:"0.6",
+    speed:"slow",convenience:"medium",regen:"200 °C",mechanism:"Hydration",
+    notes:"Colourimetric indicator — white → blue on water uptake. Good for esters, alcohols, aromatics. High residual water; largely superseded by mol. sieves.",
+    incompatible_fg:["thiol","organometallic","amine_1_2"],
+    incompatible_solvent:["acetic_acid","water"],
+    caution_fg:["alcohol"],
+    hazard:false,
+    g_per_ml:0.15,
+    procedure:["Add anhydrous CuSO₄ (white) to solution.","Swirl; observe colour change. Blue = water present.","When solid remains white, solution is dry.","Filter off solid. Evaporate."],
+    successive:null,
+    regen_detail:"Heat at 200–250 °C until white colour returns. CuSO₄·5H₂O (blue) → CuSO₄ (white). Do not overheat (decomposes above 650 °C).",
+  },
+];
+
+const SOLVENT_GROUPS = {
+  hexane:"hydrocarbon",pentane:"hydrocarbon",petroleum_ether:"hydrocarbon",
+  cyclohexane:"hydrocarbon",toluene:"aromatic",benzene:"aromatic",
+  dcm:"halogenated",chloroform:"halogenated",ccl4:"halogenated",
+  diethyl_ether:"ether",thf:"ether",dme:"ether",dioxane:"ether",mtbe:"ether",
+  ethyl_acetate:"ester",acetone:"ketone",mek:"ketone",
+  acetonitrile:"polar_aprotic",dmf:"polar_aprotic",dmso:"polar_aprotic",nmp:"polar_aprotic",
+  methanol:"protic",ethanol:"protic",isopropanol:"protic",
+  pyridine:"amine_solvent",acetic_acid:"acidic",water:"water"
+};
+
+const SOLVENT_LABELS = {
+  hexane:"Hexane",pentane:"Pentane",petroleum_ether:"Petroleum ether",
+  cyclohexane:"Cyclohexane",toluene:"Toluene",benzene:"Benzene",
+  dcm:"DCM",chloroform:"Chloroform",ccl4:"CCl₄",
+  diethyl_ether:"Diethyl ether",thf:"THF",dme:"DME",dioxane:"Dioxane",mtbe:"MTBE",
+  ethyl_acetate:"EtOAc",acetone:"Acetone",mek:"MEK",
+  acetonitrile:"MeCN",dmf:"DMF",dmso:"DMSO",nmp:"NMP",
+  methanol:"MeOH",ethanol:"EtOH",isopropanol:"iPrOH",
+  pyridine:"Pyridine",acetic_acid:"AcOH",water:"H₂O"
+};
+
+const SOLVENT_WARNINGS = {
+  protic:"Protic solvents dissolve most inorganic desiccants. Use molecular sieves (3 Å) or distillation from CaH₂.",
+  polar_aprotic:"Polar aprotic solvents (DMF, DMSO, NMP, MeCN) are best dried over 4 Å mol. sieves or by vacuum distillation.",
+  water:"Water cannot be dried directly. Extract into an organic solvent first, then dry the organic layer.",
+  acidic:"Acetic acid reacts with most drying agents. Use Na₂SO₄ cautiously, or dry by distillation.",
+  amine_solvent:"Pyridine is best dried over KOH pellets or CaH₂, or by distillation.",
+};
+
+const INCOMPAT_REASONS = {
+  alcohol:"forms coordinate complex with alcohols",phenol:"reacts with phenols",
+  amine_1_2:"forms coordinate complex with primary/secondary amines",
+  amine_3:"forms coordinate complex with tertiary amines",
+  aldehyde:"reacts with / complexes aldehydes",ketone:"forms coordinate complex with ketones",
+  carboxylic_acid:"reacts with carboxylic acids (basic agent)",
+  ester:"hydrolyses or complexes esters",amide:"forms complex with amides",
+  epoxide:"opens epoxide ring (basic agent)",thiol:"reacts with / coordinates thiols",
+  acid_sensitive:"agent is acidic — may protonate acid-sensitive groups",
+  base_sensitive:"agent is basic — may deprotonate base-sensitive groups",
+  organometallic:"may react with / deactivate organometallic compounds",
+  peroxide:"reacts with peroxides / anhydrides",nitro:"may reduce nitro groups",
+};
+
+const TEMP_WARNINGS = {
+  cold:{na2so4:"Na₂SO₄ decahydrate is unstable above 32 °C but works fine at 0 °C. Proceed normally.",cacl2:"CaCl₂ hexahydrate is unstable above 30 °C — use anhydrous form, which is fine at 0 °C."},
+  subzero:{na2so4:"Na₂SO₄ becomes ineffective below 0 °C — use MgSO₄ instead.",mgso4:"MgSO₄ is effective down to about −10 °C.",cacl2:"CaCl₂ works below 0 °C but is less efficient — mol. sieves preferred.",mol_sieves_4a:"Molecular sieves work well at sub-zero temperatures — preferred choice.",mol_sieves_3a:"Molecular sieves work well at sub-zero temperatures."},
+};
+
+let pinned = new Set();
+let compareSet = new Set();
+let activeTab = "results";
+let wetness = "traces";
+let temperature = "rt";
+
+function scoreAgent(agent, solvent, fgs) {
+  if (!solvent) return null;
+  if (agent.incompatible_solvent.includes(solvent)) return null;
+  const badFGs = fgs.filter(f => agent.incompatible_fg.includes(f));
+  if (badFGs.length > 0) return { agent, compatible: false, badFGs, cautionFGs: [], score: -1 };
+  const cautionFGs = fgs.filter(f => agent.caution_fg.includes(f));
+  let s = 100;
+  if (agent.speed === "very fast") s += 18;
+  else if (agent.speed === "fast") s += 13;
+  else if (agent.speed === "moderate") s += 7;
+  const capNum = parseFloat(agent.capacity);
+  if (!isNaN(capNum)) s += Math.round(capNum * 18);
+  else if (agent.capacity === "high") s += 12;
+  s -= cautionFGs.length * 15;
+  if (agent.hazard) s -= 12;
+  if (agent.convenience === "very low") s -= 12;
+  else if (agent.convenience === "low") s -= 6;
+  const sg = SOLVENT_GROUPS[solvent];
+  const hasAmine = fgs.includes("amine_1_2") || fgs.includes("amine_3");
+  if (sg === "protic" && agent.id === "mol_sieves_3a") s += 30;
+  if ((sg === "ether" || sg === "aromatic") && agent.id === "na_metal") s += 18;
+  if (sg === "polar_aprotic" && agent.id === "mol_sieves_4a") s += 25;
+  if (sg === "ether" && agent.id === "mol_sieves_4a") s += 12;
+  if (["ether","hydrocarbon","halogenated","aromatic"].includes(sg) && ["mgso4","na2so4"].includes(agent.id)) s += 8;
+  if (hasAmine && ["k2co3","koh"].includes(agent.id)) s += 22;
+  if (fgs.includes("alcohol") && ["mgso4","k2co3","caso4"].includes(agent.id)) s += 8;
+  if (fgs.includes("carboxylic_acid") && agent.id === "na2so4") s += 10;
+  if (wetness === "very" && agent.id === "na2so4") s += 15;
+  if (wetness === "traces" && agent.id === "caso4") s += 10;
+  if (temperature === "subzero" && ["mol_sieves_4a","mol_sieves_3a","mgso4"].includes(agent.id)) s += 10;
+  if (temperature === "subzero" && agent.id === "na2so4") s -= 20;
+  if (pinned.has(agent.id)) s += 1000;
+  return { agent, compatible: true, badFGs: [], cautionFGs, score: s };
+}
+
+function calcAmount(agent, volMl) {
+  if (!agent.g_per_ml || !volMl) return null;
+  let mult = wetness === "very" ? 2.5 : wetness === "moderate" ? 1.5 : 1.0;
+  const g = (agent.g_per_ml * volMl * mult).toFixed(1);
+  return `Suggested amount: ~${g} g for ${volMl} mL (${wetness} wetness)`;
+}
+
+function render() {
+  if (activeTab !== "results") return;
+  const solvent = document.getElementById("solvent").value;
+  const fgs = [...document.querySelectorAll(".chip.selected")].map(c => c.dataset.id);
+  const volRaw = parseFloat(document.getElementById("volume").value);
+  const volUnit = document.getElementById("volume-unit").value;
+  const volMl = isNaN(volRaw) ? null : (volUnit === "L" ? volRaw * 1000 : volRaw);
+  const searchQ = document.getElementById("agent-search").value.toLowerCase().trim();
+  const el = document.getElementById("results-content");
+
+  if (!solvent) { el.innerHTML = '<div class="empty-state">Select a solvent<br>to get started.</div>'; return; }
+
+  const sg = SOLVENT_GROUPS[solvent];
+  let html = "";
+
+  html += `<div class="solvent-note">Solvent: <span>${SOLVENT_LABELS[solvent]}</span> · Class: <span>${sg}</span>${fgs.length ? ` · ${fgs.length} group${fgs.length>1?"s":""} flagged` : ""} · Wetness: <span>${wetness}</span> · Temp: <span>${temperature}</span></div>`;
+
+  if (SOLVENT_WARNINGS[sg]) html += `<div class="warn-box">${SOLVENT_WARNINGS[sg]}</div>`;
+  if (temperature === "subzero") html += `<div class="temp-warn">Working below 0 °C: Na₂SO₄ is ineffective. Prefer MgSO₄ or molecular sieves.</div>`;
+
+  let allScored = AGENTS.map(a => scoreAgent(a, solvent, fgs)).filter(Boolean);
+  let compatible = allScored.filter(r => r.compatible).sort((a,b) => b.score - a.score);
+  let incompatible = allScored.filter(r => !r.compatible);
+
+  if (searchQ) {
+    compatible = compatible.filter(r => r.agent.name.toLowerCase().includes(searchQ) || r.agent.formula.toLowerCase().includes(searchQ));
+    incompatible = incompatible.filter(r => r.agent.name.toLowerCase().includes(searchQ));
+  }
+
+  const excluded = AGENTS.length - compatible.length - incompatible.length;
+  html += `<div class="results-header"><h2>Compatible agents</h2><span class="count-pill">${compatible.length} compatible · ${incompatible.length} excluded by FG · ${excluded} excluded by solvent</span></div>`;
+
+  if (!compatible.length && !searchQ) {
+    html += `<div class="warn-box">No compatible drying agents for this combination. Consider azeotropic distillation or changing solvent.</div>`;
+  }
+
+  compatible.forEach((res, i) => {
+    const {agent, cautionFGs} = res;
+    const isFirst = i === 0 && !pinned.has(agent.id);
+    const isPinned = pinned.has(agent.id);
+    const inCmp = compareSet.has(agent.id);
+    let badgeClass, badgeText;
+    if (isPinned) { badgeClass="badge-pinned"; badgeText="pinned"; }
+    else if (agent.hazard) { badgeClass="badge-hazard"; badgeText="hazardous"; }
+    else if (isFirst) { badgeClass="badge-best"; badgeText="recommended"; }
+    else if (i<=2) { badgeClass="badge-good"; badgeText="suitable"; }
+    else { badgeClass="badge-ok"; badgeText="use with care"; }
+
+    const amtMsg = calcAmount(agent, volMl);
+    const twoPart = agent.successive ? `<div class="successive-box" id="succ-${agent.id}" style="display:block">Two-step protocol: ${agent.successive}</div>` : "";
+    const tempW = temperature !== "rt" && TEMP_WARNINGS[temperature] && TEMP_WARNINGS[temperature][agent.id] ? `<div class="temp-warn" style="margin-bottom:10px;">${TEMP_WARNINGS[temperature][agent.id]}</div>` : "";
+    html += `<div class="agent-card${isPinned?" pinned-card":isFirst?" best":""}">
+      <div class="agent-header">
+        <div>
+          <div class="agent-name">${agent.name}</div>
+          <div class="agent-formula">${agent.formula}</div>
+        </div>
+        <div class="agent-actions">
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          <button class="btn-pin${isPinned?" pinned":""}" onclick="togglePin('${agent.id}')">${isPinned?"Unpin":"Pin"}</button>
+          <button class="btn-compare${inCmp?" in-compare":""}" onclick="toggleCompare('${agent.id}')">${inCmp?"In compare":"Compare"}</button>
+        </div>
+      </div>
+      ${tempW}
+      <div class="stats-grid">
+        <div class="stat-block"><span class="stat-label">Residual H₂O</span><span class="stat-value">${agent.residual}</span></div>
+        <div class="stat-block"><span class="stat-label">Capacity (g/g)</span><span class="stat-value">${agent.capacity}</span></div>
+        <div class="stat-block"><span class="stat-label">Speed</span><span class="stat-value">${agent.speed}</span></div>
+        <div class="stat-block"><span class="stat-label">Regenerate</span><span class="stat-value">${agent.regen}</span></div>
+      </div>
+      ${amtMsg ? `<div class="amount-box" style="display:block">${amtMsg}</div>` : ""}
+      ${twoPart}
+      <div class="agent-note">${agent.notes}</div>
+      <button class="procedure-toggle" onclick="toggleProc('${agent.id}')">Show procedure</button>
+      <div class="procedure-steps" id="proc-${agent.id}">
+        <ol>${agent.procedure.map(s=>`<li>${s}</li>`).join("")}</ol>
+      </div>
+      <div class="tag-row">
+        <span class="tag tag-neutral">${agent.nature}</span>
+        <span class="tag tag-neutral">${agent.mechanism}</span>
+        ${cautionFGs.map(f=>{const fg=FGS.find(x=>x.id===f);return`<span class="tag tag-warn">caution: ${fg?fg.label:f}</span>`;}).join("")}
+        ${agent.hazard?'<span class="tag tag-danger">hazardous</span>':""}
+      </div>
+    </div>`;
+  });
+
+  if (incompatible.length) {
+    html += `<div class="results-header" style="margin-top:20px"><h2>Excluded — incompatible</h2></div>`;
+    incompatible.forEach(res => {
+      const {agent, badFGs} = res;
+      const reasons = badFGs.map(f => {
+        const fg = FGS.find(x=>x.id===f);
+        const r = INCOMPAT_REASONS[f]||"incompatible";
+        return `${fg?fg.label:f}: ${r}`;
+      });
+      html += `<div class="agent-card" style="opacity:.65">
+        <div class="agent-header">
+          <div><div class="agent-name">${agent.name}</div><div class="agent-formula">${agent.formula}</div></div>
+          <span class="badge" style="background:var(--red-bg);color:var(--red);border:1px solid rgba(127,29,29,0.18)">excluded</span>
+        </div>
+        <div class="incompat-box">
+          Incompatible with selected functional groups:
+          ${reasons.map(r=>`<div class="incompat-reason">· ${r}</div>`).join("")}
+        </div>
+      </div>`;
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+function togglePin(id) {
+  if (pinned.has(id)) pinned.delete(id); else pinned.add(id);
+  renderPinned();
+  render();
+}
+
+function toggleCompare(id) {
+  if (compareSet.has(id)) compareSet.delete(id); else compareSet.add(id);
+  document.getElementById("compare-count").textContent = `${compareSet.size} agent${compareSet.size!==1?"s":""} selected`;
+  renderCompare();
+  render();
+}
+
+function renderPinned() {
+  const el = document.getElementById("pinned-list");
+  if (!pinned.size) { el.innerHTML = '<span class="no-pins">None pinned yet</span>'; return; }
+  el.innerHTML = [...pinned].map(id => {
+    const a = AGENTS.find(x=>x.id===id);
+    return `<div class="pin-tag">${a?a.name:id}<button onclick="togglePin('${id}')" title="Unpin">×</button></div>`;
+  }).join("");
+}
+
+function renderCompare() {
+  const el = document.getElementById("compare-content");
+  if (!compareSet.size) { el.innerHTML = '<p style="font-size:13px;color:var(--dim);font-family:var(--mono)">No agents selected for comparison.</p>'; return; }
+  const agents = [...compareSet].map(id => AGENTS.find(a=>a.id===id)).filter(Boolean);
+  const rows = [
+    ["Formula", a=>a.formula],
+    ["Nature", a=>a.nature],
+    ["Residual H₂O", a=>a.residual],
+    ["Capacity (g water/g)", a=>a.capacity],
+    ["Speed", a=>a.speed],
+    ["Mechanism", a=>a.mechanism],
+    ["Regenerate", a=>a.regen],
+    ["Hazardous?", a=>a.hazard?"Yes":"No"],
+  ];
+  let t = `<table class="compare-table"><thead><tr><th>Property</th>${agents.map(a=>`<th>${a.name}</th>`).join("")}</tr></thead><tbody>`;
+  rows.forEach(([label,fn])=>{
+    t += `<tr><td>${label}</td>${agents.map(a=>`<td>${fn(a)}</td>`).join("")}</tr>`;
+  });
+  t += `</tbody></table><button class="compare-clear" onclick="clearCompare()">Clear all</button>`;
+  el.innerHTML = t;
+}
+
+function clearCompare() {
+  compareSet.clear();
+  document.getElementById("compare-count").textContent = "0 agents selected";
+  renderCompare();
+  render();
+}
+
+function toggleProc(id) {
+  const el = document.getElementById(`proc-${id}`);
+  const btn = el.previousElementSibling;
+  el.classList.toggle("open");
+  btn.textContent = el.classList.contains("open") ? "Hide procedure" : "Show procedure";
+}
+
+function renderSolventTable() {
+  const entries = Object.entries(SOLVENT_WATER).map(([k,v])=>({key:k,...v}));
+  const maxG = Math.max(...entries.filter(e=>typeof e.g==="number").map(e=>e.g));
+  let html = `<thead><tr><th>Solvent</th><th>g H₂O / 100 mL</th><th style="width:180px">Relative water content</th><th>Notes</th></tr></thead><tbody>`;
+  entries.forEach(e => {
+    const bar = typeof e.g==="number" ? `<div class="water-bar"><div class="water-fill" style="width:${Math.round((e.g/maxG)*100)}%"></div></div>` : `<span style="font-size:11px;color:var(--dim)">miscible</span>`;
+    const note = e.g==="∞"?"Fully miscible — cannot be used as extraction solvent for aqueous workup":e.g==="—"?"—":"";
+    html += `<tr><td>${e.label}</td><td>${typeof e.g==="number"?e.g.toFixed(3):e.g}</td><td>${bar}</td><td style="font-size:11px;color:var(--muted)">${note}</td></tr>`;
+  });
+  html += "</tbody>";
+  document.getElementById("solvent-water-table").innerHTML = html;
+}
+
+function renderRegenGrid() {
+  const el = document.getElementById("regen-grid");
+  el.innerHTML = AGENTS.map(a => `
+    <div class="regen-card">
+      <div class="regen-agent">${a.name}</div>
+      <div class="regen-formula">${a.formula}</div>
+      <div class="regen-temp">${a.regen}</div>
+      <div class="regen-note">${a.regen_detail}</div>
+    </div>`).join("");
+}
+
+// SOLVENT SELECT
+document.getElementById("solvent").addEventListener("change", e => {
+  const v = e.target.value;
+  const note = document.getElementById("solvent-water-note");
+  if (v && SOLVENT_WATER[v]) {
+    const g = SOLVENT_WATER[v].g;
+    note.style.display = "block";
+    note.textContent = typeof g==="number" ? `Dissolves ~${g} g water / 100 mL` : g==="∞" ? "Fully miscible with water" : "—";
+  } else {
+    note.style.display = "none";
+  }
+  render();
+});
+// WETNESS
+document.querySelectorAll(".wet-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".wet-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    wetness = btn.dataset.wet;
+    render();
+  });
+});
+
+// TEMPERATURE
+document.querySelectorAll(".temp-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".temp-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    temperature = btn.dataset.temp;
+    render();
+  });
+});
+
+// VOLUME
+document.getElementById("volume").addEventListener("input", render);
+document.getElementById("volume-unit").addEventListener("change", render);
+
+// AGENT SEARCH
+document.getElementById("agent-search").addEventListener("input", render);
+
+// FG CHIPS
+const grid = document.getElementById("fg-grid");
+FGS.forEach(fg => {
+  const c = document.createElement("div");
+  c.className = "chip"; c.dataset.id = fg.id;
+  c.innerHTML = `<span class="dot"></span><span>${fg.label}</span>`;
+  c.addEventListener("click", () => { c.classList.toggle("selected"); render(); });
+  grid.appendChild(c);
+});
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+  document.querySelectorAll(".chip.selected").forEach(c=>c.classList.remove("selected"));
+  render();
+});
+
+
+
+// MISCIBILITY DATA
+// M = miscible, I = immiscible, P = partially miscible, S = same solvent
+const MISC_SOLVENTS = [
+  {id:"water",          label:"Water"},
+  {id:"methanol",       label:"Methanol"},
+  {id:"ethanol",        label:"Ethanol"},
+  {id:"isopropanol",    label:"Isopropanol"},
+  {id:"acetone",        label:"Acetone"},
+  {id:"acetonitrile",   label:"Acetonitrile"},
+  {id:"dmf",            label:"DMF"},
+  {id:"dmso",           label:"DMSO"},
+  {id:"acetic_acid",    label:"Acetic acid"},
+  {id:"ethyl_acetate",  label:"Ethyl acetate"},
+  {id:"dcm",            label:"DCM"},
+  {id:"chloroform",     label:"Chloroform"},
+  {id:"diethyl_ether",  label:"Diethyl ether"},
+  {id:"thf",            label:"THF"},
+  {id:"toluene",        label:"Toluene"},
+  {id:"hexane",         label:"Hexane"},
+  {id:"cyclohexane",    label:"Cyclohexane"},
+  {id:"petroleum_ether",label:"Petroleum ether"},
+  {id:"benzene",        label:"Benzene"},
+  {id:"pyridine",       label:"Pyridine"},
+  {id:"ccl4",           label:"CCl₄"},
+];
+
+// Upper triangle — row vs col. S=same, M=miscible, I=immiscible, P=partial
+// Indexed by [row][col] where row < col
+const MISC_DATA = {
+  water:       {water:"S",methanol:"M",ethanol:"M",isopropanol:"M",acetone:"M",acetonitrile:"M",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"P",dcm:"I",chloroform:"I",diethyl_ether:"I",thf:"M",toluene:"I",hexane:"I",cyclohexane:"I",petroleum_ether:"I",benzene:"I",pyridine:"M",ccl4:"I"},
+  methanol:    {methanol:"S",ethanol:"M",isopropanol:"M",acetone:"M",acetonitrile:"M",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"P",cyclohexane:"P",petroleum_ether:"P",benzene:"M",pyridine:"M",ccl4:"M"},
+  ethanol:     {ethanol:"S",isopropanol:"M",acetone:"M",acetonitrile:"M",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  isopropanol: {isopropanol:"S",acetone:"M",acetonitrile:"M",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  acetone:     {acetone:"S",acetonitrile:"M",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  acetonitrile:{acetonitrile:"S",dmf:"M",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"P",cyclohexane:"P",petroleum_ether:"P",benzene:"M",pyridine:"M",ccl4:"M"},
+  dmf:         {dmf:"S",dmso:"M",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  dmso:        {dmso:"S",acetic_acid:"M",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"P",thf:"M",toluene:"P",hexane:"I",cyclohexane:"I",petroleum_ether:"I",benzene:"P",pyridine:"M",ccl4:"P"},
+  acetic_acid: {acetic_acid:"S",ethyl_acetate:"M",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  ethyl_acetate:{ethyl_acetate:"S",dcm:"M",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  dcm:         {dcm:"S",chloroform:"M",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  chloroform:  {chloroform:"S",diethyl_ether:"M",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  diethyl_ether:{diethyl_ether:"S",thf:"M",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  thf:         {thf:"S",toluene:"M",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  toluene:     {toluene:"S",hexane:"M",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"M",ccl4:"M"},
+  hexane:      {hexane:"S",cyclohexane:"M",petroleum_ether:"M",benzene:"M",pyridine:"P",ccl4:"M"},
+  cyclohexane: {cyclohexane:"S",petroleum_ether:"M",benzene:"M",pyridine:"P",ccl4:"M"},
+  petroleum_ether:{petroleum_ether:"S",benzene:"M",pyridine:"P",ccl4:"M"},
+  benzene:     {benzene:"S",pyridine:"M",ccl4:"M"},
+  pyridine:    {pyridine:"S",ccl4:"M"},
+  ccl4:        {ccl4:"S"},
+};
+
+function getMisc(a, b) {
+  if (a === b) return "S";
+  if (MISC_DATA[a] && MISC_DATA[a][b] !== undefined) return MISC_DATA[a][b];
+  if (MISC_DATA[b] && MISC_DATA[b][a] !== undefined) return MISC_DATA[b][a];
+  return "I";
+}
+
+function renderMiscibilityTable() {
+  const wrap = document.getElementById("miscibility-wrap");
+  let html = `<table class="misc-table"><thead><tr><th class="corner"></th>`;
+  MISC_SOLVENTS.forEach(s => {
+    html += `<th class="col-header" data-id="${s.id}"><span class="col-label">${s.label}</span></th>`;
+  });
+  html += `</tr></thead><tbody>`;
+  MISC_SOLVENTS.forEach((row, ri) => {
+    html += `<tr data-row="${row.id}"><th class="row-header" data-id="${row.id}">${row.label}</th>`;
+    MISC_SOLVENTS.forEach((col, ci) => {
+      const v = getMisc(row.id, col.id);
+      const cls = v==="M"?"miscible":v==="P"?"partial":v==="S"?"same":"immiscible";
+      const sym = v==="S"?"·":v==="M"?"":v==="P"?"~":"";
+      const title = v==="M"?`Miscible: ${row.label} + ${col.label}`:
+                    v==="P"?`Partially miscible: ${row.label} + ${col.label}`:
+                    v==="S"?"Same solvent":
+                    `Immiscible ✓ ${row.label} + ${col.label} — good for extraction`;
+      html += `<td class="misc-cell ${cls}" data-col="${col.id}" title="${title}">${sym}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  wrap.innerHTML = html;
+
+  let activeRowId = null;
+  let activeColId = null;
+
+  function clearHighlights() {
+    document.querySelectorAll(".misc-table tr").forEach(r => r.classList.remove("row-active"));
+    document.querySelectorAll(".misc-table th.col-header").forEach(c => c.classList.remove("col-active"));
+    document.querySelectorAll(".misc-table td.col-active-cell").forEach(c => c.classList.remove("col-active-cell"));
+  }
+
+  function showSummary(id) {
+    const label = MISC_SOLVENTS.find(s=>s.id===id)?.label || id;
+    const immiscible = MISC_SOLVENTS.filter(s=>s.id!==id && getMisc(id,s.id)==="I").map(s=>s.label);
+    const partial    = MISC_SOLVENTS.filter(s=>s.id!==id && getMisc(id,s.id)==="P").map(s=>s.label);
+    const miscible   = MISC_SOLVENTS.filter(s=>s.id!==id && getMisc(id,s.id)==="M").map(s=>s.label);
+    const panel = document.getElementById("misc-summary");
+    panel.style.display = "block";
+    panel.innerHTML = `<h3>${label}</h3>
+      ${immiscible.length?`<span class="misc-summary-label">✓ Immiscible — use for sep-funnel extraction (${immiscible.length})</span><div class="misc-summary-row">${immiscible.map(n=>`<span class="tag tag-neutral" style="background:#fef3c7;border-color:#fcd34d;color:#78350f">${n}</span>`).join("")}</div>`:""}
+      ${partial.length?`<span class="misc-summary-label">~ Partially miscible (${partial.length})</span><div class="misc-summary-row">${partial.map(n=>`<span class="tag tag-neutral" style="background:#f3f0ff;border-color:#c4b5fd;color:#6d28d9">${n}</span>`).join("")}</div>`:""}
+      ${miscible.length?`<span class="misc-summary-label">Miscible — will not separate (${miscible.length})</span><div class="misc-summary-row">${miscible.map(n=>`<span class="tag tag-neutral">${n}</span>`).join("")}</div>`:""}`;
+  }
+
+  function highlightCol(colId) {
+    document.querySelectorAll(`.misc-table th.col-header[data-id="${colId}"]`).forEach(c => c.classList.add("col-active"));
+    document.querySelectorAll(`.misc-table td[data-col="${colId}"]`).forEach(c => c.classList.add("col-active-cell"));
+  }
+
+  // Row header click
+  wrap.addEventListener("click", e => {
+    const rh = e.target.closest("th.row-header");
+    const ch = e.target.closest("th.col-header");
+    if (rh) {
+      const id = rh.dataset.id;
+      clearHighlights();
+      if (activeRowId === id && !activeColId) { activeRowId=null; document.getElementById("misc-summary").style.display="none"; return; }
+      activeRowId = id; activeColId = null;
+      rh.closest("tr").classList.add("row-active");
+      highlightCol(id);
+      showSummary(id);
+    } else if (ch) {
+      const id = ch.dataset.id;
+      clearHighlights();
+      if (activeColId === id && !activeRowId) { activeColId=null; document.getElementById("misc-summary").style.display="none"; return; }
+      activeColId = id; activeRowId = null;
+      ch.classList.add("col-active");
+      document.querySelectorAll(`.misc-table tr[data-row="${id}"] th.row-header`).forEach(r => r.closest("tr").classList.add("row-active"));
+      highlightCol(id);
+      showSummary(id);
+    }
+  });
+}
+
+renderSolventTable();
+renderRegenGrid();
+renderMiscibilityTable();
+
+// TABS
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeTab = tab.dataset.tab;
+    ["results","compare","solvents","regen","miscibility"].forEach(t => {
+      const el = document.getElementById(`tab-${t}`);
+      if (el) el.style.display = t===activeTab?"block":"none";
+    });
+    if (activeTab==="results") render();
+  });
+});
+</script>
+</body>
+</html>

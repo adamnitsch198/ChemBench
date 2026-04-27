@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMR Solvent Peaks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap"></noscript>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f0ff; --surface: #ffffff; --surface2: #ede6ff;
+  --border: #d4c5f5; --border2: #b8a0e8;
+  --text: #1a1033; --text2: #5a4a7a; --text3: #9080b0;
+  --accent: #5b2fd4; --accent-fg: #ffffff;
+  --tag-h-bg: #fef3e2; --tag-h-fg: #92400e;
+  --tag-c-bg: #ede6ff; --tag-c-fg: #4a1fa8;
+  --peak-h: #7c3aed; --peak-c: #2563eb;
+  --peak-h-fill: rgba(124,58,237,0.10); --peak-c-fill: rgba(37,99,235,0.10);
+  --axis: #9080b0; --gridline: #ede6ff;
+}
+body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+.layout { max-width: 740px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.app-title { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 4px; }
+.app-sub { font-size: 12px; color: var(--text3); }
+.app-sub a { color: var(--text3); font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-decoration: none; }
+.tabs { display: flex; gap: 2px; margin-bottom: 2rem; background: var(--surface2); border-radius: 8px; padding: 3px; }
+.tab { flex: 1; padding: 8px 6px; border: none; background: transparent; border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; text-align: center; }
+.tab.active { background: var(--surface); color: var(--text); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.field { margin-bottom: 16px; }
+label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+select, input[type=number], input[type=text] {
+  width: 100%; height: 40px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 14px;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+  transition: border-color 0.15s;
+}
+input[type=number], input[type=text] { background-image: none; padding-right: 12px; }
+input[type=number] { font-family: 'IBM Plex Mono', monospace; }
+select:focus, input:focus { outline: none; border-color: var(--border2); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.btn { width: 100%; height: 42px; background: var(--accent); color: var(--accent-fg); border: none; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 4px; transition: opacity 0.15s, transform 0.1s; }
+.btn:hover { opacity: 0.85; } .btn:active { transform: scale(0.99); }
+.results-area { margin-top: 2rem; }
+.results-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text3); margin-bottom: 12px; letter-spacing: 0.04em; }
+
+/* peak input rows */
+.peak-row-wrap { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; margin-bottom: 8px; }
+.peak-row-wrap .field { margin-bottom: 0; }
+.peak-row-wrap input[type=number] { font-family: 'IBM Plex Mono', monospace; }
+.btn-remove-peak { height: 40px; width: 36px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text3); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.btn-remove-peak:hover { border-color: var(--border2); color: var(--text); }
+.btn-add-peak { margin-top: 4px; padding: 0 16px; height: 34px; border: 1px dashed var(--border); border-radius: 6px; background: transparent; color: var(--text2); font-family: 'IBM Plex Mono', monospace; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.btn-add-peak:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+
+/* confidence badge */
+.conf-badge { display: inline-block; margin-top: 5px; padding: 2px 10px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+.conf-high { background: #dcfce7; color: #15803d; }
+.conf-mid  { background: #fef9c3; color: #a16207; }
+.conf-low  { background: #ede6ff; color: #6d28d9; }
+.matched-peaks { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-top: 4px; }
+
+/* solvent group accordion */
+.sv-group { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.sv-group-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; cursor: pointer; user-select: none; background: var(--surface); transition: background 0.12s; }
+.sv-group-header:hover { background: var(--surface2); }
+.sv-group-left { display: flex; align-items: center; gap: 10px; }
+.sv-group-name { font-size: 14px; font-weight: 500; color: var(--text); font-family: 'IBM Plex Mono', monospace; }
+.sv-group-count { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; background: var(--surface2); border-radius: 20px; padding: 2px 8px; }
+.sv-group-arrow { font-size: 11px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+.sv-group-arrow.open { transform: rotate(180deg); }
+.sv-group-body { display: none; border-top: 1px solid var(--border); padding: 10px 12px; background: var(--surface); }
+.sv-group-body.open { display: block; }
+
+.result-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 6px; transition: border-color 0.15s; }
+.result-card:last-child { margin-bottom: 0; }
+.result-card:hover { border-color: var(--border2); }
+.rc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.rc-left { flex: 1; min-width: 0; }
+.rc-compound { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.rc-solvent { font-size: 12px; color: var(--text2); }
+.rc-right { text-align: right; flex-shrink: 0; margin-left: 16px; }
+.rc-ppm { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 3px; }
+.rc-mult { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+.tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; margin-top: 4px; }
+.tag-h { background: var(--tag-h-bg); color: var(--tag-h-fg); }
+.tag-c { background: var(--tag-c-bg); color: var(--tag-c-fg); }
+.mini-spectrum { width: 100%; height: 60px; display: block; border-radius: 4px; }
+.empty { text-align: center; padding: 3rem 1.5rem; color: var(--text3); font-size: 13px; border: 1px dashed var(--border); border-radius: 8px; font-family: 'IBM Plex Mono', monospace; }
+
+/* molecular structure */
+.mol-structure { width: 80px; height: 60px; flex-shrink: 0; color: var(--text2); }
+.mol-structure svg { width: 100%; height: 100%; }
+.rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.bc-body .mol-structure { width: 100%; height: 80px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
+.bc-body .mol-structure svg { width: auto; height: 100%; max-width: 160px; }
+
+/* ---- BROWSE TAB ---- */
+.browse-filter { margin-bottom: 1.5rem; display: flex; gap: 10px; }
+.browse-filter input[type=text] { flex: 1; }
+.browse-mode-toggle { display: flex; gap: 2px; background: var(--surface2); border-radius: 6px; padding: 2px; height: 40px; flex-shrink: 0; }
+.bmt { padding: 0 14px; border: none; background: transparent; border-radius: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text2); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.bmt.active { background: var(--surface); color: var(--text); font-weight: 500; }
+
+.bc-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.bc-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; gap: 10px; }
+.bc-name { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.bc-sv-sel {
+  height: 30px; font-size: 12px; padding: 0 26px 0 8px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text);
+  font-family: 'IBM Plex Mono', monospace; cursor: pointer; min-width: 100px;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 7px center;
+}
+.bc-sv-sel:focus { outline: none; border-color: var(--border2); }
+.bc-toggle { padding: 4px 10px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text2); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.bc-toggle:hover { background: var(--surface2); }
+.bc-body { display: none; border-top: 1px solid var(--border); padding: 12px 14px; }
+.bc-body.open { display: block; }
+.bc-mode-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.07em; color: var(--text3); text-transform: uppercase; padding: 8px 0 5px; border-bottom: 1px solid var(--border); margin-bottom: 2px; display: flex; justify-content: space-between; }
+.bc-peak-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.bc-peak-row:last-child { border-bottom: none; }
+.bc-peak-label { color: var(--text2); font-size: 12px; }
+.bc-peak-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text); }
+.bc-no-data { font-size: 12px; color: var(--text3); padding: 6px 0; font-family: 'IBM Plex Mono', monospace; }
+.bc-mini-wrap { margin-top: 10px; }
+
+/* ---- SPECTRUM TAB ---- */
+.sp-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 18px 12px; margin-top: 1.5rem; position: relative; }
+.sp-title-bar { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text3); margin-bottom: 10px; letter-spacing: 0.05em; }
+canvas#sp-canvas { width: 100%; display: block; cursor: crosshair; }
+.legend { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-family: 'IBM Plex Mono', monospace; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.sp-tooltip { position: absolute; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text); pointer-events: none; display: none; white-space: nowrap; z-index: 10; line-height: 1.6; }
+.sp-hint { margin-top: 8px; font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+.ppm-tol-note { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; margin-top: 4px; }
+footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; line-height: 1.8; }
+@media (max-width: 520px) { .grid-2,.grid-3 { grid-template-columns: 1fr; } .layout { padding: 1.5rem 1rem 3rem; } }
+</style>
+</head>
+<body>
+<div class="layout">
+  <header>
+    <div class="app-title">NMR Solvent Peaks</div>
+    <div class="app-sub">Residual solvent &amp; common impurity reference &nbsp;·&nbsp;
+      <a href="https://doi.org/10.1021/om100106e" target="_blank">Fulmer 2010</a> &amp;
+      <a href="https://doi.org/10.1021/acs.oprd.6b00251" target="_blank">Whiteker 2016</a>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('search')">Peak search</button>
+    <button class="tab" onclick="switchTab('spectrum')">Spectrum view</button>
+  </div>
+
+  <!-- SEARCH TAB -->
+  <div id="tab-search">
+    <div class="grid-2">
+      <div class="field"><label>NMR mode</label>
+        <select id="mode"><option value="H">¹H Proton</option><option value="C">¹³C Carbon</option></select>
+      </div>
+      <div class="field"><label>Deuterated solvent</label>
+        <select id="solvent">
+          <option value="all">All solvents</option>
+          <option value="CDCl3">CDCl₃</option><option value="DMSO">DMSO-d₆</option>
+          <option value="D2O">D₂O</option><option value="CD3OD">Methanol-d₄</option>
+          <option value="acetone">Acetone-d₆</option><option value="THF">THF-d₈</option>
+          <option value="toluene">Toluene-d₈</option><option value="benzene">Benzene-d₆</option>
+          <option value="pyridine">Pyridine-d₅</option><option value="CD2Cl2">CD₂Cl₂</option>
+          <option value="DMF">DMF-d₇</option><option value="ACN">Acetonitrile-d₃</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field"><label>Tolerance</label>
+      <select id="tol" style="max-width:200px;">
+        <option value="0.05">± 0.05 ppm</option><option value="0.1" selected>± 0.10 ppm</option>
+        <option value="0.2">± 0.20 ppm</option><option value="0.5">± 0.50 ppm</option>
+      </select>
+    </div>
+
+    <!-- Peak rows -->
+    <div id="peak-rows"></div>
+    <button class="btn-add-peak" onclick="addPeakRow()">+ add another peak</button>
+    <button class="btn" onclick="doSearch()" style="margin-top:12px;">Identify impurity</button>
+    <div class="results-area" id="results"></div>
+  </div>
+
+  <!-- BROWSE TAB -->
+  <div id="tab-browse" style="display:none;">
+    <div class="browse-filter">
+      <input type="text" id="browse-search" placeholder="Filter compounds..." oninput="renderBrowse()">
+      <div class="browse-mode-toggle">
+        <button class="bmt active" id="bmt-H" onclick="setBrowseMode('H')">¹H</button>
+        <button class="bmt" id="bmt-C" onclick="setBrowseMode('C')">¹³C</button>
+      </div>
+    </div>
+    <div id="browse-list"></div>
+  </div>
+
+  <!-- SPECTRUM TAB -->
+  <div id="tab-spectrum" style="display:none;">
+    <div class="grid-2">
+      <div class="field"><label>NMR mode</label>
+        <select id="sp-mode" onchange="onSpChange()">
+          <option value="H">¹H Proton</option><option value="C">¹³C Carbon</option>
+        </select>
+      </div>
+      <div class="field"><label>Deuterated solvent</label>
+        <select id="sp-solvent" onchange="onSpChange()">
+          <option value="CDCl3">CDCl₃</option><option value="DMSO">DMSO-d₆</option>
+          <option value="D2O">D₂O</option><option value="CD3OD">Methanol-d₄</option>
+          <option value="acetone">Acetone-d₆</option><option value="THF">THF-d₈</option>
+          <option value="toluene">Toluene-d₈</option><option value="benzene">Benzene-d₆</option>
+          <option value="pyridine">Pyridine-d₅</option><option value="CD2Cl2">CD₂Cl₂</option>
+          <option value="DMF">DMF-d₇</option><option value="ACN">Acetonitrile-d₃</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Highlight compound (optional)</label>
+      <select id="sp-compound" onchange="drawSpectrum()"></select>
+    </div>
+    <div class="sp-wrap">
+      <div class="sp-title-bar" id="sp-title"></div>
+      <canvas id="sp-canvas" height="220"></canvas>
+      <div class="sp-tooltip" id="sp-tooltip"></div>
+      <div class="legend" id="sp-legend"></div>
+    </div>
+    <div class="sp-hint">hover over peaks to identify · lorentzian peak shapes with multiplicity patterns</div>
+  </div>
+
+  <footer>
+    Data: Fulmer et al. Organometallics 2010, 29, 2176 &nbsp;·&nbsp; Whiteker et al. Org. Process Res. Dev. 2016, 20, 1560 &nbsp;·&nbsp; Gottlieb et al. J. Org. Chem. 1997, 62, 7512 &nbsp;·&nbsp; Cao et al. Water Sci. Technol. 2014, 69.5<br>
+    Additional entries from standard NMR reference tables. For research use only.
+  </footer>
+
+  <div style="margin-top:2.5rem; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:500; color:#7c3aed; letter-spacing:0.04em; line-height:1.5;">
+    CONFIDENTIAL FOR IPPOLITI LAB ONLY<br>DO NOT SHARE!!!!!
+  </div>
+
+  <div style="margin-top:1rem; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#9080b0; letter-spacing:0.04em;">
+    Created by Adam Nitsch
+  </div>
+</div>
+
+<script>
+const DB = [
+  {compound:"Solvent residual",solvent:"CDCl3",H:[{ppm:7.26,mult:"s"}],C:[{ppm:77.16,mult:"t"}],note:"CDCl₃ residual"},
+  {compound:"Solvent residual",solvent:"DMSO",H:[{ppm:2.50,mult:"m"}],C:[{ppm:39.52,mult:"sep"}],note:"DMSO-d₆ residual"},
+  {compound:"Solvent residual",solvent:"D2O",H:[{ppm:4.79,mult:"s"}],C:[],note:"D₂O (HDO) residual"},
+  {compound:"Solvent residual",solvent:"CD3OD",H:[{ppm:3.31,mult:"m"}],C:[{ppm:49.00,mult:"sep"}],note:"MeOD residual"},
+  {compound:"Solvent residual",solvent:"acetone",H:[{ppm:2.05,mult:"m"}],C:[{ppm:29.84,mult:"sep"},{ppm:206.26,mult:"s"}],note:"Acetone-d₆ residual"},
+  {compound:"Solvent residual",solvent:"THF",H:[{ppm:1.72,mult:"m"},{ppm:3.58,mult:"m"}],C:[{ppm:25.31,mult:"m"},{ppm:67.57,mult:"m"}],note:"THF-d₈ residual"},
+  {compound:"Solvent residual",solvent:"toluene",H:[{ppm:2.09,mult:"s"},{ppm:6.98,mult:"m"},{ppm:7.00,mult:"m"},{ppm:7.09,mult:"m"}],C:[{ppm:20.4,mult:"s"},{ppm:125.13,mult:"t"},{ppm:127.96,mult:"t"},{ppm:128.87,mult:"t"},{ppm:137.48,mult:"s"}],note:"Toluene-d₈ residual"},
+  {compound:"Solvent residual",solvent:"benzene",H:[{ppm:7.16,mult:"s"}],C:[{ppm:128.06,mult:"t"}],note:"Benzene-d₆ residual"},
+  {compound:"Solvent residual",solvent:"pyridine",H:[{ppm:7.22,mult:"m"},{ppm:7.58,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.91,mult:"t"},{ppm:149.90,mult:"t"}],note:"Pyridine-d₅ residual"},
+  {compound:"Solvent residual",solvent:"CD2Cl2",H:[{ppm:5.32,mult:"t"}],C:[{ppm:53.84,mult:"t"}],note:"CD₂Cl₂ residual"},
+  {compound:"Solvent residual",solvent:"DMF",H:[{ppm:2.75,mult:"s"},{ppm:2.96,mult:"s"},{ppm:7.95,mult:"s"}],C:[{ppm:29.76,mult:"sep"},{ppm:34.89,mult:"sep"},{ppm:162.62,mult:"t"}],note:"DMF-d₇ residual"},
+  {compound:"Solvent residual",solvent:"ACN",H:[{ppm:1.94,mult:"m"}],C:[{ppm:1.32,mult:"sep"},{ppm:118.26,mult:"s"}],note:"CD₃CN residual"},
+  {compound:"Water",solvent:"CDCl3",H:[{ppm:1.56,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"DMSO",H:[{ppm:3.33,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"acetone",H:[{ppm:2.84,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"THF",H:[{ppm:2.41,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"toluene",H:[{ppm:0.40,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"CD3OD",H:[{ppm:4.87,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"benzene",H:[{ppm:0.40,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"pyridine",H:[{ppm:4.96,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"CD2Cl2",H:[{ppm:1.51,mult:"s"}],C:[]},
+  {compound:"Water",solvent:"ACN",H:[{ppm:2.13,mult:"s"}],C:[]},
+  {compound:"Dichloromethane (DCM)",solvent:"CDCl3",H:[{ppm:5.30,mult:"s"}],C:[{ppm:53.52,mult:"t"}]},
+  {compound:"Dichloromethane (DCM)",solvent:"DMSO",H:[{ppm:5.76,mult:"s"}],C:[{ppm:54.00,mult:"t"}]},
+  {compound:"Dichloromethane (DCM)",solvent:"acetone",H:[{ppm:5.63,mult:"s"}],C:[{ppm:54.45,mult:"t"}]},
+  {compound:"Dichloromethane (DCM)",solvent:"D2O",H:[{ppm:5.44,mult:"s"}],C:[]},
+  {compound:"Dichloromethane (DCM)",solvent:"CD3OD",H:[{ppm:5.49,mult:"s"}],C:[{ppm:54.78,mult:"t"}]},
+  {compound:"Dichloromethane (DCM)",solvent:"THF",H:[{ppm:5.25,mult:"s"}],C:[{ppm:53.61,mult:"t"}]},
+  {compound:"Diethyl ether",solvent:"CDCl3",H:[{ppm:1.21,mult:"t"},{ppm:3.47,mult:"q"}],C:[{ppm:15.20,mult:"q"},{ppm:65.91,mult:"t"}]},
+  {compound:"Diethyl ether",solvent:"DMSO",H:[{ppm:1.09,mult:"t"},{ppm:3.38,mult:"q"}],C:[{ppm:15.12,mult:"q"},{ppm:64.44,mult:"t"}]},
+  {compound:"Diethyl ether",solvent:"acetone",H:[{ppm:1.11,mult:"t"},{ppm:3.41,mult:"q"}],C:[{ppm:15.63,mult:"q"},{ppm:65.94,mult:"t"}]},
+  {compound:"Diethyl ether",solvent:"CD3OD",H:[{ppm:1.18,mult:"t"},{ppm:3.45,mult:"q"}],C:[{ppm:15.46,mult:"q"},{ppm:66.12,mult:"t"}]},
+  {compound:"Diethyl ether",solvent:"D2O",H:[{ppm:1.17,mult:"t"},{ppm:3.56,mult:"q"}],C:[]},
+  {compound:"Ethyl acetate",solvent:"CDCl3",H:[{ppm:1.26,mult:"t"},{ppm:2.05,mult:"s"},{ppm:4.12,mult:"q"}],C:[{ppm:14.19,mult:"q"},{ppm:20.68,mult:"q"},{ppm:60.49,mult:"t"},{ppm:171.36,mult:"s"}]},
+  {compound:"Ethyl acetate",solvent:"DMSO",H:[{ppm:1.17,mult:"t"},{ppm:1.99,mult:"s"},{ppm:4.03,mult:"q"}],C:[{ppm:14.09,mult:"q"},{ppm:20.47,mult:"q"},{ppm:59.74,mult:"t"},{ppm:170.31,mult:"s"}]},
+  {compound:"Ethyl acetate",solvent:"acetone",H:[{ppm:1.24,mult:"t"},{ppm:1.97,mult:"s"},{ppm:4.11,mult:"q"}],C:[{ppm:14.34,mult:"q"},{ppm:20.83,mult:"q"},{ppm:60.56,mult:"t"},{ppm:170.96,mult:"s"}]},
+  {compound:"Ethyl acetate",solvent:"CD3OD",H:[{ppm:1.24,mult:"t"},{ppm:2.01,mult:"s"},{ppm:4.09,mult:"q"}],C:[{ppm:14.32,mult:"q"},{ppm:20.88,mult:"q"},{ppm:60.98,mult:"t"},{ppm:172.31,mult:"s"}]},
+  {compound:"Ethyl acetate",solvent:"D2O",H:[{ppm:1.17,mult:"t"},{ppm:2.07,mult:"s"},{ppm:4.14,mult:"q"}],C:[]},
+  {compound:"Acetone",solvent:"CDCl3",H:[{ppm:2.17,mult:"s"}],C:[{ppm:30.92,mult:"s"},{ppm:207.07,mult:"s"}]},
+  {compound:"Acetone",solvent:"DMSO",H:[{ppm:2.09,mult:"s"}],C:[{ppm:30.56,mult:"s"},{ppm:206.31,mult:"s"}]},
+  {compound:"Acetone",solvent:"D2O",H:[{ppm:2.22,mult:"s"}],C:[{ppm:30.89,mult:"s"}]},
+  {compound:"Acetone",solvent:"CD3OD",H:[{ppm:2.15,mult:"s"}],C:[{ppm:30.67,mult:"s"}]},
+  {compound:"Acetone",solvent:"benzene",H:[{ppm:1.55,mult:"s"}],C:[{ppm:30.14,mult:"s"}]},
+  {compound:"Acetic acid",solvent:"CDCl3",H:[{ppm:2.10,mult:"s"},{ppm:11.40,mult:"br s"}],C:[{ppm:20.81,mult:"q"},{ppm:178.99,mult:"s"}]},
+  {compound:"Acetic acid",solvent:"DMSO",H:[{ppm:1.91,mult:"s"},{ppm:12.38,mult:"br s"}],C:[{ppm:20.51,mult:"q"},{ppm:174.83,mult:"s"}]},
+  {compound:"Acetic acid",solvent:"D2O",H:[{ppm:2.08,mult:"s"}],C:[{ppm:21.03,mult:"q"},{ppm:181.49,mult:"s"}]},
+  {compound:"Acetic acid",solvent:"acetone",H:[{ppm:1.96,mult:"s"}],C:[{ppm:20.51,mult:"q"},{ppm:174.83,mult:"s"}]},
+  {compound:"Methanol",solvent:"CDCl3",H:[{ppm:3.49,mult:"s"},{ppm:1.09,mult:"br s"}],C:[{ppm:50.41,mult:"q"}]},
+  {compound:"Methanol",solvent:"DMSO",H:[{ppm:3.16,mult:"s"},{ppm:4.01,mult:"br s"}],C:[{ppm:48.59,mult:"q"}]},
+  {compound:"Methanol",solvent:"D2O",H:[{ppm:3.34,mult:"s"}],C:[{ppm:49.50,mult:"q"}]},
+  {compound:"Methanol",solvent:"acetone",H:[{ppm:3.31,mult:"s"}],C:[{ppm:49.77,mult:"q"}]},
+  {compound:"Ethanol",solvent:"CDCl3",H:[{ppm:1.25,mult:"t"},{ppm:2.61,mult:"br s"},{ppm:3.72,mult:"q"}],C:[{ppm:18.41,mult:"q"},{ppm:57.86,mult:"t"}],note:"CHCl₃ stabilizer"},
+  {compound:"Ethanol",solvent:"DMSO",H:[{ppm:1.06,mult:"t"},{ppm:3.44,mult:"q"},{ppm:4.35,mult:"br s"}],C:[{ppm:18.51,mult:"q"},{ppm:56.61,mult:"t"}]},
+  {compound:"Ethanol",solvent:"D2O",H:[{ppm:1.17,mult:"t"},{ppm:3.65,mult:"q"}],C:[{ppm:17.47,mult:"q"},{ppm:58.05,mult:"t"}]},
+  {compound:"Isopropanol (IPA)",solvent:"CDCl3",H:[{ppm:1.22,mult:"d"},{ppm:2.26,mult:"br s"},{ppm:4.02,mult:"sep"}],C:[{ppm:25.14,mult:"q"},{ppm:64.50,mult:"t"}]},
+  {compound:"Isopropanol (IPA)",solvent:"DMSO",H:[{ppm:1.00,mult:"d"},{ppm:3.78,mult:"sep"},{ppm:4.46,mult:"br s"}],C:[{ppm:25.43,mult:"q"},{ppm:64.26,mult:"t"}]},
+  {compound:"Isopropanol (IPA)",solvent:"D2O",H:[{ppm:1.17,mult:"d"},{ppm:4.02,mult:"sep"}],C:[{ppm:25.56,mult:"q"},{ppm:64.88,mult:"t"}]},
+  {compound:"n-Hexane",solvent:"CDCl3",H:[{ppm:0.89,mult:"t"},{ppm:1.27,mult:"m"},{ppm:1.28,mult:"m"}],C:[{ppm:13.73,mult:"q"},{ppm:22.05,mult:"t"},{ppm:30.95,mult:"t"},{ppm:31.64,mult:"t"}]},
+  {compound:"n-Hexane",solvent:"acetone",H:[{ppm:0.88,mult:"t"},{ppm:1.24,mult:"m"}],C:[{ppm:13.88,mult:"q"},{ppm:22.09,mult:"t"},{ppm:31.02,mult:"t"}]},
+  {compound:"THF",solvent:"CDCl3",H:[{ppm:1.85,mult:"m"},{ppm:3.76,mult:"m"}],C:[{ppm:25.62,mult:"t"},{ppm:67.97,mult:"t"}]},
+  {compound:"THF",solvent:"DMSO",H:[{ppm:1.76,mult:"m"},{ppm:3.60,mult:"m"}],C:[{ppm:25.14,mult:"t"},{ppm:67.03,mult:"t"}]},
+  {compound:"THF",solvent:"D2O",H:[{ppm:1.88,mult:"m"},{ppm:3.74,mult:"m"}],C:[{ppm:25.67,mult:"t"},{ppm:68.68,mult:"t"}]},
+  {compound:"Toluene",solvent:"CDCl3",H:[{ppm:2.36,mult:"s"},{ppm:7.17,mult:"m"},{ppm:7.25,mult:"m"}],C:[{ppm:21.46,mult:"q"},{ppm:125.45,mult:"t"},{ppm:128.17,mult:"t"},{ppm:129.33,mult:"t"},{ppm:137.89,mult:"s"}]},
+  {compound:"Toluene",solvent:"DMSO",H:[{ppm:2.25,mult:"s"},{ppm:7.10,mult:"m"},{ppm:7.18,mult:"m"}],C:[{ppm:20.99,mult:"q"},{ppm:125.27,mult:"t"},{ppm:127.90,mult:"t"},{ppm:129.02,mult:"t"},{ppm:137.35,mult:"s"}]},
+  {compound:"Benzene",solvent:"CDCl3",H:[{ppm:7.36,mult:"s"}],C:[{ppm:128.37,mult:"t"}]},
+  {compound:"Benzene",solvent:"DMSO",H:[{ppm:7.36,mult:"s"}],C:[{ppm:128.30,mult:"t"}]},
+  {compound:"Chloroform",solvent:"DMSO",H:[{ppm:8.32,mult:"s"}],C:[{ppm:77.33,mult:"t"}]},
+  {compound:"Chloroform",solvent:"acetone",H:[{ppm:8.07,mult:"s"}],C:[{ppm:79.19,mult:"t"}]},
+  {compound:"Dimethylformamide (DMF)",solvent:"CDCl3",H:[{ppm:2.88,mult:"s"},{ppm:2.96,mult:"s"},{ppm:8.02,mult:"s"}],C:[{ppm:30.89,mult:"q"},{ppm:36.23,mult:"q"},{ppm:162.62,mult:"t"}]},
+  {compound:"Dimethylformamide (DMF)",solvent:"DMSO",H:[{ppm:2.73,mult:"s"},{ppm:2.89,mult:"s"},{ppm:7.95,mult:"s"}],C:[{ppm:29.76,mult:"q"},{ppm:35.02,mult:"q"},{ppm:161.50,mult:"t"}]},
+  {compound:"DMSO",solvent:"CDCl3",H:[{ppm:2.62,mult:"s"}],C:[{ppm:40.76,mult:"q"}]},
+  {compound:"DMSO",solvent:"acetone",H:[{ppm:2.52,mult:"s"}],C:[{ppm:40.45,mult:"q"}]},
+  {compound:"DMSO",solvent:"D2O",H:[{ppm:2.71,mult:"s"}],C:[{ppm:41.60,mult:"q"}]},
+  {compound:"Acetonitrile",solvent:"CDCl3",H:[{ppm:2.10,mult:"s"}],C:[{ppm:1.89,mult:"q"},{ppm:116.43,mult:"s"}]},
+  {compound:"Acetonitrile",solvent:"DMSO",H:[{ppm:2.08,mult:"s"}],C:[{ppm:1.03,mult:"q"},{ppm:116.43,mult:"s"}]},
+  {compound:"Acetonitrile",solvent:"D2O",H:[{ppm:2.06,mult:"s"}],C:[{ppm:1.47,mult:"q"},{ppm:119.68,mult:"s"}]},
+  {compound:"Pyridine",solvent:"CDCl3",H:[{ppm:7.36,mult:"m"},{ppm:7.60,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.96,mult:"t"},{ppm:149.76,mult:"t"}],note:"Et₂O stabilizer"},
+  {compound:"Pyridine",solvent:"DMSO",H:[{ppm:7.36,mult:"m"},{ppm:7.73,mult:"m"},{ppm:8.52,mult:"m"}],C:[{ppm:123.84,mult:"t"},{ppm:136.56,mult:"t"},{ppm:149.58,mult:"t"}]},
+  {compound:"Pyridine",solvent:"D2O",H:[{ppm:7.45,mult:"m"},{ppm:7.79,mult:"m"},{ppm:8.57,mult:"m"}],C:[]},
+  {compound:"Triethylamine (TEA)",solvent:"CDCl3",H:[{ppm:1.03,mult:"t"},{ppm:2.53,mult:"q"}],C:[{ppm:11.61,mult:"q"},{ppm:46.25,mult:"t"}]},
+  {compound:"Triethylamine (TEA)",solvent:"DMSO",H:[{ppm:0.93,mult:"t"},{ppm:2.43,mult:"q"}],C:[{ppm:11.74,mult:"q"},{ppm:45.72,mult:"t"}]},
+  {compound:"Triethylamine (TEA)",solvent:"D2O",H:[{ppm:1.18,mult:"t"},{ppm:3.13,mult:"q"}],C:[{ppm:12.66,mult:"q"},{ppm:46.77,mult:"t"}]},
+  {compound:"Triethylamine (TEA)",solvent:"ACN",H:[{ppm:1.03,mult:"t"},{ppm:2.53,mult:"q"}],C:[{ppm:11.61,mult:"q"},{ppm:46.25,mult:"t"}],note:"MeCN stabilizer"},
+  {compound:"Grease (silicone)",solvent:"CDCl3",H:[{ppm:0.07,mult:"s"}],C:[{ppm:1.04,mult:"q"}]},
+  {compound:"Grease (silicone)",solvent:"DMSO",H:[{ppm:0.05,mult:"s"}],C:[{ppm:0.90,mult:"q"}]},
+  {compound:"BHT",solvent:"CDCl3",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:5.01,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"CHCl₃ stabilizer"},
+  {compound:"BHT",solvent:"THF",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"THF stabilizer"},
+  {compound:"BHT",solvent:"toluene",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"toluene stabilizer"},
+  {compound:"BHT",solvent:"CD2Cl2",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"DCM stabilizer"},
+  {compound:"1,4-Dioxane",solvent:"CDCl3",H:[{ppm:3.71,mult:"s"}],C:[{ppm:66.66,mult:"t"}]},
+  {compound:"1,4-Dioxane",solvent:"DMSO",H:[{ppm:3.57,mult:"s"}],C:[{ppm:66.36,mult:"t"}]},
+  {compound:"1,4-Dioxane",solvent:"D2O",H:[{ppm:3.75,mult:"s"}],C:[{ppm:67.19,mult:"t"}]},
+  {compound:"1,4-Dioxane",solvent:"THF",H:[{ppm:3.71,mult:"s"}],C:[{ppm:66.66,mult:"t"}],note:"THF impurity"},
+  {compound:"Cyclohexane",solvent:"CDCl3",H:[{ppm:1.43,mult:"s"}],C:[{ppm:26.94,mult:"t"}]},
+  {compound:"Cyclohexane",solvent:"DMSO",H:[{ppm:1.40,mult:"s"}],C:[{ppm:26.33,mult:"t"}]},
+  {compound:"n-Butanol",solvent:"CDCl3",H:[{ppm:0.93,mult:"t"},{ppm:1.38,mult:"m"},{ppm:1.56,mult:"m"},{ppm:3.64,mult:"t"}],C:[{ppm:13.79,mult:"q"},{ppm:18.99,mult:"t"},{ppm:34.96,mult:"t"},{ppm:61.66,mult:"t"}]},
+  {compound:"Nitromethane",solvent:"CDCl3",H:[{ppm:4.33,mult:"s"}],C:[{ppm:62.50,mult:"q"}]},
+  {compound:"Nitromethane",solvent:"DMSO",H:[{ppm:4.42,mult:"s"}],C:[{ppm:63.27,mult:"q"}]},
+  {compound:"N-methylpyrrolidinone (NMP)",solvent:"CDCl3",H:[{ppm:1.94,mult:"m"},{ppm:2.35,mult:"t"},{ppm:2.94,mult:"s"},{ppm:3.37,mult:"t"}],C:[{ppm:17.71,mult:"t"},{ppm:27.98,mult:"t"},{ppm:30.10,mult:"q"},{ppm:54.99,mult:"t"},{ppm:174.44,mult:"s"}]},
+
+  // Ethylene glycol (HOCH2CH2OH)
+  {compound:"Ethylene glycol",solvent:"CDCl3",H:[{ppm:2.69,mult:"br s"},{ppm:3.76,mult:"s"}],C:[{ppm:63.79,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"DMSO",H:[{ppm:3.39,mult:"s"},{ppm:4.46,mult:"br s"}],C:[{ppm:60.53,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"D2O",H:[{ppm:3.65,mult:"s"}],C:[{ppm:63.17,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"CD3OD",H:[{ppm:3.59,mult:"s"}],C:[{ppm:63.95,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"acetone",H:[{ppm:3.55,mult:"s"},{ppm:3.96,mult:"br s"}],C:[{ppm:63.38,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"THF",H:[{ppm:3.58,mult:"s"}],C:[{ppm:63.54,mult:"t"}]},
+  {compound:"Ethylene glycol",solvent:"pyridine",H:[{ppm:3.75,mult:"s"}],C:[{ppm:64.32,mult:"t"}]},
+
+  // ── THF DEGRADATION INTERMEDIATES (Cao et al. Water Sci. Technol. 2014) ──
+  // Identified by GC-MS after Fenton oxidation of THF wastewater
+
+  // 2-Hydroxytetrahydrofuran — first oxidation product of THF (GC-MS rt 3.05 min)
+  {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"CDCl3",H:[{ppm:1.75,mult:"m"},{ppm:1.95,mult:"m"},{ppm:3.75,mult:"m"},{ppm:3.90,mult:"m"},{ppm:5.45,mult:"t"},{ppm:6.10,mult:"br s"}],C:[{ppm:26.10,mult:"t"},{ppm:31.80,mult:"t"},{ppm:67.50,mult:"t"},{ppm:97.20,mult:"t"}],note:"THF degradation product"},
+  {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"DMSO",H:[{ppm:1.70,mult:"m"},{ppm:1.88,mult:"m"},{ppm:3.65,mult:"m"},{ppm:3.80,mult:"m"},{ppm:5.35,mult:"t"},{ppm:6.30,mult:"br s"}],C:[{ppm:25.80,mult:"t"},{ppm:31.40,mult:"t"},{ppm:66.90,mult:"t"},{ppm:96.80,mult:"t"}],note:"THF degradation product"},
+  {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"D2O",H:[{ppm:1.78,mult:"m"},{ppm:2.00,mult:"m"},{ppm:3.80,mult:"m"},{ppm:3.95,mult:"m"},{ppm:5.50,mult:"t"}],C:[{ppm:26.30,mult:"t"},{ppm:32.10,mult:"t"},{ppm:68.10,mult:"t"},{ppm:97.60,mult:"t"}],note:"THF degradation product"},
+
+  // γ-Butyrolactone — second oxidation intermediate (GC-MS rt 4.34 min)
+  {compound:"γ-Butyrolactone (THF impurity)",solvent:"CDCl3",H:[{ppm:2.17,mult:"m"},{ppm:2.52,mult:"m"},{ppm:4.22,mult:"t"}],C:[{ppm:22.25,mult:"t"},{ppm:27.75,mult:"t"},{ppm:68.52,mult:"t"},{ppm:177.30,mult:"s"}],note:"THF degradation product"},
+  {compound:"γ-Butyrolactone (THF impurity)",solvent:"DMSO",H:[{ppm:2.08,mult:"m"},{ppm:2.43,mult:"m"},{ppm:4.17,mult:"t"}],C:[{ppm:21.80,mult:"t"},{ppm:27.20,mult:"t"},{ppm:67.90,mult:"t"},{ppm:176.50,mult:"s"}],note:"THF degradation product"},
+  {compound:"γ-Butyrolactone (THF impurity)",solvent:"D2O",H:[{ppm:2.22,mult:"m"},{ppm:2.60,mult:"m"},{ppm:4.28,mult:"t"}],C:[{ppm:22.60,mult:"t"},{ppm:28.10,mult:"t"},{ppm:69.00,mult:"t"},{ppm:178.20,mult:"s"}],note:"THF degradation product"},
+  {compound:"γ-Butyrolactone (THF impurity)",solvent:"CD3OD",H:[{ppm:2.14,mult:"m"},{ppm:2.48,mult:"m"},{ppm:4.20,mult:"t"}],C:[{ppm:22.10,mult:"t"},{ppm:27.50,mult:"t"},{ppm:68.20,mult:"t"},{ppm:177.00,mult:"s"}],note:"THF degradation product"},
+
+  // 4-Hydroxybutanoic acid — ring-opened intermediate (GC-MS rt 9.32 min)
+  {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"CDCl3",H:[{ppm:1.90,mult:"m"},{ppm:2.45,mult:"t"},{ppm:3.62,mult:"t"},{ppm:9.50,mult:"br s"}],C:[{ppm:28.40,mult:"t"},{ppm:31.20,mult:"t"},{ppm:61.80,mult:"t"},{ppm:178.90,mult:"s"}],note:"THF degradation product"},
+  {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"DMSO",H:[{ppm:1.73,mult:"m"},{ppm:2.26,mult:"t"},{ppm:3.43,mult:"t"},{ppm:4.40,mult:"br s"},{ppm:11.98,mult:"br s"}],C:[{ppm:27.90,mult:"t"},{ppm:30.60,mult:"t"},{ppm:60.30,mult:"t"},{ppm:174.20,mult:"s"}],note:"THF degradation product"},
+  {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"D2O",H:[{ppm:1.84,mult:"m"},{ppm:2.38,mult:"t"},{ppm:3.56,mult:"t"}],C:[{ppm:28.10,mult:"t"},{ppm:31.00,mult:"t"},{ppm:61.40,mult:"t"},{ppm:181.50,mult:"s"}],note:"THF degradation product"},
+
+  // ── BENZYL ALCOHOL ───────────────────────────────────────────────────────
+  {compound:"Benzyl alcohol",solvent:"CDCl3",H:[{ppm:2.21,mult:"br s"},{ppm:4.63,mult:"s"},{ppm:7.28,mult:"m"},{ppm:7.33,mult:"m"}],C:[{ppm:64.84,mult:"t"},{ppm:126.96,mult:"t"},{ppm:127.49,mult:"t"},{ppm:128.41,mult:"t"},{ppm:140.89,mult:"s"}]},
+  {compound:"Benzyl alcohol",solvent:"DMSO",H:[{ppm:4.42,mult:"d"},{ppm:5.12,mult:"t"},{ppm:7.24,mult:"m"},{ppm:7.31,mult:"m"}],C:[{ppm:62.60,mult:"t"},{ppm:126.78,mult:"t"},{ppm:127.35,mult:"t"},{ppm:128.22,mult:"t"},{ppm:141.00,mult:"s"}]},
+  {compound:"Benzyl alcohol",solvent:"D2O",H:[{ppm:4.58,mult:"s"},{ppm:7.30,mult:"m"},{ppm:7.36,mult:"m"}],C:[{ppm:64.20,mult:"t"},{ppm:127.10,mult:"t"},{ppm:127.60,mult:"t"},{ppm:128.50,mult:"t"},{ppm:140.50,mult:"s"}]},
+  {compound:"Benzyl alcohol",solvent:"CD3OD",H:[{ppm:4.55,mult:"s"},{ppm:7.25,mult:"m"},{ppm:7.31,mult:"m"}],C:[{ppm:64.50,mult:"t"},{ppm:126.90,mult:"t"},{ppm:127.40,mult:"t"},{ppm:128.30,mult:"t"},{ppm:141.10,mult:"s"}]},
+  {compound:"Benzyl alcohol",solvent:"acetone",H:[{ppm:4.54,mult:"d"},{ppm:4.12,mult:"br s"},{ppm:7.25,mult:"m"},{ppm:7.32,mult:"m"}],C:[{ppm:64.20,mult:"t"},{ppm:126.80,mult:"t"},{ppm:127.30,mult:"t"},{ppm:128.20,mult:"t"},{ppm:141.40,mult:"s"}]},
+  {compound:"Benzyl alcohol",solvent:"THF",H:[{ppm:4.56,mult:"s"},{ppm:7.26,mult:"m"},{ppm:7.32,mult:"m"}],C:[{ppm:64.60,mult:"t"},{ppm:126.95,mult:"t"},{ppm:127.45,mult:"t"},{ppm:128.35,mult:"t"},{ppm:141.20,mult:"s"}]},
+
+  // ── SOLVENT STABILIZERS ───────────────────────────────────────
+  // Amylene (2-methyl-2-butene) — stabilizer in CHCl3, DCM
+  {compound:"Amylene (2-methyl-2-butene)",solvent:"CDCl3",H:[{ppm:1.60,mult:"d"},{ppm:1.63,mult:"d"},{ppm:5.14,mult:"m"}],C:[{ppm:13.36,mult:"q"},{ppm:17.60,mult:"q"},{ppm:25.56,mult:"q"},{ppm:118.60,mult:"t"},{ppm:133.10,mult:"s"}],note:"CHCl₃ stabilizer"},
+  {compound:"Amylene (2-methyl-2-butene)",solvent:"CD2Cl2",H:[{ppm:1.60,mult:"d"},{ppm:1.63,mult:"d"},{ppm:5.14,mult:"m"}],C:[{ppm:13.36,mult:"q"},{ppm:17.60,mult:"q"},{ppm:25.56,mult:"q"},{ppm:118.60,mult:"t"},{ppm:133.10,mult:"s"}],note:"DCM stabilizer"},
+
+  // 2,6-Di-tert-butylpyridine (DTBP) — stabilizer in DCM, CDCl3
+  {compound:"2,6-Di-tert-butylpyridine",solvent:"CDCl3",H:[{ppm:1.42,mult:"s"},{ppm:7.20,mult:"d"},{ppm:7.55,mult:"t"}],C:[{ppm:29.98,mult:"q"},{ppm:35.60,mult:"s"},{ppm:119.90,mult:"t"},{ppm:136.10,mult:"t"},{ppm:162.00,mult:"s"}],note:"CDCl₃ stabilizer"},
+  {compound:"2,6-Di-tert-butylpyridine",solvent:"CD2Cl2",H:[{ppm:1.42,mult:"s"},{ppm:7.20,mult:"d"},{ppm:7.55,mult:"t"}],C:[{ppm:29.98,mult:"q"},{ppm:35.60,mult:"s"},{ppm:119.90,mult:"t"},{ppm:136.10,mult:"t"},{ppm:162.00,mult:"s"}],note:"DCM stabilizer"},
+
+  // 4-Methoxyphenol (MEHQ) — stabilizer in some acrylates and THF
+  {compound:"4-Methoxyphenol (MEHQ)",solvent:"CDCl3",H:[{ppm:3.75,mult:"s"},{ppm:4.59,mult:"br s"},{ppm:6.72,mult:"s"},{ppm:6.76,mult:"s"}],C:[{ppm:55.71,mult:"q"},{ppm:115.49,mult:"t"},{ppm:116.05,mult:"t"},{ppm:148.08,mult:"s"},{ppm:153.26,mult:"s"}],note:"THF stabilizer"},
+  {compound:"4-Methoxyphenol (MEHQ)",solvent:"DMSO",H:[{ppm:3.65,mult:"s"},{ppm:6.60,mult:"s"},{ppm:6.64,mult:"s"},{ppm:8.55,mult:"br s"}],C:[{ppm:55.47,mult:"q"},{ppm:114.78,mult:"t"},{ppm:115.89,mult:"t"},{ppm:147.83,mult:"s"},{ppm:152.68,mult:"s"}],note:"THF stabilizer"},
+
+  // Propylene oxide — stabilizer in DCM, CHCl3
+  {compound:"Propylene oxide",solvent:"CDCl3",H:[{ppm:1.35,mult:"d"},{ppm:2.46,mult:"dd"},{ppm:2.77,mult:"t"},{ppm:3.09,mult:"m"}],C:[{ppm:18.57,mult:"q"},{ppm:46.71,mult:"t"},{ppm:51.72,mult:"t"},{ppm:57.08,mult:"t"}],note:"CHCl₃ stabilizer"},
+  {compound:"Propylene oxide",solvent:"CD2Cl2",H:[{ppm:1.35,mult:"d"},{ppm:2.46,mult:"dd"},{ppm:2.77,mult:"t"},{ppm:3.09,mult:"m"}],C:[{ppm:18.57,mult:"q"},{ppm:46.71,mult:"t"},{ppm:51.72,mult:"t"},{ppm:57.08,mult:"t"}],note:"DCM stabilizer"},
+];
+
+const SN={CDCl3:"CDCl₃",DMSO:"DMSO-d₆",D2O:"D₂O",CD3OD:"Methanol-d₄",acetone:"Acetone-d₆",THF:"THF-d₈",toluene:"Toluene-d₈",benzene:"Benzene-d₆",pyridine:"Pyridine-d₅",CD2Cl2:"CD₂Cl₂",DMF:"DMF-d₇",ACN:"Acetonitrile-d₃"};
+const ML={s:"singlet",d:"doublet",t:"triplet",q:"quartet",m:"multiplet","br s":"br. singlet",sep:"septet"};
+const COLORS=['#c0392b','#1a5276','#117a65','#7d3c98','#b7770d','#1e6b3c','#2e86c1','#a04000','#5d6d7e','#943126','#0e6655','#6c3483'];
+const allCompounds=[...new Set(DB.map(e=>e.compound))];
+
+// ── FEATURE FLAG ─────────────────────────────────────────────
+// Set to false to remove all molecular structures instantly
+const SHOW_STRUCTURES = false;
+// ─────────────────────────────────────────────────────────────
+
+// Proper skeletal bond-line SVG structures (100×70 viewBox, 120° bond angles)
+// S=stroke, W=1.5, font=10px sans-serif for heteroatoms only
+const S='stroke="currentColor" stroke-width="1.5" stroke-linecap="round"';
+const T=(x,y,t,a='middle',fs=10)=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${fs}" font-family="sans-serif" fill="currentColor">${t}</text>`;
+
+const STRUCTURES = {
+
+  // H-O-H shown as bond angle
+  "Water":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="38" x2="30" y2="25" ${S}/>
+    <line x1="50" y1="38" x2="70" y2="25" ${S}/>
+    ${T(50,52,'O')} ${T(22,24,'H')} ${T(78,24,'H')}
+  </svg>`,
+
+  "Solvent residual":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    ${T(50,31,'solvent',undefined,9)} ${T(50,44,'residual',undefined,9)}
+  </svg>`,
+
+  // Cl2CH2 — tetrahedral central C, two Cl up, two H down
+  "Dichloromethane (DCM)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="35" x2="22" y2="20" ${S}/>
+    <line x1="50" y1="35" x2="78" y2="20" ${S}/>
+    <line x1="50" y1="35" x2="35" y2="55" ${S}/>
+    <line x1="50" y1="35" x2="65" y2="55" ${S}/>
+    ${T(14,19,'Cl')} ${T(86,19,'Cl')} ${T(28,63,'H')} ${T(72,63,'H')}
+  </svg>`,
+
+  // CH3-CH2-O-CH2-CH3  zigzag skeletal
+  "Diethyl ether":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="5"  y1="45" x2="20" y2="30" ${S}/>
+    <line x1="20" y1="30" x2="38" y2="42" ${S}/>
+    <line x1="38" y1="42" x2="53" y2="30" ${S}/>
+    <line x1="53" y1="30" x2="70" y2="42" ${S}/>
+    <line x1="70" y1="42" x2="85" y2="30" ${S}/>
+    ${T(50,28,'O')}
+  </svg>`,
+
+  // CH3-C(=O)-O-CH2-CH3
+  "Ethyl acetate":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="5"  y1="42" x2="22" y2="30" ${S}/>
+    <line x1="22" y1="30" x2="40" y2="42" ${S}/>
+    <line x1="40" y1="42" x2="40" y2="24" ${S}/>
+    <line x1="38" y1="24" x2="42" y2="24" ${S}/>
+    <line x1="40" y1="42" x2="58" y2="30" ${S}/>
+    <line x1="58" y1="30" x2="76" y2="42" ${S}/>
+    <line x1="76" y1="42" x2="92" y2="30" ${S}/>
+    ${T(40,20,'O')} ${T(55,28,'O')}
+  </svg>`,
+
+  // CH3-C(=O)-CH3
+  "Acetone":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="42" x2="35" y2="30" ${S}/>
+    <line x1="35" y1="30" x2="55" y2="42" ${S}/>
+    <line x1="55" y1="42" x2="75" y2="30" ${S}/>
+    <line x1="55" y1="42" x2="55" y2="24" ${S}/>
+    <line x1="53" y1="24" x2="57" y2="24" ${S}/>
+    ${T(55,20,'O')}
+  </svg>`,
+
+  // CH3-C(=O)-OH
+  "Acetic acid":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="42" x2="35" y2="30" ${S}/>
+    <line x1="35" y1="30" x2="55" y2="42" ${S}/>
+    <line x1="55" y1="42" x2="55" y2="24" ${S}/>
+    <line x1="53" y1="24" x2="57" y2="24" ${S}/>
+    <line x1="55" y1="42" x2="75" y2="54" ${S}/>
+    ${T(55,20,'O')} ${T(80,57,'OH')}
+  </svg>`,
+
+  // CH3-OH
+  "Methanol":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="25" y1="35" x2="60" y2="35" ${S}/>
+    <line x1="60" y1="35" x2="78" y2="35" ${S}/>
+    ${T(80,38,'OH',undefined,10)}
+  </svg>`,
+
+  // CH3-CH2-OH  zigzag
+  "Ethanol":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="42" x2="38" y2="28" ${S}/>
+    <line x1="38" y1="28" x2="60" y2="42" ${S}/>
+    <line x1="60" y1="42" x2="80" y2="28" ${S}/>
+    ${T(83,27,'OH')}
+  </svg>`,
+
+  // (CH3)2CH-OH
+  "Isopropanol (IPA)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="38" x2="28" y2="24" ${S}/>
+    <line x1="50" y1="38" x2="72" y2="24" ${S}/>
+    <line x1="50" y1="38" x2="50" y2="58" ${S}/>
+    ${T(50,64,'OH')}
+  </svg>`,
+
+  // 6-carbon zigzag CH3 implied at ends
+  "n-Hexane":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="4"  y1="44" x2="20" y2="28" ${S}/>
+    <line x1="20" y1="28" x2="36" y2="44" ${S}/>
+    <line x1="36" y1="44" x2="52" y2="28" ${S}/>
+    <line x1="52" y1="28" x2="68" y2="44" ${S}/>
+    <line x1="68" y1="44" x2="84" y2="28" ${S}/>
+    <line x1="84" y1="28" x2="96" y2="44" ${S}/>
+  </svg>`,
+
+  // 5-membered ring with O at top
+  "THF":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="14" x2="74" y2="30" ${S}/>
+    <line x1="74" y1="30" x2="65" y2="56" ${S}/>
+    <line x1="65" y1="56" x2="35" y2="56" ${S}/>
+    <line x1="35" y1="56" x2="26" y2="30" ${S}/>
+    <line x1="26" y1="30" x2="50" y2="14" ${S}/>
+    ${T(50,11,'O')}
+  </svg>`,
+
+  // benzene ring with CH3 substituent at top, alternating double bonds
+  "Toluene":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,18 68,28 68,48 50,58 32,48 32,28" fill="none" ${S}/>
+    <line x1="36" y1="28" x2="46" y2="28" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="64" y1="38" x2="64" y2="48" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="36" y1="48" x2="46" y2="53" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="50" y1="18" x2="50" y2="7"  ${S}/>
+    <line x1="50" y1="7"  x2="62" y2="7"  ${S}/>
+  </svg>`,
+
+  // benzene ring with circle (aromatic)
+  "Benzene":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,10 70,22 70,46 50,58 30,46 30,22" fill="none" ${S}/>
+    <circle cx="50" cy="34" r="12" fill="none" stroke="currentColor" stroke-width="1"/>
+  </svg>`,
+
+  // CHCl3 — C at centre, 3 Cl and 1 H
+  "Chloroform":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="32" x2="20" y2="18" ${S}/>
+    <line x1="50" y1="32" x2="80" y2="18" ${S}/>
+    <line x1="50" y1="32" x2="35" y2="56" ${S}/>
+    <line x1="50" y1="32" x2="62" y2="58" ${S}/>
+    ${T(12,16,'Cl')} ${T(88,16,'Cl')} ${T(27,63,'Cl')} ${T(66,63,'H')}
+  </svg>`,
+
+  // Me2N-CHO: N connected to two CH3 and one C=O
+  "Dimethylformamide (DMF)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="38" y1="35" x2="20" y2="22" ${S}/>
+    <line x1="38" y1="35" x2="20" y2="48" ${S}/>
+    <line x1="38" y1="35" x2="62" y2="35" ${S}/>
+    <line x1="62" y1="35" x2="80" y2="22" ${S}/>
+    <line x1="62" y1="33" x2="62" y2="19" ${S}/>
+    <line x1="60" y1="19" x2="64" y2="19" ${S}/>
+    ${T(38,38,'N')} ${T(62,17,'O')} ${T(83,22,'H')}
+  </svg>`,
+
+  // CH3-S(=O)-CH3
+  "DMSO":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="42" x2="38" y2="30" ${S}/>
+    <line x1="38" y1="30" x2="62" y2="42" ${S}/>
+    <line x1="62" y1="42" x2="85" y2="30" ${S}/>
+    <line x1="62" y1="42" x2="62" y2="24" ${S}/>
+    <line x1="60" y1="24" x2="64" y2="24" ${S}/>
+    ${T(62,38,'S')} ${T(62,20,'O')}
+  </svg>`,
+
+  // CH3-C≡N  triple bond
+  "Acetonitrile":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="35" x2="45" y2="35" ${S}/>
+    <line x1="45" y1="32" x2="72" y2="32" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="45" y1="35" x2="72" y2="35" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="45" y1="38" x2="72" y2="38" stroke="currentColor" stroke-width="1.5"/>
+    ${T(76,38,'N')}
+  </svg>`,
+
+  // pyridine ring, N at top, alternating double bonds
+  "Pyridine":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,10 70,22 70,46 50,58 30,46 30,22" fill="none" ${S}/>
+    <circle cx="50" cy="34" r="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    ${T(50,9,'N')}
+  </svg>`,
+
+  // N(CH2CH3)3 — N centre, 3 Et arms in zigzag
+  "Triethylamine (TEA)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="36" x2="30" y2="24" ${S}/>
+    <line x1="30" y1="24" x2="14" y2="36" ${S}/>
+    <line x1="50" y1="36" x2="70" y2="24" ${S}/>
+    <line x1="70" y1="24" x2="86" y2="36" ${S}/>
+    <line x1="50" y1="36" x2="50" y2="56" ${S}/>
+    <line x1="50" y1="56" x2="34" y2="64" ${S}/>
+    ${T(50,34,'N')}
+  </svg>`,
+
+  // polymer notation
+  "Grease (silicone)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="10" y1="35" x2="28" y2="35" ${S}/>
+    <line x1="28" y1="35" x2="44" y2="35" ${S}/>
+    <line x1="44" y1="35" x2="60" y2="35" ${S}/>
+    <line x1="60" y1="35" x2="76" y2="35" ${S}/>
+    <line x1="28" y1="35" x2="28" y2="20" ${S}/>
+    <line x1="44" y1="35" x2="44" y2="50" ${S}/>
+    <line x1="60" y1="35" x2="60" y2="20" ${S}/>
+    ${T(28,33,'Si')} ${T(44,33,'O')} ${T(60,33,'Si')} ${T(76,33,'O',undefined,9)}
+    ${T(28,17,'Me',undefined,8)} ${T(60,17,'Me',undefined,8)}
+    ${T(87,38,'…',undefined,12)}
+  </svg>`,
+
+  // phenol ring with OH, and two tBu groups at 2,6, methyl at 4
+  "BHT":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,22 64,30 64,46 50,54 36,46 36,30" fill="none" ${S}/>
+    <circle cx="50" cy="38" r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+    <line x1="50" y1="22" x2="50" y2="10" ${S}/>
+    ${T(50,8,'OH')}
+    <line x1="36" y1="30" x2="20" y2="22" ${S}/>
+    ${T(13,21,'tBu',undefined,8)}
+    <line x1="64" y1="30" x2="80" y2="22" ${S}/>
+    ${T(87,21,'tBu',undefined,8)}
+    <line x1="50" y1="54" x2="50" y2="64" ${S}/>
+    ${T(50,68,'Me',undefined,8)}
+  </svg>`,
+
+  // chair-ish hexagon with 2 O at 1,4
+  "1,4-Dioxane":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,12 72,24 72,48 50,60 28,48 28,24" fill="none" ${S}/>
+    ${T(50,11,'O')} ${T(50,64,'O')}
+  </svg>`,
+
+  // plain hexagon
+  "Cyclohexane":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,10 72,22 72,46 50,58 28,46 28,22" fill="none" ${S}/>
+  </svg>`,
+
+  // 4-carbon zigzag with OH at end
+  "n-Butanol":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="6"  y1="48" x2="25" y2="30" ${S}/>
+    <line x1="25" y1="30" x2="45" y2="48" ${S}/>
+    <line x1="45" y1="48" x2="65" y2="30" ${S}/>
+    <line x1="65" y1="30" x2="84" y2="48" ${S}/>
+    ${T(87,52,'OH')}
+  </svg>`,
+
+  // CH3-N(+)(=O)-O(-)  resonance shown as N with two O
+  "Nitromethane":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="35" x2="40" y2="35" ${S}/>
+    <line x1="40" y1="35" x2="62" y2="20" ${S}/>
+    <line x1="40" y1="35" x2="62" y2="50" ${S}/>
+    <line x1="60" y1="20" x2="60" y2="50" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3,2"/>
+    ${T(40,33,'N')} ${T(68,18,'O')} ${T(68,54,'O')}
+  </svg>`,
+
+  // 5-membered ring with N at top and C=O on right side
+  "N-methylpyrrolidinone (NMP)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+    <line x1="50" y1="16" x2="74" y2="32" ${S}/>
+    <line x1="74" y1="32" x2="66" y2="58" ${S}/>
+    <line x1="66" y1="58" x2="34" y2="58" ${S}/>
+    <line x1="34" y1="58" x2="26" y2="32" ${S}/>
+    <line x1="26" y1="32" x2="50" y2="16" ${S}/>
+    <line x1="74" y1="32" x2="88" y2="24" ${S}/>
+    <line x1="86" y1="24" x2="86" y2="12" ${S}/>
+    <line x1="84" y1="12" x2="88" y2="12" ${S}/>
+    <line x1="50" y1="16" x2="50" y2="5"  ${S}/>
+    ${T(50,14,'N')} ${T(86,9,'O')}
+    ${T(50,4,'Me',undefined,8)}
+  </svg>`,
+};
+
+// Returns structure SVG string or empty string if disabled/missing
+function getStructureSVG(compound) {
+  if (!SHOW_STRUCTURES) return '';
+  const svg = STRUCTURES[compound];
+  if (!svg) return '';
+  return `<div class="mol-structure" title="${compound} structure">${svg}</div>`;
+}
+
+// Group DB by compound: {compoundName: [{solvent, H, C, note},...]}
+const byCompound={};
+DB.forEach(e=>{
+  if(!byCompound[e.compound]) byCompound[e.compound]=[];
+  byCompound[e.compound].push(e);
+});
+
+let browseMode='H';
+
+function switchTab(t){
+  ['search','browse','spectrum'].forEach(n=>{document.getElementById('tab-'+n).style.display=n===t?'':'none';});
+  document.querySelectorAll('.tab').forEach((el,i)=>{el.classList.toggle('active',['search','spectrum'][i]===t);});
+  if(t==='browse') renderBrowse();
+  if(t==='spectrum'){populateSpCompound();drawSpectrum();}
+}
+
+// ---- SEARCH ----
+const SV_ORDER=['CDCl3','DMSO','D2O','CD3OD','acetone','THF','toluene','benzene','pyridine','CD2Cl2','DMF','ACN'];
+let peakRowCount=0;
+
+function multOpts(sel='any'){
+  const opts=[['any','Any'],['s','Singlet (s)'],['d','Doublet (d)'],['t','Triplet (t)'],['q','Quartet (q)'],['m','Multiplet (m)'],['br s','Broad singlet'],['sep','Septet']];
+  return opts.map(([v,l])=>`<option value="${v}"${v===sel?' selected':''}>${l}</option>`).join('');
+}
+
+function addPeakRow(ppmVal='', multVal='any'){
+  const id=peakRowCount++;
+  const wrap=document.getElementById('peak-rows');
+  const div=document.createElement('div');
+  div.className='peak-row-wrap'; div.id=`pr-${id}`;
+  div.innerHTML=`
+    <div class="field"><label>Chemical shift (ppm)</label>
+      <input type="number" id="ppm-${id}" placeholder="e.g. 3.47" step="0.01" value="${ppmVal}"
+        onkeydown="if(event.key==='Enter')doSearch()">
+    </div>
+    <div class="field"><label>Multiplicity</label>
+      <select id="mult-${id}">${multOpts(multVal)}</select>
+    </div>
+    <button class="btn-remove-peak" onclick="removePeakRow(${id})" title="Remove">×</button>`;
+  wrap.appendChild(div);
+}
+
+function removePeakRow(id){
+  const el=document.getElementById(`pr-${id}`);
+  if(el) el.remove();
+  // keep at least one row
+  if(!document.querySelectorAll('.peak-row-wrap').length) addPeakRow();
+}
+
+function getPeakInputs(){
+  return [...document.querySelectorAll('.peak-row-wrap')].map(row=>{
+    const id=row.id.replace('pr-','');
+    const pStr=document.getElementById(`ppm-${id}`)?.value||'';
+    const mult=document.getElementById(`mult-${id}`)?.value||'any';
+    const pVal=parseFloat(pStr);
+    return {pVal, mult, valid:!isNaN(pVal)&&pStr!==''};
+  }).filter(p=>p.valid||p.mult!=='any');
+}
+
+// confidence: 0–100
+function calcConfidence(inputPeaks, dbEntry, isH, tol){
+  const dbPeaks=isH?dbEntry.H:dbEntry.C;
+  if(!dbPeaks.length) return {score:0,matched:0,detail:[]};
+  const validInputs=inputPeaks.filter(p=>p.valid);
+  if(!validInputs.length) return {score:50,matched:0,detail:[]};
+
+  let matchedCount=0;
+  const detail=[];
+  validInputs.forEach(inp=>{
+    // find closest db peak
+    let best=null, bestD=Infinity;
+    dbPeaks.forEach(dp=>{
+      const d=Math.abs(dp.ppm-inp.pVal);
+      if(d<bestD){bestD=d;best=dp;}
+    });
+    if(!best||bestD>tol) return;
+    const multMatch=inp.mult==='any'||inp.mult===best.mult;
+    if(!multMatch) return;
+    // ppm score: 1 at exact, 0 at tolerance edge
+    const ppmScore=1-(bestD/tol);
+    matchedCount++;
+    detail.push({inp,matched:best,ppmScore,delta:bestD});
+  });
+
+  if(!matchedCount) return {score:0,matched:0,detail:[]};
+
+  // fraction of input peaks matched × average ppm proximity
+  const fracMatched=matchedCount/validInputs.length;
+  const avgPpmScore=detail.reduce((s,d)=>s+d.ppmScore,0)/detail.length;
+  // also reward matching more of the compound's own peaks
+  const dbCoverage=Math.min(matchedCount/dbPeaks.length,1);
+  const score=Math.round((fracMatched*0.5 + avgPpmScore*0.35 + dbCoverage*0.15)*100);
+  return {score,matched:matchedCount,total:validInputs.length,detail};
+}
+
+function confClass(score){ return score>=75?'conf-high':score>=45?'conf-mid':'conf-low'; }
+
+function doSearch(){
+  const mode=document.getElementById('mode').value;
+  const solvent=document.getElementById('solvent').value;
+  const tol=parseFloat(document.getElementById('tol').value);
+  const isH=mode==='H';
+  const inputPeaks=getPeakInputs();
+  const hasAnyPpm=inputPeaks.some(p=>p.valid);
+
+  // Gather all candidate compound+solvent combos
+  const seen=new Set();
+  const candidates=[];
+  DB.forEach(e=>{
+    if(solvent!=='all'&&e.solvent!==solvent) return;
+    const dbPeaks=isH?e.H:e.C;
+    if(!dbPeaks.length) return;
+    // quick pre-filter: at least one input ppm must be within tol of a db peak
+    if(hasAnyPpm){
+      const anyHit=inputPeaks.filter(p=>p.valid).some(inp=>
+        dbPeaks.some(dp=>Math.abs(dp.ppm-inp.pVal)<=tol&&(inp.mult==='any'||inp.mult===dp.mult))
+      );
+      if(!anyHit) return;
+    }
+    const key=`${e.compound}||${e.solvent}`;
+    if(seen.has(key)) return; seen.add(key);
+    const conf=calcConfidence(inputPeaks,e,isH,tol);
+    if(hasAnyPpm&&conf.score===0) return;
+    candidates.push({entry:e, conf, isH});
+  });
+
+  const el=document.getElementById('results');
+  if(!candidates.length){
+    el.innerHTML='<div class="empty">no matching peaks found<br>try widening the tolerance or changing the solvent</div>';
+    return;
+  }
+
+  // Sort by confidence desc, then compound name
+  candidates.sort((a,b)=>b.conf.score-a.conf.score||a.entry.compound.localeCompare(b.entry.compound));
+
+  // Group by solvent for display
+  const bySolvent={};
+  candidates.forEach(c=>{
+    if(!bySolvent[c.entry.solvent]) bySolvent[c.entry.solvent]=[];
+    bySolvent[c.entry.solvent].push(c);
+  });
+
+  // Compute global ppm range for mini spectra
+  const allPpms=candidates.flatMap(c=>(isH?c.entry.H:c.entry.C).map(p=>p.ppm));
+  const lo=Math.min(...allPpms), hi=Math.max(...allPpms);
+  const pad=Math.max((hi-lo)*0.18,0.4);
+  const xMin=lo-pad, xMax=hi+pad;
+
+  const svKeys=SV_ORDER.filter(s=>bySolvent[s]);
+  const modeLabel=isH?'¹H':'¹³C';
+  let cardIdx=0;
+
+  let html=`<div class="results-meta">${candidates.length} candidate${candidates.length!==1?'s':''} across ${svKeys.length} solvent${svKeys.length!==1?'s':''} · ${modeLabel} NMR · sorted by confidence</div>`;
+
+  svKeys.forEach((sv,gi)=>{
+    const group=bySolvent[sv];
+    const isOpen=gi===0;
+    const gid=`svg-${gi}`;
+    html+=`<div class="sv-group">
+      <div class="sv-group-header" onclick="toggleSvGroup('${gid}')">
+        <div class="sv-group-left">
+          <span class="sv-group-name">${SN[sv]||sv}</span>
+          <span class="sv-group-count">${group.length} match${group.length!==1?'es':''}</span>
+        </div>
+        <span class="sv-group-arrow${isOpen?' open':''}" id="arr-${gid}">▾</span>
+      </div>
+      <div class="sv-group-body${isOpen?' open':''}" id="body-${gid}">`;
+
+    group.forEach(c=>{
+      const {entry,conf}=c;
+      const tc=isH?'tag-h':'tag-c';
+      const cid=`mini${cardIdx++}`;
+      const cc=confClass(conf.score);
+      const dbPeaks=isH?entry.H:entry.C;
+      const peakSummary=dbPeaks.map(p=>`${p.ppm.toFixed(2)} (${p.mult})`).join(' · ');
+
+      // matched peak detail line
+      let matchDetail='';
+      if(conf.detail&&conf.detail.length){
+        matchDetail=conf.detail.map(d=>`${d.inp.pVal.toFixed(2)}→${d.matched.ppm.toFixed(2)} Δ${d.delta.toFixed(2)}`).join(' · ');
+      }
+
+      html+=`<div class="result-card">
+        <div class="rc-top">
+          <div class="rc-left">
+            <div class="rc-compound">${entry.compound}</div>
+            ${entry.note?`<span class="tag ${tc}">${entry.note}</span>`:''}
+            <div class="conf-badge ${cc}">${conf.score}% confidence</div>
+            ${matchDetail?`<div class="matched-peaks">matched: ${matchDetail}</div>`:''}
+          </div>
+          <div class="rc-right">
+            ${dbPeaks.length===1?`<div class="rc-ppm">${dbPeaks[0].ppm.toFixed(2)}</div><div class="rc-mult">${ML[dbPeaks[0].mult]||dbPeaks[0].mult}</div>`:`<div class="rc-mult" style="font-size:10px;text-align:right;">${peakSummary}</div>`}
+          </div>
+          ${getStructureSVG(entry.compound)}
+        </div>
+        <canvas class="mini-spectrum" id="${cid}" height="60"
+          data-peaks='${JSON.stringify(dbPeaks)}'
+          data-xmin="${xMin}" data-xmax="${xMax}" data-ish="${isH?1:0}"></canvas>
+      </div>`;
+    });
+
+    html+=`</div></div>`;
+  });
+
+  el.innerHTML=html;
+
+  // Draw open group canvases
+  let drawn=0;
+  svKeys.forEach((sv,gi)=>{
+    const group=bySolvent[sv];
+    if(gi===0){
+      group.forEach((_,j)=>{
+        const c=document.getElementById(`mini${drawn+j}`);
+        if(c){
+          try{const peaks=JSON.parse(c.dataset.peaks);drawMiniMulti(c,peaks,xMin,xMax,isH);}catch(e){}
+        }
+      });
+    }
+    drawn+=group.length;
+  });
+}
+
+function toggleSvGroup(gid){
+  const body=document.getElementById('body-'+gid);
+  const arr=document.getElementById('arr-'+gid);
+  const opening=!body.classList.contains('open');
+  body.classList.toggle('open',opening);
+  arr.classList.toggle('open',opening);
+  if(opening){
+    body.querySelectorAll('.mini-spectrum').forEach(c=>{
+      if(!c._drawn){
+        try{
+          if(c.dataset.peaks){const peaks=JSON.parse(c.dataset.peaks);const xMin=parseFloat(c.dataset.xmin);const xMax=parseFloat(c.dataset.xmax);const isH=c.dataset.ish==='1';drawMiniMulti(c,peaks,xMin,xMax,isH);}
+          else drawMini(c);
+        }catch(e){}
+        c._drawn=true;
+      }
+    });
+  }
+}
+
+// initialise with one peak row
+addPeakRow();
+
+// ---- BROWSE ----
+function setBrowseMode(m){
+  browseMode=m;
+  document.getElementById('bmt-H').classList.toggle('active',m==='H');
+  document.getElementById('bmt-C').classList.toggle('active',m==='C');
+  renderBrowse();
+}
+
+function renderBrowse(){
+  const q=document.getElementById('browse-search').value.toLowerCase();
+  const isH=browseMode==='H';
+  const list=document.getElementById('browse-list');
+  const compounds=Object.keys(byCompound).sort();
+  let html='';
+  compounds.forEach((name,idx)=>{
+    if(q&&!name.toLowerCase().includes(q)) return;
+    const entries=byCompound[name];
+    // only include solvents that have data for the selected mode
+    const validEntries=entries.filter(e=>(isH?e.H:e.C).length>0);
+    if(!validEntries.length) return;
+    const svOpts=validEntries.map(e=>`<option value="${e.solvent}">${SN[e.solvent]||e.solvent}</option>`).join('');
+    const bid=`bc-${idx}`;
+    html+=`<div class="bc-block" id="${bid}">
+      <div class="bc-header">
+        <span class="bc-name">${name}</span>
+        <div class="bc-right">
+          <select class="bc-sv-sel" id="sv-${bid}" onchange="updateBrowseBlock('${bid}','${name}',${isH})" onclick="event.stopPropagation()">
+            ${svOpts}
+          </select>
+          <button class="bc-toggle" onclick="toggleBlock('${bid}')">expand</button>
+        </div>
+      </div>
+      <div class="bc-body" id="body-${bid}"></div>
+    </div>`;
+  });
+  list.innerHTML=html||'<div class="empty">no compounds match your search</div>';
+  // populate first solvent data for each visible block
+  compounds.forEach((name,idx)=>{
+    if(q&&!name.toLowerCase().includes(q)) return;
+    const entries=byCompound[name];
+    const validEntries=entries.filter(e=>(isH?e.H:e.C).length>0);
+    if(!validEntries.length) return;
+    const bid=`bc-${idx}`;
+    updateBrowseBlock(bid,name,isH);
+  });
+}
+
+function toggleBlock(bid){
+  const body=document.getElementById('body-'+bid);
+  const btn=document.querySelector(`#${bid} .bc-toggle`);
+  const open=body.classList.toggle('open');
+  btn.textContent=open?'collapse':'expand';
+  if(open){
+    // redraw mini canvas inside
+    const c=document.getElementById('mc-'+bid);
+    if(c) drawMini(c);
+  }
+}
+
+function updateBrowseBlock(bid,name,isH){
+  const sv=document.getElementById('sv-'+bid).value;
+  const entry=byCompound[name].find(e=>e.solvent===sv);
+  const body=document.getElementById('body-'+bid);
+  if(!entry){body.innerHTML='<div class="bc-no-data">no data</div>';return;}
+  const peaks=isH?entry.H:entry.C;
+  if(!peaks.length){body.innerHTML='<div class="bc-no-data">no '+(isH?'¹H':'¹³C')+' data in this solvent</div>';return;}
+
+  // build peak table
+  let rows='';
+  peaks.forEach(p=>{rows+=`<div class="bc-peak-row"><span class="bc-peak-label">${ML[p.mult]||p.mult}</span><span class="bc-peak-val">${p.ppm.toFixed(2)} ppm</span></div>`;});
+
+  // compute mini spectrum range from all solvents for this compound
+  const allPeaks=byCompound[name].flatMap(e=>isH?e.H:e.C);
+  const allPpms=allPeaks.map(p=>p.ppm);
+  const lo=Math.min(...allPpms),hi=Math.max(...allPpms);
+  const pad=Math.max((hi-lo)*0.2,isH?0.3:2);
+  const xMin=lo-pad,xMax=hi+pad;
+
+  // for mini: show all peaks for selected solvent combined
+  const miniPpm=peaks[0].ppm;
+  const miniMult=peaks[0].mult;
+
+  body.innerHTML=`
+    <div class="bc-mode-label"><span>${isH?'¹H':'¹³C'} peaks in ${SN[sv]||sv}</span><span>ppm</span></div>
+    ${getStructureSVG(name)}
+    ${rows}
+    <div class="bc-mini-wrap">
+      <canvas class="mini-spectrum" id="mc-${bid}" height="60"
+        data-peaks='${JSON.stringify(peaks)}'
+        data-xmin="${xMin}" data-xmax="${xMax}" data-ish="${isH?1:0}"></canvas>
+    </div>`;
+
+  const c=document.getElementById('mc-'+bid);
+  if(c&&document.getElementById('body-'+bid).classList.contains('open')) drawMiniMulti(c,peaks,xMin,xMax,isH);
+}
+
+// ---- PEAK SHAPES ----
+function getSubPeaks(ppm,mult,span){
+  const J=Math.max(span*0.022,0.04);
+  switch(mult){
+    case 's': return [{ppm,h:1}];
+    case 'd': return [{ppm:ppm-J/2,h:1},{ppm:ppm+J/2,h:1}];
+    case 't': return [{ppm:ppm-J,h:0.5},{ppm,h:1},{ppm:ppm+J,h:0.5}];
+    case 'q': return [{ppm:ppm-1.5*J,h:0.33},{ppm:ppm-0.5*J,h:1},{ppm:ppm+0.5*J,h:1},{ppm:ppm+1.5*J,h:0.33}];
+    case 'm': return [{ppm:ppm-2.5*J,h:0.2},{ppm:ppm-1.5*J,h:0.55},{ppm:ppm-0.6*J,h:0.9},{ppm,h:1},{ppm:ppm+0.6*J,h:0.9},{ppm:ppm+1.5*J,h:0.55},{ppm:ppm+2.5*J,h:0.2}];
+    case 'sep': return [{ppm:ppm-3*J,h:0.14},{ppm:ppm-2*J,h:0.57},{ppm:ppm-J,h:1},{ppm,h:0.8},{ppm:ppm+J,h:1},{ppm:ppm+2*J,h:0.57},{ppm:ppm+3*J,h:0.14}];
+    case 'br s': return [{ppm:ppm-J*0.8,h:0.5},{ppm:ppm-J*0.3,h:0.85},{ppm,h:1},{ppm:ppm+J*0.3,h:0.85},{ppm:ppm+J*0.8,h:0.5}];
+    default: return [{ppm,h:1}];
+  }
+}
+
+function drawMini(canvas){
+  const ppm=parseFloat(canvas.dataset.ppm);
+  const mult=canvas.dataset.mult;
+  const xMin=parseFloat(canvas.dataset.xmin);
+  const xMax=parseFloat(canvas.dataset.xmax);
+  const isH=canvas.dataset.ish==='1';
+  drawMiniMulti(canvas,[{ppm,mult}],xMin,xMax,isH);
+}
+
+function drawMiniMulti(canvas,peaks,xMin,xMax,isH){
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||400;
+  const H=60;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement);
+  const col=isH?cs.getPropertyValue('--peak-h').trim():cs.getPropertyValue('--peak-c').trim();
+  const fill=isH?cs.getPropertyValue('--peak-h-fill').trim():cs.getPropertyValue('--peak-c-fill').trim();
+  const axis=cs.getPropertyValue('--axis').trim();
+  const span=xMax-xMin;
+  const PL=6,PR=6,PT=5,PB=18,pW=W-PL-PR,pH=H-PT-PB;
+  const gamma=Math.max(span*0.0018,0.004);
+  // collect all sub-peaks
+  const allSubs=peaks.flatMap(p=>getSubPeaks(p.ppm,p.mult,span));
+  function xc(x){return PL+(1-(x-xMin)/span)*pW;}
+  const pts=[];
+  for(let px=0;px<=pW;px++){
+    const x=xMin+(1-px/pW)*span;
+    let y=0; allSubs.forEach(s=>{y+=s.h/(1+Math.pow((x-s.ppm)/gamma,2));});
+    pts.push({px,y});
+  }
+  const maxY=Math.max(...pts.map(p=>p.y),0.01);
+  ctx.beginPath();
+  pts.forEach((p,i)=>{const cy=PT+pH*(1-p.y/maxY); i===0?ctx.moveTo(PL+p.px,cy):ctx.lineTo(PL+p.px,cy);});
+  ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.lineTo(PL+pW,PT+pH); ctx.lineTo(PL,PT+pH);
+  ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(PL,PT+pH); ctx.lineTo(PL+pW,PT+pH);
+  ctx.strokeStyle=axis; ctx.lineWidth=0.5; ctx.stroke();
+  // labels for each peak centre
+  peaks.forEach(p=>{
+    const cx=xc(p.ppm);
+    ctx.fillStyle=col; ctx.font="500 9px 'IBM Plex Mono',monospace";
+    ctx.textAlign='center'; ctx.fillText(p.ppm.toFixed(2),cx,H-3);
+  });
+  ctx.fillStyle=axis; ctx.font="9px 'IBM Plex Mono',monospace";
+  ctx.textAlign='left'; ctx.fillText(xMax.toFixed(isH?1:0),PL,H-3);
+  ctx.textAlign='right'; ctx.fillText(xMin.toFixed(isH?1:0),PL+pW,H-3);
+}
+
+// ---- SPECTRUM ----
+let spData=[];
+function populateSpCompound(){
+  const sv=document.getElementById('sp-solvent').value;
+  const isH=document.getElementById('sp-mode').value==='H';
+  const cur=document.getElementById('sp-compound').value;
+  const cmpds=[...new Set(DB.filter(e=>e.solvent===sv&&(isH?e.H.length:e.C.length)>0).map(e=>e.compound))].sort();
+  document.getElementById('sp-compound').innerHTML='<option value="all">Show all compounds</option>'+cmpds.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(cmpds.includes(cur)) document.getElementById('sp-compound').value=cur;
+}
+function onSpChange(){populateSpCompound();drawSpectrum();}
+
+function drawSpectrum(){
+  const sv=document.getElementById('sp-solvent').value;
+  const isH=document.getElementById('sp-mode').value==='H';
+  const fc=document.getElementById('sp-compound').value;
+  const entries=DB.filter(e=>e.solvent===sv);
+  const cmpds=fc==='all'?[...new Set(entries.map(e=>e.compound))]:[fc];
+  spData=[];
+  entries.forEach(e=>{
+    if(!cmpds.includes(e.compound)) return;
+    const ci=allCompounds.indexOf(e.compound)%COLORS.length;
+    (isH?e.H:e.C).forEach(p=>{spData.push({ppm:p.ppm,mult:p.mult,compound:e.compound,color:COLORS[ci]});});
+  });
+  const canvas=document.getElementById('sp-canvas');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||680;
+  const H=220;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement);
+  const axis=cs.getPropertyValue('--axis').trim();
+  const grid=cs.getPropertyValue('--gridline').trim();
+  const text2=cs.getPropertyValue('--text2').trim();
+  const surf=cs.getPropertyValue('--surface').trim();
+  ctx.fillStyle=surf; ctx.fillRect(0,0,W,H);
+  if(!spData.length){
+    ctx.fillStyle=axis; ctx.font="12px 'IBM Plex Sans',sans-serif";
+    ctx.textAlign='center'; ctx.fillText('No data for this selection',W/2,H/2); return;
+  }
+  const PL=46,PR=16,PT=14,PB=38,pW=W-PL-PR,pH=H-PT-PB;
+  const allP=spData.map(p=>p.ppm);
+  let xMin=Math.min(...allP),xMax=Math.max(...allP);
+  const span=Math.max(xMax-xMin,isH?0.3:3);
+  xMin-=span*0.14; xMax+=span*0.14;
+  const totSpan=xMax-xMin;
+  const gamma=Math.max(totSpan*0.0018,isH?0.004:0.08);
+  function xc(x){return PL+(1-(x-xMin)/totSpan)*pW;}
+  const nG=6; ctx.setLineDash([2,3]);
+  for(let i=0;i<=nG;i++){
+    const x=xMin+i*totSpan/nG, cx=xc(x);
+    ctx.beginPath(); ctx.moveTo(cx,PT); ctx.lineTo(cx,PT+pH);
+    ctx.strokeStyle=grid; ctx.lineWidth=0.5; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=text2; ctx.font="10px 'IBM Plex Mono',monospace";
+    ctx.textAlign='center'; ctx.fillText(x.toFixed(isH?1:0),cx,PT+pH+14);
+    ctx.setLineDash([2,3]);
+  }
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(PL,PT); ctx.lineTo(PL,PT+pH); ctx.lineTo(PL+pW,PT+pH);
+  ctx.strokeStyle=axis; ctx.lineWidth=0.5; ctx.stroke();
+  ctx.save(); ctx.translate(13,PT+pH/2); ctx.rotate(-Math.PI/2);
+  ctx.fillStyle=axis; ctx.font="10px 'IBM Plex Mono',monospace"; ctx.textAlign='center';
+  ctx.fillText('intensity',0,0); ctx.restore();
+  ctx.fillStyle=axis; ctx.font="10px 'IBM Plex Mono',monospace"; ctx.textAlign='center';
+  ctx.fillText('chemical shift (ppm)',PL+pW/2,H-6);
+  const cmpdList=[...new Set(spData.map(p=>p.compound))];
+  let globalMax=0;
+  cmpdList.forEach(cm=>{
+    const cPks=spData.filter(p=>p.compound===cm);
+    for(let px=0;px<=pW;px++){
+      const x=xMin+(1-px/pW)*totSpan;
+      let y=0; cPks.forEach(p=>getSubPeaks(p.ppm,p.mult,totSpan).forEach(s=>{y+=s.h/(1+Math.pow((x-s.ppm)/gamma,2));}));
+      if(y>globalMax) globalMax=y;
+    }
+  });
+  cmpdList.forEach(cm=>{
+    const cPks=spData.filter(p=>p.compound===cm);
+    const color=cPks[0].color;
+    const pts=[];
+    for(let px=0;px<=pW;px++){
+      const x=xMin+(1-px/pW)*totSpan;
+      let y=0; cPks.forEach(p=>getSubPeaks(p.ppm,p.mult,totSpan).forEach(s=>{y+=s.h/(1+Math.pow((x-s.ppm)/gamma,2));}));
+      pts.push(y/globalMax);
+    }
+    const r=parseInt(color.slice(1,3),16),g=parseInt(color.slice(3,5),16),b=parseInt(color.slice(5,7),16);
+    ctx.beginPath();
+    pts.forEach((y,px)=>{const cy=PT+pH*(1-y*0.88); px===0?ctx.moveTo(PL+px,cy):ctx.lineTo(PL+px,cy);});
+    ctx.lineTo(PL+pW,PT+pH); ctx.lineTo(PL,PT+pH); ctx.closePath();
+    ctx.fillStyle=`rgba(${r},${g},${b},0.08)`; ctx.fill();
+    ctx.beginPath();
+    pts.forEach((y,px)=>{const cy=PT+pH*(1-y*0.88); px===0?ctx.moveTo(PL+px,cy):ctx.lineTo(PL+px,cy);});
+    ctx.strokeStyle=color; ctx.lineWidth=1.6; ctx.stroke();
+    cPks.forEach(p=>{
+      const cx=xc(p.ppm);
+      ctx.beginPath(); ctx.moveTo(cx,PT+pH); ctx.lineTo(cx,PT+pH+4);
+      ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke();
+    });
+  });
+  document.getElementById('sp-title').textContent=`${isH?'¹H':'¹³C'} NMR · ${SN[sv]||sv}${fc!=='all'?' · '+fc:''}`;
+  document.getElementById('sp-legend').innerHTML=cmpdList.map(c=>{
+    const col=spData.find(p=>p.compound===c)?.color||'#999';
+    return `<div class="legend-item"><div class="legend-dot" style="background:${col}"></div>${c}</div>`;
+  }).join('');
+  canvas._meta={xMin,xMax:xMin+totSpan,PL,pW,PT,pH,gamma,totSpan};
+}
+
+const spCanvas=document.getElementById('sp-canvas');
+const spTip=document.getElementById('sp-tooltip');
+spCanvas.addEventListener('mousemove',function(e){
+  if(!spData.length||!this._meta) return;
+  const rect=this.getBoundingClientRect();
+  const mx=e.clientX-rect.left;
+  const {xMin,totSpan,PL,pW}=this._meta;
+  const ppm=xMin+(1-(mx-PL)/pW)*totSpan;
+  let best=null,bestD=Infinity;
+  spData.forEach(p=>{const d=Math.abs(p.ppm-ppm);if(d<bestD){bestD=d;best=p;}});
+  if(best&&bestD<totSpan*0.035){
+    spTip.style.display='block';
+    spTip.style.left=(mx+12)+'px';
+    spTip.style.top=(e.clientY-this.getBoundingClientRect().top-8)+'px';
+    spTip.innerHTML=`<strong>${best.compound}</strong><br>${best.ppm.toFixed(2)} ppm (${best.mult})`;
+  } else { spTip.style.display='none'; }
+});
+spCanvas.addEventListener('mouseleave',()=>{spTip.style.display='none';});
+
+window.addEventListener('resize',()=>{
+  if(document.getElementById('tab-spectrum').style.display!=='none') drawSpectrum();
+  document.querySelectorAll('.mini-spectrum').forEach(c=>{
+    if(c.dataset.peaks){
+      try{const peaks=JSON.parse(c.dataset.peaks);const xMin=parseFloat(c.dataset.xmin);const xMax=parseFloat(c.dataset.xmax);const isH=c.dataset.ish==='1';drawMiniMulti(c,peaks,xMin,xMax,isH);}catch(e){}
+    } else { drawMini(c); }
+  });
+});
+document.getElementById('ppm').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+</script>
+</body>
+</html>

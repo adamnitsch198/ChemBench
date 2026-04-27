@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChemBench — University of St. Thomas</title>
+<!-- Non-blocking font load -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ust-purple:  #512773;
+  --ust-purple2: #3d1d57;
+  --ust-gray:    #98999B;
+  --ust-gray2:   #5a5b5d;
+  --ust-gray3:   #f0eff2;
+  --ink:         #1a1218;
+  --ink2:        #3d3442;
+  --ink3:        #6b6070;
+  --paper:       #faf9f7;
+  --white:       #ffffff;
+  --rule:        #dddadf;
+  --accent:      #512773;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ── MASTHEAD ─────────────────────────────────────────── */
+.masthead {
+  background: var(--white);
+  border-bottom: 3px solid var(--ust-purple);
+  padding: 0;
+}
+.masthead-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 4rem;
+  border-bottom: 1px solid var(--rule);
+}
+.masthead-brand {
+  display: flex; align-items: baseline; gap: 16px;
+}
+.masthead-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ust-purple); text-decoration: none;
+}
+.masthead-subtitle {
+  font-size: 12px; color: var(--ust-gray2);
+  letter-spacing: 0.04em; font-style: italic;
+}
+.masthead-info {
+  text-align: right; font-size: 11px; color: var(--ust-gray);
+  font-family: 'IBM Plex Mono', monospace; line-height: 1.8;
+}
+.masthead-nav {
+  background: var(--ust-purple);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4rem; height: 44px;
+}
+.nav-items { display: flex; gap: 0; }
+.nav-item {
+  font-size: 12px; color: rgba(255,255,255,0.75); text-decoration: none;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0 20px; height: 44px; display: flex; align-items: center;
+  border-right: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-item:first-child { border-left: 1px solid rgba(255,255,255,0.12); }
+.nav-item:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+.nav-cta {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--ust-purple); background: var(--white);
+  padding: 7px 18px; text-decoration: none; letter-spacing: 0.04em;
+  transition: opacity 0.15s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero {
+  background: var(--white);
+  border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 80vh;
+}
+.hero-left {
+  padding: 6rem 4rem 6rem 4rem;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hero-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ust-purple); margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-kicker::before {
+  content: ''; display: block; width: 32px; height: 1px; background: var(--ust-purple);
+}
+.hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-weight: 700; line-height: 1.12; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 1.5rem;
+}
+.hero h1 em { font-style: italic; color: var(--ust-purple); }
+.hero-body {
+  font-size: 16px; color: var(--ink2); line-height: 1.8;
+  font-weight: 300; max-width: 480px; margin-bottom: 2.5rem;
+  border-left: 2px solid var(--ust-purple);
+  padding-left: 1.2rem;
+}
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--ust-purple); color: var(--white);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  padding: 12px 24px; text-decoration: none; letter-spacing: 0.06em;
+  text-transform: uppercase; transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--ust-purple2); }
+.btn-secondary {
+  background: transparent; color: var(--ust-purple);
+  border: 1px solid var(--ust-purple);
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  padding: 12px 24px; text-decoration: none; letter-spacing: 0.06em;
+  text-transform: uppercase; transition: all 0.15s;
+}
+.btn-secondary:hover { background: var(--ust-purple); color: var(--white); }
+
+.hero-right {
+  background: var(--ust-purple);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0; overflow: hidden; position: relative;
+}
+.hero-right-inner {
+  padding: 4rem;
+  position: relative; z-index: 1;
+}
+.hero-pull {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem); font-style: italic;
+  color: rgba(255,255,255,0.92); line-height: 1.4;
+  margin-bottom: 2rem;
+}
+.hero-pull::before {
+  content: '\201C'; font-size: 5rem; line-height: 0; vertical-align: -0.4em;
+  color: rgba(255,255,255,0.15); margin-right: 8px;
+}
+.hero-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; }
+.hero-stat {
+  background: rgba(255,255,255,0.06); padding: 1.4rem;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.hero-stat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem; font-weight: 700; color: var(--white); line-height: 1;
+}
+.hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px; letter-spacing: 0.04em; }
+.hero-bg-text {
+  position: absolute; top: 2rem; right: -1rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14rem; font-weight: 700; font-style: italic;
+  color: rgba(255,255,255,0.04); line-height: 1; pointer-events: none; user-select: none;
+  letter-spacing: -0.05em;
+}
+
+/* ── TOOLS ─────────────────────────────────────────────── */
+.tools-section { background: var(--paper); }
+.section-header {
+  padding: 4rem 4rem 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex; align-items: baseline; gap: 2rem; padding-bottom: 1.5rem;
+}
+.section-num {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--ust-gray); letter-spacing: 0.1em;
+}
+.section-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; color: var(--ink);
+}
+.tools-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+}
+.tool-card {
+  padding: 3rem 4rem; background: var(--white);
+  border-right: 1px solid var(--rule);
+  transition: background 0.2s;
+}
+.tool-card:last-child { border-right: none; }
+.tool-card:hover { background: var(--ust-gray3); }
+.tool-issue {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--ust-purple); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
+}
+.tool-issue::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+.tool-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem; font-weight: 600; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 1rem; line-height: 1.2;
+}
+.tool-desc { font-size: 14px; color: var(--ink2); line-height: 1.8; margin-bottom: 1.5rem; }
+.tool-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.tool-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--ust-gray2); border: 1px solid var(--rule);
+  padding: 3px 10px; letter-spacing: 0.04em; background: var(--paper);
+}
+.tool-link {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--ust-purple); text-decoration: none; letter-spacing: 0.08em;
+  text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px;
+  padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  width: 100%; transition: gap 0.15s;
+}
+.tool-link:hover { gap: 14px; }
+
+/* ── ABSTRACT / ABOUT ─────────────────────────────────── */
+.about-section {
+  background: var(--ink); padding: 6rem 4rem;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 5rem;
+  align-items: start;
+}
+.about-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35);
+  padding-top: 6px;
+}
+.about-content {}
+.about-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem; font-weight: 600; font-style: italic;
+  color: var(--white); margin-bottom: 1.5rem; line-height: 1.3;
+}
+.about-body { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.9; font-weight: 300; }
+.about-body + .about-body { margin-top: 1rem; }
+.about-refs {
+  margin-top: 2.5rem; padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.about-ref {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.3); text-decoration: none;
+  transition: color 0.15s;
+}
+.about-ref:hover { color: rgba(255,255,255,0.65); }
+
+/* ── FEATURES ─────────────────────────────────────────── */
+.features-section { background: var(--white); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+}
+.feat-card {
+  padding: 3rem 3.5rem;
+  border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.feat-card:nth-child(3n) { border-right: none; }
+.feat-card:nth-child(4), .feat-card:nth-child(5), .feat-card:nth-child(6) { border-bottom: none; }
+.feat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3rem; font-weight: 700; color: var(--rule);
+  line-height: 1; margin-bottom: 1rem;
+}
+.feat-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.7rem;
+}
+.feat-body { font-size: 13px; color: var(--ink2); line-height: 1.75; }
+
+/* ── SOLVENTS ─────────────────────────────────────────── */
+.solvents-section {
+  background: var(--ust-purple); padding: 5rem 4rem;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center;
+}
+.solvents-left {}
+.solvents-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 0.8rem;
+}
+.solvents-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem; font-weight: 600; color: var(--white); line-height: 1.3;
+}
+.solvents-right { display: flex; flex-wrap: wrap; gap: 8px; }
+.solvent-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 18px; transition: all 0.15s;
+}
+.solvent-tag:hover { background: rgba(255,255,255,0.1); color: var(--white); border-color: rgba(255,255,255,0.4); }
+
+/* ── CTA ────────────────────────────────────────────────── */
+.cta-section {
+  background: var(--paper); padding: 7rem 4rem;
+  display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; align-items: center;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.cta-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 700;
+  letter-spacing: -0.03em; color: var(--ink); line-height: 1.15;
+}
+.cta-heading em { font-style: italic; color: var(--ust-purple); }
+.cta-body { font-size: 14px; color: var(--ink3); margin-top: 1rem; line-height: 1.7; }
+.cta-right { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer {
+  background: var(--ink); padding: 3rem 4rem;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3rem;
+  border-top: 3px solid var(--ust-purple);
+}
+.footer-col-title {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 1rem;
+}
+.footer-brand-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem; font-weight: 700; color: var(--white); margin-bottom: 0.4rem;
+}
+.footer-brand-sub { font-size: 12px; color: rgba(255,255,255,0.35); font-style: italic; }
+.footer-links { display: flex; flex-direction: column; gap: 8px; }
+.footer-links a {
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  text-decoration: none; transition: color 0.15s;
+}
+.footer-links a:hover { color: rgba(255,255,255,0.8); }
+.footer-refs { display: flex; flex-direction: column; gap: 8px; }
+.footer-ref {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: rgba(255,255,255,0.3); text-decoration: none; line-height: 1.6;
+  transition: color 0.15s;
+}
+.footer-ref:hover { color: rgba(255,255,255,0.6); }
+.footer-bottom {
+  grid-column: 1 / -1; padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: rgba(255,255,255,0.2); letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .hero, .tools-grid, .features-grid { grid-template-columns: 1fr; }
+  .hero-right { min-height: 300px; }
+  .hero-bg-text { font-size: 8rem; }
+  .about-section, .solvents-section, .cta-section { grid-template-columns: 1fr; gap: 2rem; }
+  footer { grid-template-columns: 1fr; }
+  .masthead-top, .masthead-nav, .tools-section .section-header,
+  .about-section, .features-section, .solvents-section, .cta-section, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .hero-left, .hero-right-inner, .tool-card, .feat-card { padding: 2rem 1.5rem; }
+  .feat-card:nth-child(3n) { border-right: 1px solid var(--rule); }
+  .feat-card { border-right: none; }
+  .nav-items .nav-item:not(:first-child):not(:last-child) { display: none; }
+  .masthead-info { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="masthead-brand">
+      <a href="#" class="masthead-title">ChemBench</a>
+      <span class="masthead-subtitle">Chemistry Laboratory Reference</span>
+    </div>
+    <div class="masthead-info">
+      University of St. Thomas<br>
+      Department of Chemistry<br>
+      Saint Paul, Minnesota
+    </div>
+  </div>
+  <nav class="masthead-nav">
+    <div class="nav-items">
+      <a href="#tools" class="nav-item">Tools</a>
+      <a href="#features" class="nav-item">Capabilities</a>
+      <a href="#database" class="nav-item">Database</a>
+      <a href="#references" class="nav-item">References</a>
+    </div>
+    <a href="app.html" class="nav-cta">Open ChemBench →</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-kicker">Chemistry Reference Tools</div>
+    <h1>Precision tools for the<br><em>working chemist</em></h1>
+    <p class="hero-body">
+      ChemBench provides fast, peer-reviewed reference data for NMR solvent impurity identification and drying agent selection — designed for use at the bench, not the library.
+    </p>
+    <div class="hero-btns">
+      <a href="app.html" class="btn-primary">NMR Solvent Peaks</a>
+      <a href="drying-agent.html" class="btn-secondary">Drying Agent Selector</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-bg-text">NMR</div>
+    <div class="hero-right-inner">
+      <div class="hero-pull">
+        A comprehensive reference for residual solvent peaks, impurity identification, and drying agent compatibility
+      </div>
+      <div class="hero-stat-row">
+        <div class="hero-stat">
+          <div class="hero-stat-num">40+</div>
+          <div class="hero-stat-label">Compounds indexed</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">12</div>
+          <div class="hero-stat-label">Deuterated solvents</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">300+</div>
+          <div class="hero-stat-label">Peak entries</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2</div>
+          <div class="hero-stat-label">Primary references</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-header">
+    <span class="section-num">§ 01</span>
+    <h2 class="section-heading">Available Tools</h2>
+  </div>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-issue">NMR Reference · Tool 01</div>
+      <div class="tool-name">NMR Solvent Peaks</div>
+      <div class="tool-desc">
+        Enter a chemical shift (ppm) and multiplicity to identify residual solvent peaks and common laboratory impurities. Supports multi-peak entry for narrowing candidates, confidence-scored results, an interactive Lorentzian spectrum view, and a curated database spanning stabilizers and degradation products.
+      </div>
+      <div class="tool-tags">
+        <span class="tool-tag">¹H NMR</span>
+        <span class="tool-tag">¹³C NMR</span>
+        <span class="tool-tag">Confidence scoring</span>
+        <span class="tool-tag">Multi-peak</span>
+        <span class="tool-tag">Spectrum view</span>
+        <span class="tool-tag">Stabilizers</span>
+      </div>
+      <a href="app.html" class="tool-link">Open NMR Solvent Peaks →</a>
+    </div>
+    <div class="tool-card">
+      <div class="tool-issue">Solvent Drying · Tool 02</div>
+      <div class="tool-name">Drying Agent Selector</div>
+      <div class="tool-desc">
+        Select the optimal drying agent for a given solvent and functional group profile. Specify wetness level, volume, and temperature to receive ranked agent recommendations with compatibility assessments, hazard flags, dosage calculations, and step-by-step drying procedures.
+      </div>
+      <div class="tool-tags">
+        <span class="tool-tag">Compatibility</span>
+        <span class="tool-tag">Dosage calc</span>
+        <span class="tool-tag">Functional groups</span>
+        <span class="tool-tag">Ranked results</span>
+        <span class="tool-tag">Procedure</span>
+      </div>
+      <a href="drying-agent.html" class="tool-link">Open Drying Agent Selector →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / ABSTRACT -->
+<section class="about-section" id="database">
+  <div class="about-label">Abstract</div>
+  <div class="about-content">
+    <div class="about-heading">On the identification of residual solvent peaks in NMR spectra</div>
+    <p class="about-body">
+      Residual solvent signals are among the most frequently encountered artifacts in routine NMR spectroscopy. Accurate identification of these peaks is essential for characterisation of synthetic products and assessment of sample purity. ChemBench provides a systematically organised reference for ¹H and ¹³C chemical shifts of common laboratory solvents, impurities, stabilisers, and degradation products across twelve deuterated solvent systems.
+    </p>
+    <p class="about-body">
+      Peak data is sourced from peer-reviewed literature and presented with a confidence-scored identification engine, supporting both single- and multi-peak queries. The drying agent module complements the NMR reference by providing compatibility-aware recommendations for solvent desiccation.
+    </p>
+    <div class="about-refs" id="references">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;">NMR Solvent Peaks</div>
+      <a href="https://doi.org/10.1006/jorg.1997.1186" class="about-ref">
+        [1] Gottlieb, H.E.; Kotlyar, V.; Nudelman, A. NMR Chemical Shifts of Common Laboratory Solvents as Trace Impurities. <em>J. Org. Chem.</em> 1997, 62, 7512–7515.
+      </a>
+      <a href="https://doi.org/10.1021/om100106e" class="about-ref">
+        [2] Fulmer, G.R. et al. NMR Chemical Shifts of Trace Impurities: Common Laboratory Solvents, Organics, and Gases in Deuterated Solvents Relevant to the Organometallic Chemist. <em>Organometallics</em> 2010, 29, 2176–2179.
+      </a>
+      <a href="https://doi.org/10.1021/acs.oprd.5b00417" class="about-ref">
+        [3] Fulmer, G.R. et al. NMR Chemical Shifts of Trace Impurities: Industrially Preferred Solvents Used in Process and Green Chemistry. <em>Org. Process Res. Dev.</em> 2016, 20, 1548–1553.
+      </a>
+      <a href="https://doi.org/10.1021/acs.oprd.6b00251" class="about-ref">
+        [4] Whiteker, G.T. et al. <em>Org. Process Res. Dev.</em> 2016, 20, 1560.
+      </a>
+      <a href="https://doi.org/10.2166/wst.2014.017" class="about-ref">
+        [5] Cao, X. et al. Treatment of THF wastewater by the Fenton process. <em>Water Sci. Technol.</em> 2014, 69.5, 1080–1088.
+      </a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-top:14px;margin-bottom:8px;">Drying Agent Selector</div>
+      <a href="https://doi.org/10.1021/jo00170a031" class="about-ref">
+        [6] Burfield, D.R.; Lee, K.-H.; Smithers, R.H. Desiccant Efficiency in Solvent Drying: A Reappraisal by Application of a Novel Method for Solvent Water Assay. <em>J. Org. Chem.</em> 1977, 42, 3060–3065.
+      </a>
+      <a href="https://doi.org/10.1021/om960100e" class="about-ref">
+        [7] Pangborn, A.B.; Giardello, M.A.; Grubbs, R.H.; Rosen, R.K.; Timmers, F.J. Safe and Convenient Procedure for Solvent Purification. <em>Organometallics</em> 1996, 15, 1518–1520.
+      </a>
+      <a href="https://doi.org/10.1021/jo101589h" class="about-ref">
+        [8] Williams, D.B.G.; Lawton, M. Drying of Organic Solvents: Quantitative Evaluation of the Efficiency of Several Desiccants. <em>J. Org. Chem.</em> 2010, 75, 8351–8354.
+      </a>
+      <a href="https://doi.org/10.1021/jo00127a021" class="about-ref">
+        [9] Burfield, D.R.; Smithers, R.H. Desiccant Efficiency in Solvent and Reagent Drying. 7. Alcohols. <em>J. Org. Chem.</em> 1983, 48, 2420–2422.
+      </a>
+      <a href="https://doi.org/10.1039/C3GC41925K" class="about-ref">
+        [10] Prat, D. et al. CHEM21 Selection Guide of Classical- and Less Classical-Solvents. <em>Green Chem.</em> 2016, 18, 288–296.
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-header" style="padding:3rem 4rem 1.5rem;">
+    <span class="section-num">§ 02</span>
+    <h2 class="section-heading">Capabilities</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-num">01</div>
+      <div class="feat-title">Multi-peak identification</div>
+      <div class="feat-body">Enter multiple chemical shifts simultaneously. The engine cross-references all entries to identify compounds matching the full peak pattern.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-num">02</div>
+      <div class="feat-title">Confidence scoring</div>
+      <div class="feat-body">Each candidate receives a percentage confidence score derived from ppm proximity, multiplicity agreement, and peak set coverage.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-num">03</div>
+      <div class="feat-title">Spectrum visualisation</div>
+      <div class="feat-body">Interactive Lorentzian spectrum rendering with correct multiplicity patterns — singlets through septets — with hover identification.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-num">04</div>
+      <div class="feat-title">Stabiliser database</div>
+      <div class="feat-body">BHT, amylene, ethanol, propylene oxide, MEHQ, triethylamine, and additional stabilisers — each tagged to their parent solvent.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-num">05</div>
+      <div class="feat-title">Drying agent compatibility</div>
+      <div class="feat-body">Functional group-aware drying agent recommendations with ranked output, hazard assessment, and dosage and procedural guidance.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-num">06</div>
+      <div class="feat-title">Peer-reviewed data</div>
+      <div class="feat-body">All NMR reference data is drawn from Fulmer et al. 2010 and Whiteker et al. 2016 — the established standards in the field.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLVENTS -->
+<section class="solvents-section">
+  <div class="solvents-left">
+    <div class="solvents-label">NMR Coverage</div>
+    <div class="solvents-heading">Twelve<br>deuterated<br>solvents</div>
+  </div>
+  <div class="solvents-right">
+    <span class="solvent-tag">CDCl₃</span>
+    <span class="solvent-tag">DMSO-d₆</span>
+    <span class="solvent-tag">D₂O</span>
+    <span class="solvent-tag">Methanol-d₄</span>
+    <span class="solvent-tag">Acetone-d₆</span>
+    <span class="solvent-tag">THF-d₈</span>
+    <span class="solvent-tag">Toluene-d₈</span>
+    <span class="solvent-tag">Benzene-d₆</span>
+    <span class="solvent-tag">Pyridine-d₅</span>
+    <span class="solvent-tag">CD₂Cl₂</span>
+    <span class="solvent-tag">DMF-d₇</span>
+    <span class="solvent-tag">Acetonitrile-d₃</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div>
+    <div class="cta-heading">Open ChemBench<br><em>in your browser</em></div>
+    <p class="cta-body">No installation, no login, no cost. Both tools run entirely in the browser and are available on any device.</p>
+  </div>
+  <div class="cta-right">
+    <a href="app.html" class="btn-primary" style="text-align:center;">NMR Solvent Peaks →</a>
+    <a href="drying-agent.html" class="btn-secondary" style="text-align:center;">Drying Agent Selector →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-col">
+    <div class="footer-col-title">Publication</div>
+    <div class="footer-brand-name">ChemBench</div>
+    <div class="footer-brand-sub">University of St. Thomas<br>Chemistry Department</div>
+    <div style="margin-top:1rem; font-size:12px; color:rgba(255,255,255,0.3);">Created by Adam Nitsch</div>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Tools</div>
+    <div class="footer-links">
+      <a href="app.html">NMR Solvent Peaks</a>
+      <a href="drying-agent.html">Drying Agent Selector</a>
+    </div>
+  </div>
+  <div class="footer-col" id="ref-footer">
+    <div class="footer-col-title">NMR References</div>
+    <div class="footer-refs">
+      <a href="https://doi.org/10.1006/jorg.1997.1186" class="footer-ref">Gottlieb et al. J. Org. Chem. 1997, 62, 7512</a>
+      <a href="https://doi.org/10.1021/om100106e" class="footer-ref">Fulmer et al. Organometallics 2010, 29, 2176</a>
+      <a href="https://doi.org/10.1021/acs.oprd.5b00417" class="footer-ref">Fulmer et al. Org. Process Res. Dev. 2016, 20, 1548</a>
+      <a href="https://doi.org/10.1021/acs.oprd.6b00251" class="footer-ref">Whiteker et al. Org. Process Res. Dev. 2016, 20, 1560</a>
+      <a href="https://doi.org/10.2166/wst.2014.017" class="footer-ref">Cao et al. Water Sci. Technol. 2014, 69.5</a>
+    </div>
+    <div class="footer-col-title" style="margin-top:1.2rem;">Drying Agent References</div>
+    <div class="footer-refs">
+      <a href="https://doi.org/10.1021/jo00170a031" class="footer-ref">Burfield et al. J. Org. Chem. 1977, 42, 3060</a>
+      <a href="https://doi.org/10.1021/om960100e" class="footer-ref">Pangborn et al. Organometallics 1996, 15, 1518</a>
+      <a href="https://doi.org/10.1021/jo101589h" class="footer-ref">Williams & Lawton. J. Org. Chem. 2010, 75, 8351</a>
+      <a href="https://doi.org/10.1021/jo00127a021" class="footer-ref">Burfield & Smithers. J. Org. Chem. 1983, 48, 2420</a>
+      <a href="https://doi.org/10.1039/C3GC41925K" class="footer-ref">Prat et al. Green Chem. 2016, 18, 288</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© ChemBench · University of St. Thomas</span>
+    <span>Saint Paul, Minnesota · Est. 2025</span>
+  </div>
+</footer>
+
+</body>
+</html>
