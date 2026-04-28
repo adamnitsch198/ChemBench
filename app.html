@@ -6,156 +6,127 @@
 <title>NMR Solvent Peaks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"></noscript>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #0a0b0d;
-  --bg1:      #0f1114;
-  --bg2:      #141720;
-  --bg3:      #1a1e2a;
-  --border:   rgba(255,255,255,0.07);
-  --border2:  rgba(99,220,200,0.35);
-  --text:     #e8eaf0;
-  --text2:    #8b90a0;
-  --text3:    #4a5068;
-  --accent:   #63dcc8;
-  --accent2:  #3bbfab;
-  --accent-dim: rgba(99,220,200,0.12);
-  --accent-glow: rgba(99,220,200,0.25);
-  --peak-h:   #63dcc8;
-  --peak-c:   #7b8cff;
-  --peak-h-fill: rgba(99,220,200,0.08);
-  --peak-c-fill: rgba(123,140,255,0.08);
-  --axis:     #3a3f52;
-  --gridline: #141720;
-  --radius:   6px;
-  --mono: 'Space Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --ink:      #111111;
+  --ink2:     #444444;
+  --ink3:     #888888;
+  --paper:    #F5F0E8;
+  --paper2:   #EDE8DC;
+  --paper3:   #E2DDD0;
+  --rule:     #C8C0B0;
+  --rule2:    #111111;
+  --accent:   #C0392B;
+  --accent2:  #96291E;
+  --accent-bg:#FDF0EE;
+  --green:    #1A5C2E;
+  --green-bg: #EBF3EE;
+  --amber:    #8C5A00;
+  --amber-bg: #FDF5E6;
+  --blue:     #1A3A6C;
+  --blue-bg:  #EBF0F8;
+  --peak-h:   #C0392B;
+  --peak-c:   #1A3A6C;
+  --peak-h-fill: rgba(192,57,43,0.08);
+  --peak-c-fill: rgba(26,58,108,0.08);
+  --axis:     #888888;
+  --gridline: #E2DDD0;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
 }
 
-html { background: var(--bg); }
+html { background: var(--paper); }
 
 body {
   font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
+  background: var(--paper);
+  color: var(--ink);
   min-height: 100vh;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle grid background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(99,220,200,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,220,200,0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.layout {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 5rem;
-  position: relative;
-  z-index: 1;
-}
+.layout { max-width: 780px; margin: 0 auto; padding: 0 0 5rem; }
 
 /* ── HEADER ── */
 header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  border-bottom: 4px solid var(--ink);
+  padding: 2rem 2rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
   gap: 1rem;
 }
 
-.header-left {}
-
 .app-title {
-  font-family: var(--sans);
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  line-height: 1;
+  font-family: var(--display);
+  font-size: 56px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  line-height: 0.9;
   margin-bottom: 8px;
 }
 
-.app-title span {
-  color: var(--accent);
-}
+.app-title span { color: var(--accent); }
 
 .app-sub {
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.06em;
+  color: var(--ink3);
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-.app-sub a {
-  color: var(--accent);
-  text-decoration: none;
-  transition: opacity 0.15s;
-}
-.app-sub a:hover { opacity: 0.7; }
+.app-sub a { color: var(--accent); text-decoration: none; }
+.app-sub a:hover { text-decoration: underline; }
 
-.header-badge {
+.header-meta {
+  text-align: right;
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.12em;
+  color: var(--ink3);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid var(--border2);
-  padding: 4px 10px;
-  border-radius: 2px;
-  white-space: nowrap;
-  background: var(--accent-dim);
-  flex-shrink: 0;
-  margin-top: 4px;
+  line-height: 2;
+  border-left: 2px solid var(--rule);
+  padding-left: 1.2rem;
 }
 
 /* ── TABS ── */
 .tabs {
   display: flex;
-  gap: 0;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--ink);
+  background: var(--paper2);
+  padding: 0 2rem;
 }
 
 .tab {
-  padding: 10px 20px;
+  padding: 12px 0;
+  margin-right: 32px;
   border: none;
   background: transparent;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text3);
+  color: var(--ink3);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: color 0.15s;
   position: relative;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
 }
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
 
-.tab:hover { color: var(--text2); }
-
-.tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
+/* ── CONTENT AREA ── */
+.content-pad { padding: 2rem 2rem; }
 
 /* ── FORM ELEMENTS ── */
 .field { margin-bottom: 14px; }
@@ -166,39 +137,32 @@ label {
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text3);
-  margin-bottom: 6px;
+  color: var(--ink3);
+  margin-bottom: 5px;
+  font-weight: 500;
 }
 
 select, input[type=number], input[type=text] {
   width: 100%;
-  height: 38px;
+  height: 40px;
   padding: 0 12px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
+  background: #fff;
+  border: 1.5px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
   font-family: var(--mono);
   font-size: 12px;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a5068' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s;
 }
 
-input[type=number], input[type=text] {
-  background-image: none;
-  padding-right: 12px;
-}
-
-select:focus, input:focus {
-  outline: none;
-  border-color: var(--accent2);
-  box-shadow: 0 0 0 3px var(--accent-dim);
-}
+input[type=number], input[type=text] { background-image: none; padding-right: 12px; }
+select:focus, input:focus { outline: none; border-color: var(--ink); }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
@@ -206,33 +170,20 @@ select:focus, input:focus {
 /* ── BUTTON ── */
 .btn {
   width: 100%;
-  height: 42px;
-  background: var(--accent);
-  color: #0a0b0d;
+  height: 44px;
+  background: var(--ink);
+  color: var(--paper);
   border: none;
-  border-radius: var(--radius);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  border-radius: 0;
+  font-family: var(--display);
+  font-size: 18px;
+  letter-spacing: 0.12em;
   cursor: pointer;
-  margin-top: 6px;
-  transition: all 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0);
+  margin-top: 8px;
   transition: background 0.15s;
 }
-
-.btn:hover { background: var(--accent2); box-shadow: 0 0 20px var(--accent-glow); }
-.btn:active { transform: scale(0.99); }
+.btn:hover { background: var(--accent); }
+.btn:active { opacity: 0.9; }
 
 /* ── PEAK INPUT ROWS ── */
 .peak-row-wrap {
@@ -245,92 +196,73 @@ select:focus, input:focus {
 .peak-row-wrap .field { margin-bottom: 0; }
 
 .btn-remove-peak {
-  height: 38px;
-  width: 36px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  height: 40px; width: 40px;
+  border: 1.5px solid var(--rule);
+  border-radius: 0;
   background: transparent;
-  color: var(--text3);
-  font-size: 16px;
+  color: var(--ink3);
+  font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
   flex-shrink: 0;
 }
-.btn-remove-peak:hover { border-color: #ff4a6a; color: #ff4a6a; }
+.btn-remove-peak:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 
 .btn-add-peak {
-  margin-top: 4px;
+  margin-top: 6px;
   padding: 0 16px;
-  height: 34px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  height: 36px;
+  border: 1.5px dashed var(--rule);
+  border-radius: 0;
   background: transparent;
-  color: var(--text3);
+  color: var(--ink3);
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-add-peak:hover { border-color: var(--accent2); color: var(--accent); background: var(--accent-dim); }
+.btn-add-peak:hover { border-color: var(--ink); color: var(--ink); background: var(--paper2); }
 
 /* ── RESULTS ── */
 .results-area { margin-top: 2rem; }
 
 .results-meta {
   font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-  margin-bottom: 14px;
-  letter-spacing: 0.06em;
+  font-size: 9px;
+  color: var(--ink3);
+  margin-bottom: 16px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.results-meta::before {
-  content: '';
-  display: block;
-  width: 20px;
-  height: 1px;
-  background: var(--accent);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
 }
 
 /* ── CONFIDENCE BADGE ── */
 .conf-badge {
   display: inline-block;
-  margin-top: 5px;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-.conf-high { background: rgba(99,220,200,0.15); color: var(--accent); border: 1px solid rgba(99,220,200,0.3); }
-.conf-mid  { background: rgba(255,180,50,0.1); color: #ffb432; border: 1px solid rgba(255,180,50,0.25); }
-.conf-low  { background: rgba(123,140,255,0.1); color: #7b8cff; border: 1px solid rgba(123,140,255,0.25); }
-
-.matched-peaks {
-  font-size: 10px;
-  color: var(--text3);
-  font-family: var(--mono);
   margin-top: 4px;
-  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 0;
 }
+.conf-high { background: var(--green-bg); color: var(--green); }
+.conf-mid  { background: var(--amber-bg); color: var(--amber); }
+.conf-low  { background: var(--blue-bg);  color: var(--blue); }
+
+.matched-peaks { font-size: 10px; color: var(--ink3); font-family: var(--mono); margin-top: 4px; }
 
 /* ── SOLVENT GROUP ACCORDION ── */
 .sv-group {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--rule);
   margin-bottom: 6px;
   overflow: hidden;
-  transition: border-color 0.15s;
 }
-.sv-group:hover { border-color: rgba(255,255,255,0.12); }
 
 .sv-group-header {
   display: flex;
@@ -339,18 +271,19 @@ select:focus, input:focus {
   padding: 10px 14px;
   cursor: pointer;
   user-select: none;
-  background: var(--bg1);
+  background: var(--paper2);
+  border-bottom: 1px solid transparent;
   transition: background 0.12s;
 }
-.sv-group-header:hover { background: var(--bg2); }
+.sv-group-header:hover { background: var(--paper3); }
 
-.sv-group-left { display: flex; align-items: center; gap: 10px; }
+.sv-group-left { display: flex; align-items: center; gap: 12px; }
 
 .sv-group-name {
   font-family: var(--mono);
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 500;
+  color: var(--ink);
   letter-spacing: 0.04em;
 }
 
@@ -358,72 +291,67 @@ select:focus, input:focus {
   font-family: var(--mono);
   font-size: 9px;
   color: var(--accent);
-  background: var(--accent-dim);
-  border: 1px solid rgba(99,220,200,0.2);
-  border-radius: 2px;
-  padding: 2px 7px;
+  background: var(--accent-bg);
+  padding: 2px 8px;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.sv-group-arrow {
-  font-size: 10px;
-  color: var(--text3);
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
-.sv-group-arrow.open { transform: rotate(180deg); color: var(--accent); }
+.sv-group-arrow { font-size: 10px; color: var(--ink3); transition: transform 0.2s; flex-shrink: 0; }
+.sv-group-arrow.open { transform: rotate(180deg); }
 
-.sv-group-body {
-  display: none;
-  border-top: 1px solid var(--border);
-  padding: 10px 12px;
-  background: var(--bg);
-}
+.sv-group-body { display: none; border-top: 1px solid var(--rule); padding: 10px 12px; background: #fff; }
 .sv-group-body.open { display: block; }
 
 /* ── RESULT CARD ── */
 .result-card {
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-left: 3px solid transparent;
   padding: 12px 14px;
-  margin-bottom: 6px;
-  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 5px;
+  transition: border-left-color 0.15s;
 }
 .result-card:last-child { margin-bottom: 0; }
-.result-card:hover { border-color: rgba(255,255,255,0.12); background: var(--bg2); }
+.result-card:hover { border-left-color: var(--accent); }
 
 .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
 .rc-left { flex: 1; min-width: 0; }
-.rc-compound { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; font-family: var(--sans); }
+.rc-compound { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 2px; font-family: var(--sans); }
 .rc-right { text-align: right; flex-shrink: 0; }
-.rc-ppm { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 2px; }
-.rc-mult { font-size: 10px; color: var(--text3); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.rc-ppm {
+  font-family: var(--display);
+  font-size: 28px;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 2px;
+  letter-spacing: 0.04em;
+}
+.rc-mult { font-size: 9px; color: var(--ink3); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 
 .tag {
   display: inline-block;
   font-family: var(--mono);
   font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 2px;
+  padding: 1px 7px;
   margin-top: 4px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.tag-h { background: rgba(255,180,50,0.1); color: #ffb432; border: 1px solid rgba(255,180,50,0.2); }
-.tag-c { background: rgba(123,140,255,0.1); color: #7b8cff; border: 1px solid rgba(123,140,255,0.2); }
+.tag-h { background: var(--amber-bg); color: var(--amber); }
+.tag-c { background: var(--blue-bg);  color: var(--blue); }
 
-.mini-spectrum { width: 100%; height: 60px; display: block; border-radius: 4px; }
+.mini-spectrum { width: 100%; height: 60px; display: block; }
 
 .empty {
   text-align: center;
   padding: 3rem 1.5rem;
-  color: var(--text3);
-  font-size: 12px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  color: var(--ink3);
+  font-size: 11px;
+  border: 1.5px dashed var(--rule);
   font-family: var(--mono);
   letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ── BROWSE TAB ── */
@@ -432,228 +360,186 @@ select:focus, input:focus {
 
 .browse-mode-toggle {
   display: flex;
-  gap: 2px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2px;
-  height: 38px;
+  height: 40px;
+  border: 1.5px solid var(--rule);
+  overflow: hidden;
   flex-shrink: 0;
 }
-
 .bmt {
-  padding: 0 14px;
+  padding: 0 18px;
   border: none;
   background: transparent;
-  border-radius: 4px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--text3);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
   cursor: pointer;
   transition: all 0.15s;
-  white-space: nowrap;
+  border-right: 1.5px solid var(--rule);
 }
-.bmt.active { background: var(--accent); color: #0a0b0d; font-weight: 700; }
+.bmt:last-child { border-right: none; }
+.bmt.active { background: var(--ink); color: var(--paper); }
 
-.bc-block {
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 6px;
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
-.bc-block:hover { border-color: rgba(255,255,255,0.12); }
+.bc-block { border: 1.5px solid var(--rule); margin-bottom: 5px; overflow: hidden; }
+.bc-block:hover { border-color: var(--ink3); }
 
-.bc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  gap: 10px;
-}
-
-.bc-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
+.bc-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; gap: 10px; background: var(--paper2); }
+.bc-name { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
 .bc-sv-sel {
-  height: 28px;
-  font-size: 11px;
-  padding: 0 24px 0 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  color: var(--text);
-  font-family: var(--mono);
-  cursor: pointer;
-  min-width: 100px;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a5068' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 6px center;
+  height: 28px; font-size: 10px; padding: 0 22px 0 8px;
+  border: 1px solid var(--rule); background: #fff; color: var(--ink);
+  font-family: var(--mono); cursor: pointer; min-width: 100px;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 6px center;
+  border-radius: 0;
 }
-.bc-sv-sel:focus { outline: none; border-color: var(--accent2); }
+.bc-sv-sel:focus { outline: none; border-color: var(--ink); }
 
 .bc-toggle {
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--text3);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
+  padding: 3px 10px; border: 1px solid var(--rule); background: transparent;
+  color: var(--ink3); font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  border-radius: 0;
 }
-.bc-toggle:hover { border-color: var(--accent2); color: var(--accent); }
+.bc-toggle:hover { border-color: var(--ink); color: var(--ink); background: var(--paper3); }
 
-.bc-body { display: none; border-top: 1px solid var(--border); padding: 12px 14px; background: var(--bg); }
+.bc-body { display: none; border-top: 1px solid var(--rule); padding: 12px 14px; background: #fff; }
 .bc-body.open { display: block; }
 
 .bc-mode-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-transform: uppercase;
-  padding: 6px 0 5px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--ink3);
+  text-transform: uppercase; padding: 6px 0 5px; border-bottom: 1px solid var(--rule);
+  margin-bottom: 4px; display: flex; justify-content: space-between;
 }
-
-.bc-peak-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
+.bc-peak-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--gridline); font-size: 13px; }
 .bc-peak-row:last-child { border-bottom: none; }
-.bc-peak-label { color: var(--text2); font-size: 11px; font-family: var(--mono); }
-.bc-peak-val { font-family: var(--mono); font-size: 13px; color: var(--accent); }
-.bc-no-data { font-size: 11px; color: var(--text3); padding: 6px 0; font-family: var(--mono); }
+.bc-peak-label { color: var(--ink2); font-size: 11px; font-family: var(--mono); }
+.bc-peak-val { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 500; }
+.bc-no-data { font-size: 10px; color: var(--ink3); padding: 6px 0; font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .bc-mini-wrap { margin-top: 10px; }
 
 /* ── SPECTRUM TAB ── */
 .sp-wrap {
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 16px 12px;
+  background: #fff;
+  border: 1.5px solid var(--rule);
+  padding: 16px;
   margin-top: 1.5rem;
   position: relative;
-  overflow: hidden;
-}
-
-.sp-wrap::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.5;
 }
 
 .sp-title-bar {
   font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
+  font-size: 9px;
+  color: var(--ink3);
   margin-bottom: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--gridline);
+  padding-bottom: 8px;
 }
 
 canvas#sp-canvas { width: 100%; display: block; cursor: crosshair; }
 
-.legend { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text2); font-family: var(--mono); }
+.legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--ink2); font-family: var(--mono); }
 .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 .sp-tooltip {
   position: absolute;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 6px 10px;
+  background: var(--ink);
+  border: none;
+  padding: 6px 12px;
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--text);
+  color: var(--paper);
   pointer-events: none;
   display: none;
   white-space: nowrap;
   z-index: 10;
   line-height: 1.7;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
-.sp-hint {
-  margin-top: 8px;
-  font-size: 10px;
-  color: var(--text3);
-  font-family: var(--mono);
-  letter-spacing: 0.04em;
-}
+.sp-hint { margin-top: 8px; font-size: 10px; color: var(--ink3); font-family: var(--mono); letter-spacing: 0.04em; }
 
 /* ── MOL STRUCTURE ── */
-.mol-structure { width: 80px; height: 60px; flex-shrink: 0; color: var(--text2); }
+.mol-structure { width: 80px; height: 60px; flex-shrink: 0; color: var(--ink2); }
 .mol-structure svg { width: 100%; height: 100%; }
-.bc-body .mol-structure {
-  width: 100%; height: 80px; margin-bottom: 10px;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: var(--bg1);
-}
+.rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.bc-body .mol-structure { width: 100%; height: 80px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--rule); background: var(--paper2); }
 .bc-body .mol-structure svg { width: auto; height: 100%; max-width: 160px; }
 
 /* ── FOOTER ── */
 footer {
   margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem 0;
+  border-top: 2px solid var(--ink);
   font-size: 10px;
-  color: var(--text3);
+  color: var(--ink3);
   font-family: var(--mono);
   line-height: 2;
   letter-spacing: 0.04em;
 }
 
+/* ── SECTION DIVIDER ── */
+.section-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  background: var(--paper2);
+  border: 1.5px solid var(--rule);
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.section-label-vert {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 12px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.section-content { padding: 16px; flex: 1; }
+
 @media (max-width: 520px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .layout { padding: 1.5rem 1rem 3rem; }
-  .tab { padding: 10px 12px; }
+  .layout { padding: 0 0 3rem; }
+  header, .content-pad, footer { padding-left: 1rem; padding-right: 1rem; }
+  .app-title { font-size: 40px; }
 }
 </style>
 </head>
 <body>
 <div class="layout">
   <header>
-    <div class="header-left">
+    <div>
       <div class="app-title">NMR <span>Solvent</span> Peaks</div>
       <div class="app-sub">
-        Residual solvent &amp; impurity reference &nbsp;·&nbsp;
+        Residual solvent &amp; common impurity reference &nbsp;&middot;&nbsp;
         <a href="https://doi.org/10.1021/om100106e" target="_blank">Fulmer 2010</a> &amp;
         <a href="https://doi.org/10.1021/acs.oprd.6b00251" target="_blank">Whiteker 2016</a>
       </div>
     </div>
-    <div class="header-badge">¹H · ¹³C</div>
+    <div class="header-meta">
+      University of St. Thomas<br>
+      Chemistry Dept.<br>
+      Saint Paul, MN
+    </div>
   </header>
 
   <div class="tabs">
@@ -661,122 +547,136 @@ footer {
     <button class="tab" onclick="switchTab('spectrum')">Spectrum View</button>
   </div>
 
-  <!-- SEARCH TAB -->
-  <div id="tab-search">
-    <div class="grid-2">
-      <div class="field"><label>NMR Mode</label>
-        <select id="mode">
-          <option value="H">¹H Proton</option>
-          <option value="C">¹³C Carbon</option>
-        </select>
+  <div class="content-pad">
+
+    <!-- SEARCH TAB -->
+    <div id="tab-search">
+      <div class="section-row">
+        <div class="section-label-vert">Parameters</div>
+        <div class="section-content">
+          <div class="grid-2">
+            <div class="field"><label>NMR Mode</label>
+              <select id="mode">
+                <option value="H">&#185;H Proton</option>
+                <option value="C">&#185;&#179;C Carbon</option>
+              </select>
+            </div>
+            <div class="field"><label>Deuterated Solvent</label>
+              <select id="solvent">
+                <option value="all">All solvents</option>
+                <option value="CDCl3">CDCl&#8323;</option>
+                <option value="DMSO">DMSO-d&#8326;</option>
+                <option value="D2O">D&#8322;O</option>
+                <option value="CD3OD">Methanol-d&#8324;</option>
+                <option value="acetone">Acetone-d&#8326;</option>
+                <option value="THF">THF-d&#8328;</option>
+                <option value="toluene">Toluene-d&#8328;</option>
+                <option value="benzene">Benzene-d&#8326;</option>
+                <option value="pyridine">Pyridine-d&#8325;</option>
+                <option value="CD2Cl2">CD&#8322;Cl&#8322;</option>
+                <option value="DMF">DMF-d&#8327;</option>
+                <option value="ACN">Acetonitrile-d&#8323;</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="max-width:220px;"><label>Tolerance</label>
+            <select id="tol">
+              <option value="0.05">&plusmn; 0.05 ppm</option>
+              <option value="0.1" selected>&plusmn; 0.10 ppm</option>
+              <option value="0.2">&plusmn; 0.20 ppm</option>
+              <option value="0.5">&plusmn; 0.50 ppm</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="field"><label>Deuterated Solvent</label>
-        <select id="solvent">
-          <option value="all">All solvents</option>
-          <option value="CDCl3">CDCl₃</option>
-          <option value="DMSO">DMSO-d₆</option>
-          <option value="D2O">D₂O</option>
-          <option value="CD3OD">Methanol-d₄</option>
-          <option value="acetone">Acetone-d₆</option>
-          <option value="THF">THF-d₈</option>
-          <option value="toluene">Toluene-d₈</option>
-          <option value="benzene">Benzene-d₆</option>
-          <option value="pyridine">Pyridine-d₅</option>
-          <option value="CD2Cl2">CD₂Cl₂</option>
-          <option value="DMF">DMF-d₇</option>
-          <option value="ACN">Acetonitrile-d₃</option>
-        </select>
+
+      <div class="section-row">
+        <div class="section-label-vert">Peaks</div>
+        <div class="section-content">
+          <div id="peak-rows"></div>
+          <button class="btn-add-peak" onclick="addPeakRow()">+ Add Peak</button>
+          <button class="btn" onclick="doSearch()" style="margin-top:14px;">Identify Impurity</button>
+        </div>
       </div>
+
+      <div class="results-area" id="results"></div>
     </div>
 
-    <div class="field"><label>Tolerance</label>
-      <select id="tol" style="max-width:200px;">
-        <option value="0.05">± 0.05 ppm</option>
-        <option value="0.1" selected>± 0.10 ppm</option>
-        <option value="0.2">± 0.20 ppm</option>
-        <option value="0.5">± 0.50 ppm</option>
-      </select>
+    <!-- BROWSE TAB -->
+    <div id="tab-browse" style="display:none;">
+      <div class="browse-filter">
+        <input type="text" id="browse-search" placeholder="Filter compounds..." oninput="renderBrowse()">
+        <div class="browse-mode-toggle">
+          <button class="bmt active" id="bmt-H" onclick="setBrowseMode('H')">&#185;H</button>
+          <button class="bmt" id="bmt-C" onclick="setBrowseMode('C')">&#185;&#179;C</button>
+        </div>
+      </div>
+      <div id="browse-list"></div>
     </div>
 
-    <div id="peak-rows"></div>
-    <button class="btn-add-peak" onclick="addPeakRow()">+ add peak</button>
-    <button class="btn" onclick="doSearch()" style="margin-top:12px;">Identify Impurity</button>
-    <div class="results-area" id="results"></div>
-  </div>
+    <!-- SPECTRUM TAB -->
+    <div id="tab-spectrum" style="display:none;">
+      <div class="grid-2">
+        <div class="field"><label>NMR Mode</label>
+          <select id="sp-mode" onchange="onSpChange()">
+            <option value="H">&#185;H Proton</option>
+            <option value="C">&#185;&#179;C Carbon</option>
+          </select>
+        </div>
+        <div class="field"><label>Deuterated Solvent</label>
+          <select id="sp-solvent" onchange="onSpChange()">
+            <option value="CDCl3">CDCl&#8323;</option>
+            <option value="DMSO">DMSO-d&#8326;</option>
+            <option value="D2O">D&#8322;O</option>
+            <option value="CD3OD">Methanol-d&#8324;</option>
+            <option value="acetone">Acetone-d&#8326;</option>
+            <option value="THF">THF-d&#8328;</option>
+            <option value="toluene">Toluene-d&#8328;</option>
+            <option value="benzene">Benzene-d&#8326;</option>
+            <option value="pyridine">Pyridine-d&#8325;</option>
+            <option value="CD2Cl2">CD&#8322;Cl&#8322;</option>
+            <option value="DMF">DMF-d&#8327;</option>
+            <option value="ACN">Acetonitrile-d&#8323;</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Highlight Compound (optional)</label>
+        <select id="sp-compound" onchange="drawSpectrum()"></select>
+      </div>
+      <div class="sp-wrap">
+        <div class="sp-title-bar" id="sp-title"></div>
+        <canvas id="sp-canvas" height="220"></canvas>
+        <div class="sp-tooltip" id="sp-tooltip"></div>
+        <div class="legend" id="sp-legend"></div>
+      </div>
+      <div class="sp-hint">Hover over peaks to identify &middot; Lorentzian peak shapes with multiplicity patterns</div>
+    </div>
 
-  <!-- BROWSE TAB -->
-  <div id="tab-browse" style="display:none;">
-    <div class="browse-filter">
-      <input type="text" id="browse-search" placeholder="Filter compounds..." oninput="renderBrowse()">
-      <div class="browse-mode-toggle">
-        <button class="bmt active" id="bmt-H" onclick="setBrowseMode('H')">¹H</button>
-        <button class="bmt" id="bmt-C" onclick="setBrowseMode('C')">¹³C</button>
-      </div>
-    </div>
-    <div id="browse-list"></div>
-  </div>
-
-  <!-- SPECTRUM TAB -->
-  <div id="tab-spectrum" style="display:none;">
-    <div class="grid-2">
-      <div class="field"><label>NMR Mode</label>
-        <select id="sp-mode" onchange="onSpChange()">
-          <option value="H">¹H Proton</option>
-          <option value="C">¹³C Carbon</option>
-        </select>
-      </div>
-      <div class="field"><label>Deuterated Solvent</label>
-        <select id="sp-solvent" onchange="onSpChange()">
-          <option value="CDCl3">CDCl₃</option>
-          <option value="DMSO">DMSO-d₆</option>
-          <option value="D2O">D₂O</option>
-          <option value="CD3OD">Methanol-d₄</option>
-          <option value="acetone">Acetone-d₆</option>
-          <option value="THF">THF-d₈</option>
-          <option value="toluene">Toluene-d₈</option>
-          <option value="benzene">Benzene-d₆</option>
-          <option value="pyridine">Pyridine-d₅</option>
-          <option value="CD2Cl2">CD₂Cl₂</option>
-          <option value="DMF">DMF-d₇</option>
-          <option value="ACN">Acetonitrile-d₃</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>Highlight Compound (optional)</label>
-      <select id="sp-compound" onchange="drawSpectrum()"></select>
-    </div>
-    <div class="sp-wrap">
-      <div class="sp-title-bar" id="sp-title"></div>
-      <canvas id="sp-canvas" height="220"></canvas>
-      <div class="sp-tooltip" id="sp-tooltip"></div>
-      <div class="legend" id="sp-legend"></div>
-    </div>
-    <div class="sp-hint">hover over peaks to identify &nbsp;·&nbsp; lorentzian peak shapes with multiplicity patterns</div>
-  </div>
+  </div><!-- /content-pad -->
 
   <footer>
-    Fulmer et al. Organometallics 2010, 29, 2176 &nbsp;·&nbsp;
-    Whiteker et al. Org. Process Res. Dev. 2016, 20, 1560 &nbsp;·&nbsp;
-    Gottlieb et al. J. Org. Chem. 1997, 62, 7512 &nbsp;·&nbsp;
-    Cao et al. Water Sci. Technol. 2014, 69.5
-    <br>For research use only.
+    Fulmer et al. Organometallics 2010, 29, 2176 &nbsp;&middot;&nbsp;
+    Whiteker et al. Org. Process Res. Dev. 2016, 20, 1560 &nbsp;&middot;&nbsp;
+    Gottlieb et al. J. Org. Chem. 1997, 62, 7512 &nbsp;&middot;&nbsp;
+    Cao et al. Water Sci. Technol. 2014, 69.5<br>
+    For research use only.
   </footer>
 </div>
 
 <script>
 const DB = [
-  {compound:"Solvent residual",solvent:"CDCl3",H:[{ppm:7.26,mult:"s"}],C:[{ppm:77.16,mult:"t"}],note:"CDClÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"DMSO",H:[{ppm:2.50,mult:"m"}],C:[{ppm:39.52,mult:"sep"}],note:"DMSO-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"D2O",H:[{ppm:4.79,mult:"s"}],C:[],note:"DÃ¢ÂÂO (HDO) residual"},
+  {compound:"Solvent residual",solvent:"CDCl3",H:[{ppm:7.26,mult:"s"}],C:[{ppm:77.16,mult:"t"}],note:"CDClÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"DMSO",H:[{ppm:2.50,mult:"m"}],C:[{ppm:39.52,mult:"sep"}],note:"DMSO-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"D2O",H:[{ppm:4.79,mult:"s"}],C:[],note:"DÃÂ¢ÃÂÃÂO (HDO) residual"},
   {compound:"Solvent residual",solvent:"CD3OD",H:[{ppm:3.31,mult:"m"}],C:[{ppm:49.00,mult:"sep"}],note:"MeOD residual"},
-  {compound:"Solvent residual",solvent:"acetone",H:[{ppm:2.05,mult:"m"}],C:[{ppm:29.84,mult:"sep"},{ppm:206.26,mult:"s"}],note:"Acetone-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"THF",H:[{ppm:1.72,mult:"m"},{ppm:3.58,mult:"m"}],C:[{ppm:25.31,mult:"m"},{ppm:67.57,mult:"m"}],note:"THF-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"toluene",H:[{ppm:2.09,mult:"s"},{ppm:6.98,mult:"m"},{ppm:7.00,mult:"m"},{ppm:7.09,mult:"m"}],C:[{ppm:20.4,mult:"s"},{ppm:125.13,mult:"t"},{ppm:127.96,mult:"t"},{ppm:128.87,mult:"t"},{ppm:137.48,mult:"s"}],note:"Toluene-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"benzene",H:[{ppm:7.16,mult:"s"}],C:[{ppm:128.06,mult:"t"}],note:"Benzene-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"pyridine",H:[{ppm:7.22,mult:"m"},{ppm:7.58,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.91,mult:"t"},{ppm:149.90,mult:"t"}],note:"Pyridine-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"CD2Cl2",H:[{ppm:5.32,mult:"t"}],C:[{ppm:53.84,mult:"t"}],note:"CDÃ¢ÂÂClÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"DMF",H:[{ppm:2.75,mult:"s"},{ppm:2.96,mult:"s"},{ppm:7.95,mult:"s"}],C:[{ppm:29.76,mult:"sep"},{ppm:34.89,mult:"sep"},{ppm:162.62,mult:"t"}],note:"DMF-dÃ¢ÂÂ residual"},
-  {compound:"Solvent residual",solvent:"ACN",H:[{ppm:1.94,mult:"m"}],C:[{ppm:1.32,mult:"sep"},{ppm:118.26,mult:"s"}],note:"CDÃ¢ÂÂCN residual"},
+  {compound:"Solvent residual",solvent:"acetone",H:[{ppm:2.05,mult:"m"}],C:[{ppm:29.84,mult:"sep"},{ppm:206.26,mult:"s"}],note:"Acetone-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"THF",H:[{ppm:1.72,mult:"m"},{ppm:3.58,mult:"m"}],C:[{ppm:25.31,mult:"m"},{ppm:67.57,mult:"m"}],note:"THF-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"toluene",H:[{ppm:2.09,mult:"s"},{ppm:6.98,mult:"m"},{ppm:7.00,mult:"m"},{ppm:7.09,mult:"m"}],C:[{ppm:20.4,mult:"s"},{ppm:125.13,mult:"t"},{ppm:127.96,mult:"t"},{ppm:128.87,mult:"t"},{ppm:137.48,mult:"s"}],note:"Toluene-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"benzene",H:[{ppm:7.16,mult:"s"}],C:[{ppm:128.06,mult:"t"}],note:"Benzene-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"pyridine",H:[{ppm:7.22,mult:"m"},{ppm:7.58,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.91,mult:"t"},{ppm:149.90,mult:"t"}],note:"Pyridine-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"CD2Cl2",H:[{ppm:5.32,mult:"t"}],C:[{ppm:53.84,mult:"t"}],note:"CDÃÂ¢ÃÂÃÂClÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"DMF",H:[{ppm:2.75,mult:"s"},{ppm:2.96,mult:"s"},{ppm:7.95,mult:"s"}],C:[{ppm:29.76,mult:"sep"},{ppm:34.89,mult:"sep"},{ppm:162.62,mult:"t"}],note:"DMF-dÃÂ¢ÃÂÃÂ residual"},
+  {compound:"Solvent residual",solvent:"ACN",H:[{ppm:1.94,mult:"m"}],C:[{ppm:1.32,mult:"sep"},{ppm:118.26,mult:"s"}],note:"CDÃÂ¢ÃÂÃÂCN residual"},
   {compound:"Water",solvent:"CDCl3",H:[{ppm:1.56,mult:"s"}],C:[]},
   {compound:"Water",solvent:"DMSO",H:[{ppm:3.33,mult:"s"}],C:[]},
   {compound:"Water",solvent:"acetone",H:[{ppm:2.84,mult:"s"}],C:[]},
@@ -816,7 +716,7 @@ const DB = [
   {compound:"Methanol",solvent:"DMSO",H:[{ppm:3.16,mult:"s"},{ppm:4.01,mult:"br s"}],C:[{ppm:48.59,mult:"q"}]},
   {compound:"Methanol",solvent:"D2O",H:[{ppm:3.34,mult:"s"}],C:[{ppm:49.50,mult:"q"}]},
   {compound:"Methanol",solvent:"acetone",H:[{ppm:3.31,mult:"s"}],C:[{ppm:49.77,mult:"q"}]},
-  {compound:"Ethanol",solvent:"CDCl3",H:[{ppm:1.25,mult:"t"},{ppm:2.61,mult:"br s"},{ppm:3.72,mult:"q"}],C:[{ppm:18.41,mult:"q"},{ppm:57.86,mult:"t"}],note:"CHClÃ¢ÂÂ stabilizer"},
+  {compound:"Ethanol",solvent:"CDCl3",H:[{ppm:1.25,mult:"t"},{ppm:2.61,mult:"br s"},{ppm:3.72,mult:"q"}],C:[{ppm:18.41,mult:"q"},{ppm:57.86,mult:"t"}],note:"CHClÃÂ¢ÃÂÃÂ stabilizer"},
   {compound:"Ethanol",solvent:"DMSO",H:[{ppm:1.06,mult:"t"},{ppm:3.44,mult:"q"},{ppm:4.35,mult:"br s"}],C:[{ppm:18.51,mult:"q"},{ppm:56.61,mult:"t"}]},
   {compound:"Ethanol",solvent:"D2O",H:[{ppm:1.17,mult:"t"},{ppm:3.65,mult:"q"}],C:[{ppm:17.47,mult:"q"},{ppm:58.05,mult:"t"}]},
   {compound:"Isopropanol (IPA)",solvent:"CDCl3",H:[{ppm:1.22,mult:"d"},{ppm:2.26,mult:"br s"},{ppm:4.02,mult:"sep"}],C:[{ppm:25.14,mult:"q"},{ppm:64.50,mult:"t"}]},
@@ -841,7 +741,7 @@ const DB = [
   {compound:"Acetonitrile",solvent:"CDCl3",H:[{ppm:2.10,mult:"s"}],C:[{ppm:1.89,mult:"q"},{ppm:116.43,mult:"s"}]},
   {compound:"Acetonitrile",solvent:"DMSO",H:[{ppm:2.08,mult:"s"}],C:[{ppm:1.03,mult:"q"},{ppm:116.43,mult:"s"}]},
   {compound:"Acetonitrile",solvent:"D2O",H:[{ppm:2.06,mult:"s"}],C:[{ppm:1.47,mult:"q"},{ppm:119.68,mult:"s"}]},
-  {compound:"Pyridine",solvent:"CDCl3",H:[{ppm:7.36,mult:"m"},{ppm:7.60,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.96,mult:"t"},{ppm:149.76,mult:"t"}],note:"EtÃ¢ÂÂO stabilizer"},
+  {compound:"Pyridine",solvent:"CDCl3",H:[{ppm:7.36,mult:"m"},{ppm:7.60,mult:"m"},{ppm:8.57,mult:"m"}],C:[{ppm:123.87,mult:"t"},{ppm:135.96,mult:"t"},{ppm:149.76,mult:"t"}],note:"EtÃÂ¢ÃÂÃÂO stabilizer"},
   {compound:"Pyridine",solvent:"DMSO",H:[{ppm:7.36,mult:"m"},{ppm:7.73,mult:"m"},{ppm:8.52,mult:"m"}],C:[{ppm:123.84,mult:"t"},{ppm:136.56,mult:"t"},{ppm:149.58,mult:"t"}]},
   {compound:"Pyridine",solvent:"D2O",H:[{ppm:7.45,mult:"m"},{ppm:7.79,mult:"m"},{ppm:8.57,mult:"m"}],C:[]},
   {compound:"Triethylamine (TEA)",solvent:"CDCl3",H:[{ppm:1.03,mult:"t"},{ppm:2.53,mult:"q"}],C:[{ppm:11.61,mult:"q"},{ppm:46.25,mult:"t"}]},
@@ -850,7 +750,7 @@ const DB = [
   {compound:"Triethylamine (TEA)",solvent:"ACN",H:[{ppm:1.03,mult:"t"},{ppm:2.53,mult:"q"}],C:[{ppm:11.61,mult:"q"},{ppm:46.25,mult:"t"}],note:"MeCN stabilizer"},
   {compound:"Grease (silicone)",solvent:"CDCl3",H:[{ppm:0.07,mult:"s"}],C:[{ppm:1.04,mult:"q"}]},
   {compound:"Grease (silicone)",solvent:"DMSO",H:[{ppm:0.05,mult:"s"}],C:[{ppm:0.90,mult:"q"}]},
-  {compound:"BHT",solvent:"CDCl3",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:5.01,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"CHClÃ¢ÂÂ stabilizer"},
+  {compound:"BHT",solvent:"CDCl3",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:5.01,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"CHClÃÂ¢ÃÂÃÂ stabilizer"},
   {compound:"BHT",solvent:"THF",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"THF stabilizer"},
   {compound:"BHT",solvent:"toluene",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"toluene stabilizer"},
   {compound:"BHT",solvent:"CD2Cl2",H:[{ppm:1.43,mult:"s"},{ppm:2.27,mult:"s"},{ppm:6.98,mult:"s"}],C:[{ppm:20.89,mult:"q"},{ppm:30.43,mult:"q"},{ppm:34.06,mult:"s"},{ppm:125.72,mult:"t"},{ppm:135.26,mult:"s"},{ppm:140.51,mult:"s"},{ppm:153.77,mult:"s"}],note:"DCM stabilizer"},
@@ -874,26 +774,26 @@ const DB = [
   {compound:"Ethylene glycol",solvent:"THF",H:[{ppm:3.58,mult:"s"}],C:[{ppm:63.54,mult:"t"}]},
   {compound:"Ethylene glycol",solvent:"pyridine",H:[{ppm:3.75,mult:"s"}],C:[{ppm:64.32,mult:"t"}]},
 
-  // Ã¢ÂÂÃ¢ÂÂ THF DEGRADATION INTERMEDIATES (Cao et al. Water Sci. Technol. 2014) Ã¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ THF DEGRADATION INTERMEDIATES (Cao et al. Water Sci. Technol. 2014) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   // Identified by GC-MS after Fenton oxidation of THF wastewater
 
-  // 2-Hydroxytetrahydrofuran Ã¢ÂÂ first oxidation product of THF (GC-MS rt 3.05 min)
+  // 2-Hydroxytetrahydrofuran ÃÂ¢ÃÂÃÂ first oxidation product of THF (GC-MS rt 3.05 min)
   {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"CDCl3",H:[{ppm:1.75,mult:"m"},{ppm:1.95,mult:"m"},{ppm:3.75,mult:"m"},{ppm:3.90,mult:"m"},{ppm:5.45,mult:"t"},{ppm:6.10,mult:"br s"}],C:[{ppm:26.10,mult:"t"},{ppm:31.80,mult:"t"},{ppm:67.50,mult:"t"},{ppm:97.20,mult:"t"}],note:"THF degradation product"},
   {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"DMSO",H:[{ppm:1.70,mult:"m"},{ppm:1.88,mult:"m"},{ppm:3.65,mult:"m"},{ppm:3.80,mult:"m"},{ppm:5.35,mult:"t"},{ppm:6.30,mult:"br s"}],C:[{ppm:25.80,mult:"t"},{ppm:31.40,mult:"t"},{ppm:66.90,mult:"t"},{ppm:96.80,mult:"t"}],note:"THF degradation product"},
   {compound:"2-Hydroxytetrahydrofuran (THF impurity)",solvent:"D2O",H:[{ppm:1.78,mult:"m"},{ppm:2.00,mult:"m"},{ppm:3.80,mult:"m"},{ppm:3.95,mult:"m"},{ppm:5.50,mult:"t"}],C:[{ppm:26.30,mult:"t"},{ppm:32.10,mult:"t"},{ppm:68.10,mult:"t"},{ppm:97.60,mult:"t"}],note:"THF degradation product"},
 
-  // ÃÂ³-Butyrolactone Ã¢ÂÂ second oxidation intermediate (GC-MS rt 4.34 min)
-  {compound:"ÃÂ³-Butyrolactone (THF impurity)",solvent:"CDCl3",H:[{ppm:2.17,mult:"m"},{ppm:2.52,mult:"m"},{ppm:4.22,mult:"t"}],C:[{ppm:22.25,mult:"t"},{ppm:27.75,mult:"t"},{ppm:68.52,mult:"t"},{ppm:177.30,mult:"s"}],note:"THF degradation product"},
-  {compound:"ÃÂ³-Butyrolactone (THF impurity)",solvent:"DMSO",H:[{ppm:2.08,mult:"m"},{ppm:2.43,mult:"m"},{ppm:4.17,mult:"t"}],C:[{ppm:21.80,mult:"t"},{ppm:27.20,mult:"t"},{ppm:67.90,mult:"t"},{ppm:176.50,mult:"s"}],note:"THF degradation product"},
-  {compound:"ÃÂ³-Butyrolactone (THF impurity)",solvent:"D2O",H:[{ppm:2.22,mult:"m"},{ppm:2.60,mult:"m"},{ppm:4.28,mult:"t"}],C:[{ppm:22.60,mult:"t"},{ppm:28.10,mult:"t"},{ppm:69.00,mult:"t"},{ppm:178.20,mult:"s"}],note:"THF degradation product"},
-  {compound:"ÃÂ³-Butyrolactone (THF impurity)",solvent:"CD3OD",H:[{ppm:2.14,mult:"m"},{ppm:2.48,mult:"m"},{ppm:4.20,mult:"t"}],C:[{ppm:22.10,mult:"t"},{ppm:27.50,mult:"t"},{ppm:68.20,mult:"t"},{ppm:177.00,mult:"s"}],note:"THF degradation product"},
+  // ÃÂÃÂ³-Butyrolactone ÃÂ¢ÃÂÃÂ second oxidation intermediate (GC-MS rt 4.34 min)
+  {compound:"ÃÂÃÂ³-Butyrolactone (THF impurity)",solvent:"CDCl3",H:[{ppm:2.17,mult:"m"},{ppm:2.52,mult:"m"},{ppm:4.22,mult:"t"}],C:[{ppm:22.25,mult:"t"},{ppm:27.75,mult:"t"},{ppm:68.52,mult:"t"},{ppm:177.30,mult:"s"}],note:"THF degradation product"},
+  {compound:"ÃÂÃÂ³-Butyrolactone (THF impurity)",solvent:"DMSO",H:[{ppm:2.08,mult:"m"},{ppm:2.43,mult:"m"},{ppm:4.17,mult:"t"}],C:[{ppm:21.80,mult:"t"},{ppm:27.20,mult:"t"},{ppm:67.90,mult:"t"},{ppm:176.50,mult:"s"}],note:"THF degradation product"},
+  {compound:"ÃÂÃÂ³-Butyrolactone (THF impurity)",solvent:"D2O",H:[{ppm:2.22,mult:"m"},{ppm:2.60,mult:"m"},{ppm:4.28,mult:"t"}],C:[{ppm:22.60,mult:"t"},{ppm:28.10,mult:"t"},{ppm:69.00,mult:"t"},{ppm:178.20,mult:"s"}],note:"THF degradation product"},
+  {compound:"ÃÂÃÂ³-Butyrolactone (THF impurity)",solvent:"CD3OD",H:[{ppm:2.14,mult:"m"},{ppm:2.48,mult:"m"},{ppm:4.20,mult:"t"}],C:[{ppm:22.10,mult:"t"},{ppm:27.50,mult:"t"},{ppm:68.20,mult:"t"},{ppm:177.00,mult:"s"}],note:"THF degradation product"},
 
-  // 4-Hydroxybutanoic acid Ã¢ÂÂ ring-opened intermediate (GC-MS rt 9.32 min)
+  // 4-Hydroxybutanoic acid ÃÂ¢ÃÂÃÂ ring-opened intermediate (GC-MS rt 9.32 min)
   {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"CDCl3",H:[{ppm:1.90,mult:"m"},{ppm:2.45,mult:"t"},{ppm:3.62,mult:"t"},{ppm:9.50,mult:"br s"}],C:[{ppm:28.40,mult:"t"},{ppm:31.20,mult:"t"},{ppm:61.80,mult:"t"},{ppm:178.90,mult:"s"}],note:"THF degradation product"},
   {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"DMSO",H:[{ppm:1.73,mult:"m"},{ppm:2.26,mult:"t"},{ppm:3.43,mult:"t"},{ppm:4.40,mult:"br s"},{ppm:11.98,mult:"br s"}],C:[{ppm:27.90,mult:"t"},{ppm:30.60,mult:"t"},{ppm:60.30,mult:"t"},{ppm:174.20,mult:"s"}],note:"THF degradation product"},
   {compound:"4-Hydroxybutanoic acid (THF impurity)",solvent:"D2O",H:[{ppm:1.84,mult:"m"},{ppm:2.38,mult:"t"},{ppm:3.56,mult:"t"}],C:[{ppm:28.10,mult:"t"},{ppm:31.00,mult:"t"},{ppm:61.40,mult:"t"},{ppm:181.50,mult:"s"}],note:"THF degradation product"},
 
-  // Ã¢ÂÂÃ¢ÂÂ BENZYL ALCOHOL Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ BENZYL ALCOHOL ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   {compound:"Benzyl alcohol",solvent:"CDCl3",H:[{ppm:2.21,mult:"br s"},{ppm:4.63,mult:"s"},{ppm:7.28,mult:"m"},{ppm:7.33,mult:"m"}],C:[{ppm:64.84,mult:"t"},{ppm:126.96,mult:"t"},{ppm:127.49,mult:"t"},{ppm:128.41,mult:"t"},{ppm:140.89,mult:"s"}]},
   {compound:"Benzyl alcohol",solvent:"DMSO",H:[{ppm:4.42,mult:"d"},{ppm:5.12,mult:"t"},{ppm:7.24,mult:"m"},{ppm:7.31,mult:"m"}],C:[{ppm:62.60,mult:"t"},{ppm:126.78,mult:"t"},{ppm:127.35,mult:"t"},{ppm:128.22,mult:"t"},{ppm:141.00,mult:"s"}]},
   {compound:"Benzyl alcohol",solvent:"D2O",H:[{ppm:4.58,mult:"s"},{ppm:7.30,mult:"m"},{ppm:7.36,mult:"m"}],C:[{ppm:64.20,mult:"t"},{ppm:127.10,mult:"t"},{ppm:127.60,mult:"t"},{ppm:128.50,mult:"t"},{ppm:140.50,mult:"s"}]},
@@ -901,35 +801,35 @@ const DB = [
   {compound:"Benzyl alcohol",solvent:"acetone",H:[{ppm:4.54,mult:"d"},{ppm:4.12,mult:"br s"},{ppm:7.25,mult:"m"},{ppm:7.32,mult:"m"}],C:[{ppm:64.20,mult:"t"},{ppm:126.80,mult:"t"},{ppm:127.30,mult:"t"},{ppm:128.20,mult:"t"},{ppm:141.40,mult:"s"}]},
   {compound:"Benzyl alcohol",solvent:"THF",H:[{ppm:4.56,mult:"s"},{ppm:7.26,mult:"m"},{ppm:7.32,mult:"m"}],C:[{ppm:64.60,mult:"t"},{ppm:126.95,mult:"t"},{ppm:127.45,mult:"t"},{ppm:128.35,mult:"t"},{ppm:141.20,mult:"s"}]},
 
-  // Ã¢ÂÂÃ¢ÂÂ SOLVENT STABILIZERS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
-  // Amylene (2-methyl-2-butene) Ã¢ÂÂ stabilizer in CHCl3, DCM
-  {compound:"Amylene (2-methyl-2-butene)",solvent:"CDCl3",H:[{ppm:1.60,mult:"d"},{ppm:1.63,mult:"d"},{ppm:5.14,mult:"m"}],C:[{ppm:13.36,mult:"q"},{ppm:17.60,mult:"q"},{ppm:25.56,mult:"q"},{ppm:118.60,mult:"t"},{ppm:133.10,mult:"s"}],note:"CHClÃ¢ÂÂ stabilizer"},
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ SOLVENT STABILIZERS ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // Amylene (2-methyl-2-butene) ÃÂ¢ÃÂÃÂ stabilizer in CHCl3, DCM
+  {compound:"Amylene (2-methyl-2-butene)",solvent:"CDCl3",H:[{ppm:1.60,mult:"d"},{ppm:1.63,mult:"d"},{ppm:5.14,mult:"m"}],C:[{ppm:13.36,mult:"q"},{ppm:17.60,mult:"q"},{ppm:25.56,mult:"q"},{ppm:118.60,mult:"t"},{ppm:133.10,mult:"s"}],note:"CHClÃÂ¢ÃÂÃÂ stabilizer"},
   {compound:"Amylene (2-methyl-2-butene)",solvent:"CD2Cl2",H:[{ppm:1.60,mult:"d"},{ppm:1.63,mult:"d"},{ppm:5.14,mult:"m"}],C:[{ppm:13.36,mult:"q"},{ppm:17.60,mult:"q"},{ppm:25.56,mult:"q"},{ppm:118.60,mult:"t"},{ppm:133.10,mult:"s"}],note:"DCM stabilizer"},
 
-  // 2,6-Di-tert-butylpyridine (DTBP) Ã¢ÂÂ stabilizer in DCM, CDCl3
-  {compound:"2,6-Di-tert-butylpyridine",solvent:"CDCl3",H:[{ppm:1.42,mult:"s"},{ppm:7.20,mult:"d"},{ppm:7.55,mult:"t"}],C:[{ppm:29.98,mult:"q"},{ppm:35.60,mult:"s"},{ppm:119.90,mult:"t"},{ppm:136.10,mult:"t"},{ppm:162.00,mult:"s"}],note:"CDClÃ¢ÂÂ stabilizer"},
+  // 2,6-Di-tert-butylpyridine (DTBP) ÃÂ¢ÃÂÃÂ stabilizer in DCM, CDCl3
+  {compound:"2,6-Di-tert-butylpyridine",solvent:"CDCl3",H:[{ppm:1.42,mult:"s"},{ppm:7.20,mult:"d"},{ppm:7.55,mult:"t"}],C:[{ppm:29.98,mult:"q"},{ppm:35.60,mult:"s"},{ppm:119.90,mult:"t"},{ppm:136.10,mult:"t"},{ppm:162.00,mult:"s"}],note:"CDClÃÂ¢ÃÂÃÂ stabilizer"},
   {compound:"2,6-Di-tert-butylpyridine",solvent:"CD2Cl2",H:[{ppm:1.42,mult:"s"},{ppm:7.20,mult:"d"},{ppm:7.55,mult:"t"}],C:[{ppm:29.98,mult:"q"},{ppm:35.60,mult:"s"},{ppm:119.90,mult:"t"},{ppm:136.10,mult:"t"},{ppm:162.00,mult:"s"}],note:"DCM stabilizer"},
 
-  // 4-Methoxyphenol (MEHQ) Ã¢ÂÂ stabilizer in some acrylates and THF
+  // 4-Methoxyphenol (MEHQ) ÃÂ¢ÃÂÃÂ stabilizer in some acrylates and THF
   {compound:"4-Methoxyphenol (MEHQ)",solvent:"CDCl3",H:[{ppm:3.75,mult:"s"},{ppm:4.59,mult:"br s"},{ppm:6.72,mult:"s"},{ppm:6.76,mult:"s"}],C:[{ppm:55.71,mult:"q"},{ppm:115.49,mult:"t"},{ppm:116.05,mult:"t"},{ppm:148.08,mult:"s"},{ppm:153.26,mult:"s"}],note:"THF stabilizer"},
   {compound:"4-Methoxyphenol (MEHQ)",solvent:"DMSO",H:[{ppm:3.65,mult:"s"},{ppm:6.60,mult:"s"},{ppm:6.64,mult:"s"},{ppm:8.55,mult:"br s"}],C:[{ppm:55.47,mult:"q"},{ppm:114.78,mult:"t"},{ppm:115.89,mult:"t"},{ppm:147.83,mult:"s"},{ppm:152.68,mult:"s"}],note:"THF stabilizer"},
 
-  // Propylene oxide Ã¢ÂÂ stabilizer in DCM, CHCl3
-  {compound:"Propylene oxide",solvent:"CDCl3",H:[{ppm:1.35,mult:"d"},{ppm:2.46,mult:"dd"},{ppm:2.77,mult:"t"},{ppm:3.09,mult:"m"}],C:[{ppm:18.57,mult:"q"},{ppm:46.71,mult:"t"},{ppm:51.72,mult:"t"},{ppm:57.08,mult:"t"}],note:"CHClÃ¢ÂÂ stabilizer"},
+  // Propylene oxide ÃÂ¢ÃÂÃÂ stabilizer in DCM, CHCl3
+  {compound:"Propylene oxide",solvent:"CDCl3",H:[{ppm:1.35,mult:"d"},{ppm:2.46,mult:"dd"},{ppm:2.77,mult:"t"},{ppm:3.09,mult:"m"}],C:[{ppm:18.57,mult:"q"},{ppm:46.71,mult:"t"},{ppm:51.72,mult:"t"},{ppm:57.08,mult:"t"}],note:"CHClÃÂ¢ÃÂÃÂ stabilizer"},
   {compound:"Propylene oxide",solvent:"CD2Cl2",H:[{ppm:1.35,mult:"d"},{ppm:2.46,mult:"dd"},{ppm:2.77,mult:"t"},{ppm:3.09,mult:"m"}],C:[{ppm:18.57,mult:"q"},{ppm:46.71,mult:"t"},{ppm:51.72,mult:"t"},{ppm:57.08,mult:"t"}],note:"DCM stabilizer"},
 ];
 
-const SN={CDCl3:"CDClÃ¢ÂÂ",DMSO:"DMSO-dÃ¢ÂÂ",D2O:"DÃ¢ÂÂO",CD3OD:"Methanol-dÃ¢ÂÂ",acetone:"Acetone-dÃ¢ÂÂ",THF:"THF-dÃ¢ÂÂ",toluene:"Toluene-dÃ¢ÂÂ",benzene:"Benzene-dÃ¢ÂÂ",pyridine:"Pyridine-dÃ¢ÂÂ",CD2Cl2:"CDÃ¢ÂÂClÃ¢ÂÂ",DMF:"DMF-dÃ¢ÂÂ",ACN:"Acetonitrile-dÃ¢ÂÂ"};
+const SN={CDCl3:"CDClÃÂ¢ÃÂÃÂ",DMSO:"DMSO-dÃÂ¢ÃÂÃÂ",D2O:"DÃÂ¢ÃÂÃÂO",CD3OD:"Methanol-dÃÂ¢ÃÂÃÂ",acetone:"Acetone-dÃÂ¢ÃÂÃÂ",THF:"THF-dÃÂ¢ÃÂÃÂ",toluene:"Toluene-dÃÂ¢ÃÂÃÂ",benzene:"Benzene-dÃÂ¢ÃÂÃÂ",pyridine:"Pyridine-dÃÂ¢ÃÂÃÂ",CD2Cl2:"CDÃÂ¢ÃÂÃÂClÃÂ¢ÃÂÃÂ",DMF:"DMF-dÃÂ¢ÃÂÃÂ",ACN:"Acetonitrile-dÃÂ¢ÃÂÃÂ"};
 const ML={s:"singlet",d:"doublet",t:"triplet",q:"quartet",m:"multiplet","br s":"br. singlet",sep:"septet"};
 const COLORS=['#c0392b','#1a5276','#117a65','#7d3c98','#b7770d','#1e6b3c','#2e86c1','#a04000','#5d6d7e','#943126','#0e6655','#6c3483'];
 const allCompounds=[...new Set(DB.map(e=>e.compound))];
 
-// Ã¢ÂÂÃ¢ÂÂ FEATURE FLAG Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ FEATURE FLAG ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 // Set to false to remove all molecular structures instantly
 const SHOW_STRUCTURES = false;
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
-// Proper skeletal bond-line SVG structures (100ÃÂ70 viewBox, 120ÃÂ° bond angles)
+// Proper skeletal bond-line SVG structures (100ÃÂÃÂ70 viewBox, 120ÃÂÃÂ° bond angles)
 // S=stroke, W=1.5, font=10px sans-serif for heteroatoms only
 const S='stroke="currentColor" stroke-width="1.5" stroke-linecap="round"';
 const T=(x,y,t,a='middle',fs=10)=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${fs}" font-family="sans-serif" fill="currentColor">${t}</text>`;
@@ -947,7 +847,7 @@ const STRUCTURES = {
     ${T(50,31,'solvent',undefined,9)} ${T(50,44,'residual',undefined,9)}
   </svg>`,
 
-  // Cl2CH2 Ã¢ÂÂ tetrahedral central C, two Cl up, two H down
+  // Cl2CH2 ÃÂ¢ÃÂÃÂ tetrahedral central C, two Cl up, two H down
   "Dichloromethane (DCM)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
     <line x1="50" y1="35" x2="22" y2="20" ${S}/>
     <line x1="50" y1="35" x2="78" y2="20" ${S}/>
@@ -1057,7 +957,7 @@ const STRUCTURES = {
     <circle cx="50" cy="34" r="12" fill="none" stroke="currentColor" stroke-width="1"/>
   </svg>`,
 
-  // CHCl3 Ã¢ÂÂ C at centre, 3 Cl and 1 H
+  // CHCl3 ÃÂ¢ÃÂÃÂ C at centre, 3 Cl and 1 H
   "Chloroform":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
     <line x1="50" y1="32" x2="20" y2="18" ${S}/>
     <line x1="50" y1="32" x2="80" y2="18" ${S}/>
@@ -1087,7 +987,7 @@ const STRUCTURES = {
     ${T(62,38,'S')} ${T(62,20,'O')}
   </svg>`,
 
-  // CH3-CÃ¢ÂÂ¡N  triple bond
+  // CH3-CÃÂ¢ÃÂÃÂ¡N  triple bond
   "Acetonitrile":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
     <line x1="20" y1="35" x2="45" y2="35" ${S}/>
     <line x1="45" y1="32" x2="72" y2="32" stroke="currentColor" stroke-width="1.5"/>
@@ -1103,7 +1003,7 @@ const STRUCTURES = {
     ${T(50,9,'N')}
   </svg>`,
 
-  // N(CH2CH3)3 Ã¢ÂÂ N centre, 3 Et arms in zigzag
+  // N(CH2CH3)3 ÃÂ¢ÃÂÃÂ N centre, 3 Et arms in zigzag
   "Triethylamine (TEA)":`<svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
     <line x1="50" y1="36" x2="30" y2="24" ${S}/>
     <line x1="30" y1="24" x2="14" y2="36" ${S}/>
@@ -1125,7 +1025,7 @@ const STRUCTURES = {
     <line x1="60" y1="35" x2="60" y2="20" ${S}/>
     ${T(28,33,'Si')} ${T(44,33,'O')} ${T(60,33,'Si')} ${T(76,33,'O',undefined,9)}
     ${T(28,17,'Me',undefined,8)} ${T(60,17,'Me',undefined,8)}
-    ${T(87,38,'Ã¢ÂÂ¦',undefined,12)}
+    ${T(87,38,'ÃÂ¢ÃÂÃÂ¦',undefined,12)}
   </svg>`,
 
   // phenol ring with OH, and two tBu groups at 2,6, methyl at 4
@@ -1233,7 +1133,7 @@ function addPeakRow(ppmVal='', multVal='any'){
     <div class="field"><label>Multiplicity</label>
       <select id="mult-${id}">${multOpts(multVal)}</select>
     </div>
-    <button class="btn-remove-peak" onclick="removePeakRow(${id})" title="Remove">ÃÂ</button>`;
+    <button class="btn-remove-peak" onclick="removePeakRow(${id})" title="Remove">ÃÂÃÂ</button>`;
   wrap.appendChild(div);
 }
 
@@ -1254,7 +1154,7 @@ function getPeakInputs(){
   }).filter(p=>p.valid||p.mult!=='any');
 }
 
-// confidence: 0Ã¢ÂÂ100
+// confidence: 0ÃÂ¢ÃÂÃÂ100
 function calcConfidence(inputPeaks, dbEntry, isH, tol){
   const dbPeaks=isH?dbEntry.H:dbEntry.C;
   if(!dbPeaks.length) return {score:0,matched:0,detail:[]};
@@ -1281,7 +1181,7 @@ function calcConfidence(inputPeaks, dbEntry, isH, tol){
 
   if(!matchedCount) return {score:0,matched:0,detail:[]};
 
-  // fraction of input peaks matched ÃÂ average ppm proximity
+  // fraction of input peaks matched ÃÂÃÂ average ppm proximity
   const fracMatched=matchedCount/validInputs.length;
   const avgPpmScore=detail.reduce((s,d)=>s+d.ppmScore,0)/detail.length;
   // also reward matching more of the compound's own peaks
@@ -1344,10 +1244,10 @@ function doSearch(){
   const xMin=lo-pad, xMax=hi+pad;
 
   const svKeys=SV_ORDER.filter(s=>bySolvent[s]);
-  const modeLabel=isH?'ÃÂ¹H':'ÃÂ¹ÃÂ³C';
+  const modeLabel=isH?'ÃÂÃÂ¹H':'ÃÂÃÂ¹ÃÂÃÂ³C';
   let cardIdx=0;
 
-  let html=`<div class="results-meta">${candidates.length} candidate${candidates.length!==1?'s':''} across ${svKeys.length} solvent${svKeys.length!==1?'s':''} ÃÂ· ${modeLabel} NMR ÃÂ· sorted by confidence</div>`;
+  let html=`<div class="results-meta">${candidates.length} candidate${candidates.length!==1?'s':''} across ${svKeys.length} solvent${svKeys.length!==1?'s':''} ÃÂÃÂ· ${modeLabel} NMR ÃÂÃÂ· sorted by confidence</div>`;
 
   svKeys.forEach((sv,gi)=>{
     const group=bySolvent[sv];
@@ -1359,7 +1259,7 @@ function doSearch(){
           <span class="sv-group-name">${SN[sv]||sv}</span>
           <span class="sv-group-count">${group.length} match${group.length!==1?'es':''}</span>
         </div>
-        <span class="sv-group-arrow${isOpen?' open':''}" id="arr-${gid}">Ã¢ÂÂ¾</span>
+        <span class="sv-group-arrow${isOpen?' open':''}" id="arr-${gid}">ÃÂ¢ÃÂÃÂ¾</span>
       </div>
       <div class="sv-group-body${isOpen?' open':''}" id="body-${gid}">`;
 
@@ -1369,12 +1269,12 @@ function doSearch(){
       const cid=`mini${cardIdx++}`;
       const cc=confClass(conf.score);
       const dbPeaks=isH?entry.H:entry.C;
-      const peakSummary=dbPeaks.map(p=>`${p.ppm.toFixed(2)} (${p.mult})`).join(' ÃÂ· ');
+      const peakSummary=dbPeaks.map(p=>`${p.ppm.toFixed(2)} (${p.mult})`).join(' ÃÂÃÂ· ');
 
       // matched peak detail line
       let matchDetail='';
       if(conf.detail&&conf.detail.length){
-        matchDetail=conf.detail.map(d=>`${d.inp.pVal.toFixed(2)}Ã¢ÂÂ${d.matched.ppm.toFixed(2)} ÃÂ${d.delta.toFixed(2)}`).join(' ÃÂ· ');
+        matchDetail=conf.detail.map(d=>`${d.inp.pVal.toFixed(2)}ÃÂ¢ÃÂÃÂ${d.matched.ppm.toFixed(2)} ÃÂÃÂ${d.delta.toFixed(2)}`).join(' ÃÂÃÂ· ');
       }
 
       html+=`<div class="result-card">
@@ -1504,7 +1404,7 @@ function updateBrowseBlock(bid,name,isH){
   const body=document.getElementById('body-'+bid);
   if(!entry){body.innerHTML='<div class="bc-no-data">no data</div>';return;}
   const peaks=isH?entry.H:entry.C;
-  if(!peaks.length){body.innerHTML='<div class="bc-no-data">no '+(isH?'ÃÂ¹H':'ÃÂ¹ÃÂ³C')+' data in this solvent</div>';return;}
+  if(!peaks.length){body.innerHTML='<div class="bc-no-data">no '+(isH?'ÃÂÃÂ¹H':'ÃÂÃÂ¹ÃÂÃÂ³C')+' data in this solvent</div>';return;}
 
   // build peak table
   let rows='';
@@ -1522,7 +1422,7 @@ function updateBrowseBlock(bid,name,isH){
   const miniMult=peaks[0].mult;
 
   body.innerHTML=`
-    <div class="bc-mode-label"><span>${isH?'ÃÂ¹H':'ÃÂ¹ÃÂ³C'} peaks in ${SN[sv]||sv}</span><span>ppm</span></div>
+    <div class="bc-mode-label"><span>${isH?'ÃÂÃÂ¹H':'ÃÂÃÂ¹ÃÂÃÂ³C'} peaks in ${SN[sv]||sv}</span><span>ppm</span></div>
     ${getStructureSVG(name)}
     ${rows}
     <div class="bc-mini-wrap">
@@ -1699,7 +1599,7 @@ function drawSpectrum(){
       ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke();
     });
   });
-  document.getElementById('sp-title').textContent=`${isH?'ÃÂ¹H':'ÃÂ¹ÃÂ³C'} NMR ÃÂ· ${SN[sv]||sv}${fc!=='all'?' ÃÂ· '+fc:''}`;
+  document.getElementById('sp-title').textContent=`${isH?'ÃÂÃÂ¹H':'ÃÂÃÂ¹ÃÂÃÂ³C'} NMR ÃÂÃÂ· ${SN[sv]||sv}${fc!=='all'?' ÃÂÃÂ· '+fc:''}`;
   document.getElementById('sp-legend').innerHTML=cmpdList.map(c=>{
     const col=spData.find(p=>p.compound===c)?.color||'#999';
     return `<div class="legend-item"><div class="legend-dot" style="background:${col}"></div>${c}</div>`;
