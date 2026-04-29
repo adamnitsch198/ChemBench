@@ -3,676 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NMR Solvent Peaks — St. Thomas Chemistry</title>
+<title>NMR Solvent Peaks - ChemBench</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap"></noscript>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  /* UST Brand Colors */
-  --ust-purple:    #512773;
-  --ust-purple2:   #3d1d57;
-  --ust-purple3:   #6b3a8e;
-  --ust-gray:      #98999B;
-  --ust-gray2:     #5a5b5d;
-  --ust-gray3:     #d4d4d5;
-  --ust-gray4:     #f0eff2;
-
-  /* Mapped roles */
-  --ink:           #1a1218;
-  --ink2:          #3d3442;
-  --ink3:          #6b6070;
-  --paper:         #faf9f7;
-  --paper2:        #f3f0f7;
-  --paper3:        #ebe5f2;
-  --rule:          #d6cde0;
-  --rule2:         #512773;
-  --accent:        #512773;
-  --accent2:       #3d1d57;
-  --accent-light:  #6b3a8e;
-  --accent-bg:     #f3f0f7;
-  --accent-pale:   #ebe5f2;
-
-  /* Status colors */
-  --green:         #1a5c2e;
-  --green-bg:      #ebf3ee;
-  --amber:         #7a4f00;
-  --amber-bg:      #fdf5e6;
-  --blue:          #1a3a6c;
-  --blue-bg:       #ebf0f8;
-
-  /* NMR peaks */
-  --peak-h:        #512773;
-  --peak-c:        #1a3a6c;
-  --peak-h-fill:   rgba(81,39,115,0.08);
-  --peak-c-fill:   rgba(26,58,108,0.08);
-  --axis:          #98999B;
-  --gridline:      #ebe5f2;
-
-  --mono:    'DM Mono', monospace;
-  --sans:    'DM Sans', sans-serif;
-  --display: 'Bebas Neue', sans-serif;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#2563eb;--blue2:#1d4ed8;--blue3:#1e40af;
+  --blue-light:#eff6ff;--blue-mid:#dbeafe;--blue-border:#bfdbfe;
+  --ink:#0f172a;--ink2:#334155;--ink3:#64748b;
+  --bg:#f8faff;--white:#ffffff;--rule:#e2e8f0;
+  --peak-h:#2563eb;--peak-c:#7c3aed;
+  --peak-h-fill:rgba(37,99,235,0.08);--peak-c-fill:rgba(124,58,237,0.08);
+  --axis:#94a3b8;--gridline:#f1f5f9;
+  --mono:'DM Mono',monospace;--sans:'Inter',sans-serif;
 }
+html{background:var(--bg);}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
 
-html { background: var(--paper); }
+/* NAV */
+.topnav{background:var(--white);border-bottom:1px solid var(--rule);box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.topnav-inner{max-width:840px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.topnav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.topnav-logo{width:28px;height:28px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.topnav-logo svg{width:14px;height:14px;}
+.topnav-name{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;}
+.topnav-name span{color:var(--blue);}
+.topnav-sub{font-size:11px;color:var(--ink3);font-family:var(--mono);}
 
-body {
-  font-family: var(--sans);
-  background: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+.layout{max-width:840px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;}
+.page-title{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-0.03em;margin-bottom:4px;}
+.page-title span{color:var(--blue);}
+.page-sub{font-size:12px;color:var(--ink3);font-family:var(--mono);}
+.page-sub a{color:var(--blue);text-decoration:none;}
+.page-sub a:hover{text-decoration:underline;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:2rem;background:var(--blue-mid);border-radius:12px;padding:4px;}
+.tab{flex:1;padding:9px 8px;border:none;background:transparent;border-radius:9px;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s;text-align:center;}
+.tab.active{background:var(--white);color:var(--blue);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.tab:hover:not(.active){color:var(--ink2);}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:14px;}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-family:var(--mono);}
+select,input[type=number],input[type=text]{
+  width:100%;height:40px;padding:0 12px;
+  background:var(--white);border:1.5px solid var(--rule);border-radius:9px;
+  color:var(--ink);font-family:var(--sans);font-size:13px;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+  transition:all 0.15s;
 }
+input[type=number],input[type=text]{background-image:none;padding-right:12px;font-family:var(--mono);}
+select:focus,input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-.layout { max-width: 780px; margin: 0 auto; padding: 0 0 5rem; }
+/* CARD GROUPS */
+.card-group{background:var(--white);border:1.5px solid var(--rule);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.group-label{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:0.07em;text-transform:uppercase;font-family:var(--mono);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.group-label::after{content:'';flex:1;height:1px;background:var(--blue-border);}
 
-/* ── HEADER ── */
-header {
-  background: var(--ust-purple);
-  padding: 2rem 2rem 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: end;
-  gap: 1rem;
-  border-bottom: 4px solid var(--ust-purple2);
-}
+/* BUTTON */
+.btn{width:100%;height:42px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;transition:all 0.15s;box-shadow:0 4px 12px rgba(37,99,235,0.3);}
+.btn:hover{background:var(--blue2);box-shadow:0 6px 18px rgba(37,99,235,0.4);transform:translateY(-1px);}
+.btn:active{transform:scale(0.99);}
 
-.app-title {
-  font-family: var(--display);
-  font-size: 56px;
-  letter-spacing: 0.04em;
-  color: #ffffff;
-  line-height: 0.9;
-  margin-bottom: 10px;
-}
+/* PEAK ROWS */
+.peak-row-wrap{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;}
+.peak-row-wrap .field{margin-bottom:0;}
+.btn-remove-peak{height:40px;width:40px;border:1.5px solid var(--rule);border-radius:9px;background:transparent;color:var(--ink3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.btn-remove-peak:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2;}
+.btn-add-peak{margin-top:6px;padding:0 16px;height:36px;border:1.5px dashed var(--blue-border);border-radius:9px;background:transparent;color:var(--blue);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-add-peak:hover{border-color:var(--blue);background:var(--blue-light);}
 
-.app-title span { color: rgba(255,255,255,0.55); }
+/* RESULTS */
+.results-area{margin-top:1.5rem;}
+.results-meta{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:14px;letter-spacing:0.04em;display:flex;align-items:center;gap:8px;}
+.results-meta::before{content:'';width:16px;height:2px;background:var(--blue);border-radius:2px;}
 
-.app-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: rgba(255,255,255,0.6);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
+/* CONFIDENCE */
+.conf-badge{display:inline-block;margin-top:4px;padding:2px 9px;border-radius:20px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.03em;}
+.conf-high{background:#dcfce7;color:#15803d;}
+.conf-mid{background:#fef9c3;color:#a16207;}
+.conf-low{background:var(--blue-light);color:var(--blue);}
+.matched-peaks{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-top:4px;}
 
-.app-sub a { color: rgba(255,255,255,0.85); text-decoration: none; }
-.app-sub a:hover { color: #ffffff; text-decoration: underline; }
+/* SOLVENT GROUP */
+.sv-group{border:1.5px solid var(--rule);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color 0.15s;}
+.sv-group:hover{border-color:var(--blue-border);}
+.sv-group-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;background:var(--bg);transition:background 0.12s;}
+.sv-group-header:hover{background:var(--blue-light);}
+.sv-group-left{display:flex;align-items:center;gap:10px;}
+.sv-group-name{font-size:13px;font-weight:700;color:var(--ink);font-family:var(--mono);}
+.sv-group-count{font-size:10px;color:var(--blue);background:var(--blue-light);border:1px solid var(--blue-border);border-radius:20px;padding:2px 9px;font-family:var(--mono);font-weight:600;}
+.sv-group-arrow{font-size:10px;color:var(--ink3);transition:transform 0.2s;flex-shrink:0;}
+.sv-group-arrow.open{transform:rotate(180deg);color:var(--blue);}
+.sv-group-body{display:none;border-top:1px solid var(--rule);padding:10px 12px;background:var(--white);}
+.sv-group-body.open{display:block;}
 
-.header-meta {
-  text-align: right;
-  font-family: var(--mono);
-  font-size: 9px;
-  color: rgba(255,255,255,0.5);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 2;
-  border-left: 1px solid rgba(255,255,255,0.2);
-  padding-left: 1.2rem;
-}
+/* RESULT CARD */
+.result-card{background:var(--bg);border:1.5px solid var(--rule);border-radius:10px;padding:12px 14px;margin-bottom:6px;transition:all 0.15s;border-left:3px solid transparent;}
+.result-card:last-child{margin-bottom:0;}
+.result-card:hover{border-left-color:var(--blue);background:var(--blue-light);box-shadow:0 2px 8px rgba(37,99,235,0.08);}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.rc-left{flex:1;min-width:0;}
+.rc-compound{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.rc-right{text-align:right;flex-shrink:0;}
+.rc-ppm{font-family:var(--mono);font-size:22px;font-weight:800;color:var(--blue);line-height:1;margin-bottom:2px;}
+.rc-mult{font-size:10px;color:var(--ink3);font-family:var(--mono);letter-spacing:0.04em;}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:6px;margin-top:4px;}
+.tag-h{background:#fef3c7;color:#92400e;}
+.tag-c{background:var(--blue-light);color:var(--blue3);}
+.mini-spectrum{width:100%;height:60px;display:block;border-radius:6px;}
+.empty{text-align:center;padding:3rem 1.5rem;color:var(--ink3);font-size:12px;border:1.5px dashed var(--rule);border-radius:12px;font-family:var(--mono);}
 
-/* ── TABS ── */
-.tabs {
-  display: flex;
-  border-bottom: 2px solid var(--rule);
-  background: var(--paper2);
-  padding: 0 2rem;
-}
+/* BROWSE */
+.browse-filter{margin-bottom:1.5rem;display:flex;gap:10px;}
+.browse-filter input[type=text]{flex:1;}
+.browse-mode-toggle{display:flex;gap:3px;background:var(--blue-mid);border-radius:10px;padding:3px;height:40px;flex-shrink:0;}
+.bmt{padding:0 16px;border:none;background:transparent;border-radius:8px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
+.bmt.active{background:var(--white);color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,0.1);}
 
-.tab {
-  padding: 12px 0;
-  margin-right: 32px;
-  border: none;
-  background: transparent;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  cursor: pointer;
-  transition: color 0.15s;
-  position: relative;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-}
-.tab:hover { color: var(--accent); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.bc-block{background:var(--white);border:1.5px solid var(--rule);border-radius:12px;margin-bottom:6px;overflow:hidden;}
+.bc-block:hover{border-color:var(--blue-border);}
+.bc-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:10px;background:var(--bg);}
+.bc-name{font-size:13px;font-weight:600;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bc-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.bc-sv-sel{height:30px;font-size:11px;padding:0 26px 0 8px;border-radius:8px;border:1.5px solid var(--rule);background:var(--white);color:var(--ink);font-family:var(--mono);cursor:pointer;min-width:110px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;}
+.bc-sv-sel:focus{outline:none;border-color:var(--blue);}
+.bc-toggle{padding:4px 12px;border:1.5px solid var(--rule);border-radius:8px;background:transparent;color:var(--ink3);font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.bc-toggle:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light);}
+.bc-body{display:none;border-top:1px solid var(--rule);padding:12px 14px;background:var(--white);}
+.bc-body.open{display:block;}
+.bc-mode-label{font-family:var(--mono);font-size:10px;letter-spacing:0.07em;color:var(--ink3);text-transform:uppercase;padding:6px 0 5px;border-bottom:1px solid var(--rule);margin-bottom:4px;display:flex;justify-content:space-between;}
+.bc-peak-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--gridline);}
+.bc-peak-row:last-child{border-bottom:none;}
+.bc-peak-label{color:var(--ink2);font-size:12px;font-family:var(--mono);}
+.bc-peak-val{font-family:var(--mono);font-size:13px;color:var(--blue);font-weight:600;}
+.bc-no-data{font-size:11px;color:var(--ink3);padding:6px 0;font-family:var(--mono);}
+.bc-mini-wrap{margin-top:10px;}
 
-/* ── CONTENT ── */
-.content-pad { padding: 2rem 2rem; }
+/* SPECTRUM */
+.sp-wrap{background:var(--white);border:1.5px solid var(--rule);border-radius:14px;padding:18px;margin-top:1.5rem;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.sp-title-bar{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:12px;letter-spacing:0.06em;border-bottom:1px solid var(--gridline);padding-bottom:10px;}
+canvas#sp-canvas{width:100%;display:block;cursor:crosshair;}
+.legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink2);font-family:var(--mono);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sp-tooltip{position:absolute;background:var(--ink);border-radius:8px;padding:7px 12px;font-family:var(--mono);font-size:11px;color:#fff;pointer-events:none;display:none;white-space:nowrap;z-index:10;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+.sp-hint{margin-top:8px;font-size:11px;color:var(--ink3);font-family:var(--mono);}
 
-/* ── FORM ELEMENTS ── */
-.field { margin-bottom: 14px; }
+/* MOL STRUCTURE */
+.mol-structure{width:80px;height:60px;flex-shrink:0;color:var(--ink2);}
+.mol-structure svg{width:100%;height:100%;}
+.bc-body .mol-structure{width:100%;height:80px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--rule);border-radius:8px;background:var(--bg);}
+.bc-body .mol-structure svg{width:auto;height:100%;max-width:160px;}
 
-label {
-  display: block;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: 5px;
-  font-weight: 500;
-}
+/* FOOTER */
+.app-footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:11px;color:var(--ink3);font-family:var(--mono);line-height:2;}
+.app-footer a{color:var(--blue);text-decoration:none;}
 
-select, input[type=number], input[type=text] {
-  width: 100%;
-  height: 40px;
-  padding: 0 12px;
-  background: #fff;
-  border: 1.5px solid var(--rule);
-  border-radius: 0;
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 12px;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2398999B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-  transition: border-color 0.15s;
-}
-input[type=number], input[type=text] { background-image: none; padding-right: 12px; }
-select:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(81,39,115,0.1); }
-
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-/* ── BUTTON ── */
-.btn {
-  width: 100%;
-  height: 44px;
-  background: var(--ust-purple);
-  color: #ffffff;
-  border: none;
-  border-radius: 0;
-  font-family: var(--display);
-  font-size: 18px;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.15s;
-}
-.btn:hover { background: var(--ust-purple2); }
-.btn:active { opacity: 0.9; }
-
-/* ── PEAK ROWS ── */
-.peak-row-wrap {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 8px;
-  align-items: end;
-  margin-bottom: 8px;
-}
-.peak-row-wrap .field { margin-bottom: 0; }
-
-.btn-remove-peak {
-  height: 40px; width: 40px;
-  border: 1.5px solid var(--rule);
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink3);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-.btn-remove-peak:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
-
-.btn-add-peak {
-  margin-top: 6px;
-  padding: 0 16px;
-  height: 36px;
-  border: 1.5px dashed var(--rule);
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink3);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-add-peak:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
-
-/* ── RESULTS ── */
-.results-area { margin-top: 2rem; }
-
-.results-meta {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--ink3);
-  margin-bottom: 16px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule);
-}
-
-/* ── CONFIDENCE BADGE ── */
-.conf-badge {
-  display: inline-block;
-  margin-top: 4px;
-  padding: 2px 8px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  border-radius: 0;
-}
-.conf-high { background: var(--green-bg);  color: var(--green); }
-.conf-mid  { background: var(--amber-bg);  color: var(--amber); }
-.conf-low  { background: var(--accent-pale); color: var(--accent); }
-
-.matched-peaks { font-size: 10px; color: var(--ink3); font-family: var(--mono); margin-top: 4px; }
-
-/* ── SOLVENT GROUP ── */
-.sv-group {
-  border: 1.5px solid var(--rule);
-  margin-bottom: 6px;
-  overflow: hidden;
-}
-
-.sv-group-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 14px;
-  cursor: pointer; user-select: none;
-  background: var(--paper2);
-  transition: background 0.12s;
-}
-.sv-group-header:hover { background: var(--paper3); }
-
-.sv-group-left { display: flex; align-items: center; gap: 12px; }
-
-.sv-group-name {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: 0.04em;
-}
-
-.sv-group-count {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--accent);
-  background: var(--accent-pale);
-  padding: 2px 8px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.sv-group-arrow { font-size: 10px; color: var(--ink3); transition: transform 0.2s; flex-shrink: 0; }
-.sv-group-arrow.open { transform: rotate(180deg); color: var(--accent); }
-
-.sv-group-body { display: none; border-top: 1px solid var(--rule); padding: 10px 12px; background: #fff; }
-.sv-group-body.open { display: block; }
-
-/* ── RESULT CARD ── */
-.result-card {
-  background: #fff;
-  border: 1px solid var(--rule);
-  border-left: 3px solid transparent;
-  padding: 12px 14px;
-  margin-bottom: 5px;
-  transition: border-left-color 0.15s;
-}
-.result-card:last-child { margin-bottom: 0; }
-.result-card:hover { border-left-color: var(--ust-purple); }
-
-.rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
-.rc-left { flex: 1; min-width: 0; }
-.rc-compound { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
-.rc-right { text-align: right; flex-shrink: 0; }
-.rc-ppm {
-  font-family: var(--display);
-  font-size: 28px;
-  color: var(--ust-purple);
-  line-height: 1;
-  margin-bottom: 2px;
-  letter-spacing: 0.04em;
-}
-.rc-mult { font-size: 9px; color: var(--ink3); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
-
-.tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 9px;
-  padding: 1px 7px;
-  margin-top: 4px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.tag-h { background: var(--amber-bg); color: var(--amber); }
-.tag-c { background: var(--blue-bg);  color: var(--blue); }
-
-.mini-spectrum { width: 100%; height: 60px; display: block; }
-
-.empty {
-  text-align: center;
-  padding: 3rem 1.5rem;
-  color: var(--ink3);
-  font-size: 11px;
-  border: 1.5px dashed var(--rule);
-  font-family: var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* ── BROWSE ── */
-.browse-filter { margin-bottom: 1.5rem; display: flex; gap: 10px; }
-.browse-filter input[type=text] { flex: 1; }
-
-.browse-mode-toggle {
-  display: flex;
-  height: 40px;
-  border: 1.5px solid var(--rule);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.bmt {
-  padding: 0 18px;
-  border: none;
-  background: transparent;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  cursor: pointer;
-  transition: all 0.15s;
-  border-right: 1.5px solid var(--rule);
-}
-.bmt:last-child { border-right: none; }
-.bmt.active { background: var(--ust-purple); color: #fff; }
-.bmt:not(.active):hover { background: var(--accent-bg); color: var(--accent); }
-
-.bc-block { border: 1.5px solid var(--rule); margin-bottom: 5px; overflow: hidden; }
-.bc-block:hover { border-color: var(--ust-gray); }
-
-.bc-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; gap: 10px; background: var(--paper2); }
-.bc-name { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-.bc-sv-sel {
-  height: 28px; font-size: 10px; padding: 0 22px 0 8px;
-  border: 1px solid var(--rule); background: #fff; color: var(--ink);
-  font-family: var(--mono); cursor: pointer; min-width: 100px;
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2398999B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat; background-position: right 6px center; border-radius: 0;
-}
-.bc-sv-sel:focus { outline: none; border-color: var(--accent); }
-
-.bc-toggle {
-  padding: 3px 10px; border: 1px solid var(--rule); background: transparent;
-  color: var(--ink3); font-family: var(--mono); font-size: 9px;
-  letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap; border-radius: 0;
-}
-.bc-toggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
-
-.bc-body { display: none; border-top: 1px solid var(--rule); padding: 12px 14px; background: #fff; }
-.bc-body.open { display: block; }
-
-.bc-mode-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--ink3);
-  text-transform: uppercase; padding: 6px 0 5px; border-bottom: 1px solid var(--rule);
-  margin-bottom: 4px; display: flex; justify-content: space-between;
-}
-.bc-peak-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--gridline); }
-.bc-peak-row:last-child { border-bottom: none; }
-.bc-peak-label { color: var(--ink2); font-size: 11px; font-family: var(--mono); }
-.bc-peak-val { font-family: var(--mono); font-size: 13px; color: var(--ust-purple); font-weight: 500; }
-.bc-no-data { font-size: 10px; color: var(--ink3); padding: 6px 0; font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
-.bc-mini-wrap { margin-top: 10px; }
-
-/* ── SPECTRUM ── */
-.sp-wrap {
-  background: #fff;
-  border: 1.5px solid var(--rule);
-  border-top: 3px solid var(--ust-purple);
-  padding: 16px;
-  margin-top: 1.5rem;
-  position: relative;
-}
-
-.sp-title-bar {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--ink3);
-  margin-bottom: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--gridline);
-  padding-bottom: 8px;
-}
-
-canvas#sp-canvas { width: 100%; display: block; cursor: crosshair; }
-
-.legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--ink2); font-family: var(--mono); }
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-.sp-tooltip {
-  position: absolute;
-  background: var(--ust-purple);
-  padding: 6px 12px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: #fff;
-  pointer-events: none;
-  display: none;
-  white-space: nowrap;
-  z-index: 10;
-  line-height: 1.7;
-}
-
-.sp-hint { margin-top: 8px; font-size: 10px; color: var(--ink3); font-family: var(--mono); letter-spacing: 0.04em; }
-
-/* ── MOL STRUCTURE ── */
-.mol-structure { width: 80px; height: 60px; flex-shrink: 0; color: var(--ink2); }
-.mol-structure svg { width: 100%; height: 100%; }
-.bc-body .mol-structure { width: 100%; height: 80px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--rule); background: var(--paper2); }
-.bc-body .mol-structure svg { width: auto; height: 100%; max-width: 160px; }
-
-/* ── SECTION BLOCKS ── */
-.section-row {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  border: 1.5px solid var(--rule);
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.section-label-vert {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  font-family: var(--display);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  color: #fff;
-  background: var(--ust-purple);
-  padding: 12px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  min-width: 32px;
-}
-
-.section-content { padding: 16px; flex: 1; background: var(--paper2); }
-
-/* ── FOOTER ── */
-footer {
-  margin-top: 3rem;
-  padding: 1.5rem 2rem 0;
-  border-top: 3px solid var(--ust-purple);
-  font-size: 10px;
-  color: var(--ink3);
-  font-family: var(--mono);
-  line-height: 2;
-  letter-spacing: 0.04em;
-}
-
-@media (max-width: 520px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .layout { padding: 0 0 3rem; }
-  header, .content-pad, footer { padding-left: 1rem; padding-right: 1rem; }
-  .app-title { font-size: 40px; }
-  .tabs { padding: 0 1rem; }
-}
+@media(max-width:520px){.grid-2,.grid-3{grid-template-columns:1fr;}.layout{padding:1.5rem 1rem 3rem;}}
 </style>
 </head>
 <body>
-<div class="layout">
 
-  <header>
-    <div>
-      <div class="app-title">NMR <span>Solvent</span> Peaks</div>
-      <div class="app-sub">
-        Residual solvent &amp; common impurity reference &nbsp;&middot;&nbsp;
-        <a href="https://doi.org/10.1021/om100106e" target="_blank">Fulmer 2010</a> &amp;
-        <a href="https://doi.org/10.1021/acs.oprd.6b00251" target="_blank">Whiteker 2016</a>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-logo">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7" cy="7" r="5" stroke="white" stroke-width="1.6"/>
+          <line x1="7" y1="2" x2="7" y2="12" stroke="white" stroke-width="1.2"/>
+          <line x1="2" y1="7" x2="12" y2="7" stroke="white" stroke-width="1.2"/>
+        </svg>
       </div>
+      <span class="topnav-name">Chem<span>Bench</span></span>
+    </a>
+    <span class="topnav-sub">University of St. Thomas</span>
+  </div>
+</nav>
+
+<div class="layout">
+  <div class="page-header">
+    <div class="page-title">NMR <span>Solvent</span> Peaks</div>
+    <div class="page-sub">
+      Residual solvent &amp; common impurity reference &nbsp;&middot;&nbsp;
+      <a href="https://doi.org/10.1021/om100106e" target="_blank">Fulmer 2010</a> &amp;
+      <a href="https://doi.org/10.1021/acs.oprd.6b00251" target="_blank">Whiteker 2016</a>
     </div>
-    <div class="header-meta">
-      University of St. Thomas<br>
-      Chemistry Dept.<br>
-      Saint Paul, MN
-    </div>
-  </header>
+  </div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('search')">Peak Search</button>
     <button class="tab" onclick="switchTab('spectrum')">Spectrum View</button>
   </div>
 
-  <div class="content-pad">
-
-    <!-- SEARCH TAB -->
-    <div id="tab-search">
-      <div class="section-row">
-        <div class="section-label-vert">Parameters</div>
-        <div class="section-content">
-          <div class="grid-2">
-            <div class="field"><label>NMR Mode</label>
-              <select id="mode">
-                <option value="H">&#185;H Proton</option>
-                <option value="C">&#185;&#179;C Carbon</option>
-              </select>
-            </div>
-            <div class="field"><label>Deuterated Solvent</label>
-              <select id="solvent">
-                <option value="all">All solvents</option>
-                <option value="CDCl3">CDCl&#8323;</option>
-                <option value="DMSO">DMSO-d&#8326;</option>
-                <option value="D2O">D&#8322;O</option>
-                <option value="CD3OD">Methanol-d&#8324;</option>
-                <option value="acetone">Acetone-d&#8326;</option>
-                <option value="THF">THF-d&#8328;</option>
-                <option value="toluene">Toluene-d&#8328;</option>
-                <option value="benzene">Benzene-d&#8326;</option>
-                <option value="pyridine">Pyridine-d&#8325;</option>
-                <option value="CD2Cl2">CD&#8322;Cl&#8322;</option>
-                <option value="DMF">DMF-d&#8327;</option>
-                <option value="ACN">Acetonitrile-d&#8323;</option>
-              </select>
-            </div>
-          </div>
-          <div class="field" style="max-width:220px;"><label>Tolerance</label>
-            <select id="tol">
-              <option value="0.05">&plusmn; 0.05 ppm</option>
-              <option value="0.1" selected>&plusmn; 0.10 ppm</option>
-              <option value="0.2">&plusmn; 0.20 ppm</option>
-              <option value="0.5">&plusmn; 0.50 ppm</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-row">
-        <div class="section-label-vert">Peaks</div>
-        <div class="section-content">
-          <div id="peak-rows"></div>
-          <button class="btn-add-peak" onclick="addPeakRow()">+ Add Peak</button>
-          <button class="btn" onclick="doSearch()" style="margin-top:14px;">Identify Impurity</button>
-        </div>
-      </div>
-
-      <div class="results-area" id="results"></div>
-    </div>
-
-    <!-- BROWSE TAB -->
-    <div id="tab-browse" style="display:none;">
-      <div class="browse-filter">
-        <input type="text" id="browse-search" placeholder="Filter compounds..." oninput="renderBrowse()">
-        <div class="browse-mode-toggle">
-          <button class="bmt active" id="bmt-H" onclick="setBrowseMode('H')">&#185;H</button>
-          <button class="bmt" id="bmt-C" onclick="setBrowseMode('C')">&#185;&#179;C</button>
-        </div>
-      </div>
-      <div id="browse-list"></div>
-    </div>
-
-    <!-- SPECTRUM TAB -->
-    <div id="tab-spectrum" style="display:none;">
+  <!-- SEARCH TAB -->
+  <div id="tab-search">
+    <div class="card-group">
+      <div class="group-label">Parameters</div>
       <div class="grid-2">
         <div class="field"><label>NMR Mode</label>
-          <select id="sp-mode" onchange="onSpChange()">
-            <option value="H">&#185;H Proton</option>
-            <option value="C">&#185;&#179;C Carbon</option>
+          <select id="mode"><option value="H">1H Proton</option><option value="C">13C Carbon</option></select>
+        </div>
+        <div class="field"><label>Deuterated Solvent</label>
+          <select id="solvent">
+            <option value="all">All solvents</option>
+            <option value="CDCl3">CDCl3</option><option value="DMSO">DMSO-d6</option>
+            <option value="D2O">D2O</option><option value="CD3OD">Methanol-d4</option>
+            <option value="acetone">Acetone-d6</option><option value="THF">THF-d8</option>
+            <option value="toluene">Toluene-d8</option><option value="benzene">Benzene-d6</option>
+            <option value="pyridine">Pyridine-d5</option><option value="CD2Cl2">CD2Cl2</option>
+            <option value="DMF">DMF-d7</option><option value="ACN">Acetonitrile-d3</option>
           </select>
+        </div>
+      </div>
+      <div class="field" style="max-width:220px;"><label>Tolerance</label>
+        <select id="tol">
+          <option value="0.05">+/- 0.05 ppm</option><option value="0.1" selected>+/- 0.10 ppm</option>
+          <option value="0.2">+/- 0.20 ppm</option><option value="0.5">+/- 0.50 ppm</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-group">
+      <div class="group-label">Peak Input</div>
+      <div id="peak-rows"></div>
+      <button class="btn-add-peak" onclick="addPeakRow()">+ Add Peak</button>
+      <button class="btn" onclick="doSearch()" style="margin-top:10px;">Identify Impurity</button>
+    </div>
+
+    <div class="results-area" id="results"></div>
+  </div>
+
+  <!-- BROWSE TAB -->
+  <div id="tab-browse" style="display:none;">
+    <div class="browse-filter">
+      <input type="text" id="browse-search" placeholder="Filter compounds..." oninput="renderBrowse()">
+      <div class="browse-mode-toggle">
+        <button class="bmt active" id="bmt-H" onclick="setBrowseMode('H')">1H</button>
+        <button class="bmt" id="bmt-C" onclick="setBrowseMode('C')">13C</button>
+      </div>
+    </div>
+    <div id="browse-list"></div>
+  </div>
+
+  <!-- SPECTRUM TAB -->
+  <div id="tab-spectrum" style="display:none;">
+    <div class="card-group">
+      <div class="group-label">Settings</div>
+      <div class="grid-2">
+        <div class="field"><label>NMR Mode</label>
+          <select id="sp-mode" onchange="onSpChange()"><option value="H">1H Proton</option><option value="C">13C Carbon</option></select>
         </div>
         <div class="field"><label>Deuterated Solvent</label>
           <select id="sp-solvent" onchange="onSpChange()">
-            <option value="CDCl3">CDCl&#8323;</option>
-            <option value="DMSO">DMSO-d&#8326;</option>
-            <option value="D2O">D&#8322;O</option>
-            <option value="CD3OD">Methanol-d&#8324;</option>
-            <option value="acetone">Acetone-d&#8326;</option>
-            <option value="THF">THF-d&#8328;</option>
-            <option value="toluene">Toluene-d&#8328;</option>
-            <option value="benzene">Benzene-d&#8326;</option>
-            <option value="pyridine">Pyridine-d&#8325;</option>
-            <option value="CD2Cl2">CD&#8322;Cl&#8322;</option>
-            <option value="DMF">DMF-d&#8327;</option>
-            <option value="ACN">Acetonitrile-d&#8323;</option>
+            <option value="CDCl3">CDCl3</option><option value="DMSO">DMSO-d6</option>
+            <option value="D2O">D2O</option><option value="CD3OD">Methanol-d4</option>
+            <option value="acetone">Acetone-d6</option><option value="THF">THF-d8</option>
+            <option value="toluene">Toluene-d8</option><option value="benzene">Benzene-d6</option>
+            <option value="pyridine">Pyridine-d5</option><option value="CD2Cl2">CD2Cl2</option>
+            <option value="DMF">DMF-d7</option><option value="ACN">Acetonitrile-d3</option>
           </select>
         </div>
       </div>
       <div class="field"><label>Highlight Compound (optional)</label>
         <select id="sp-compound" onchange="drawSpectrum()"></select>
       </div>
-      <div class="sp-wrap">
-        <div class="sp-title-bar" id="sp-title"></div>
-        <canvas id="sp-canvas" height="220"></canvas>
-        <div class="sp-tooltip" id="sp-tooltip"></div>
-        <div class="legend" id="sp-legend"></div>
-      </div>
-      <div class="sp-hint">Hover over peaks to identify &middot; Lorentzian peak shapes with multiplicity patterns</div>
     </div>
-
+    <div class="sp-wrap">
+      <div class="sp-title-bar" id="sp-title"></div>
+      <canvas id="sp-canvas" height="220"></canvas>
+      <div class="sp-tooltip" id="sp-tooltip"></div>
+      <div class="legend" id="sp-legend"></div>
+    </div>
+    <div class="sp-hint">Hover over peaks to identify &middot; Lorentzian peak shapes with multiplicity patterns</div>
   </div>
 
-  <footer>
+  <div class="app-footer">
     Fulmer et al. Organometallics 2010, 29, 2176 &nbsp;&middot;&nbsp;
     Whiteker et al. Org. Process Res. Dev. 2016, 20, 1560 &nbsp;&middot;&nbsp;
     Gottlieb et al. J. Org. Chem. 1997, 62, 7512 &nbsp;&middot;&nbsp;
-    Cao et al. Water Sci. Technol. 2014, 69.5<br>
-    For research use only &nbsp;&middot;&nbsp; University of St. Thomas Chemistry Department
-  </footer>
-
+    Cao et al. Water Sci. Technol. 2014, 69.5 &nbsp;&middot;&nbsp;
+    For research use only
+  </div>
 </div>
 
 <script>
@@ -1648,5 +1271,7 @@ window.addEventListener('resize',()=>{
 });
 document.getElementById('ppm').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 </script>
+</body>
+</html>
 </body>
 </html>
