@@ -1547,330 +1547,142 @@ window.addEventListener('resize',()=>{
 document.getElementById('ppm').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 
 
-// ---- JDF / JCAMP-DX PARSER & ANALYSIS ----
-
-let jdfPeaks = []; // [{ppm, excluded}]
-let jdfExcluded = new S
-// ---- JDF / JCAMP-DX PARSER & ANALYSIS ----
-
-let jdfPeaks = [];
-let jdfExcluded = new Set();
-let jdfMeta = {};
-let jdfInited = false;
-
-function jdfInit() {
-  if (jdfInited) return;
-  const zone = document.getElementById('jdf-drop-zone');
-  const input = document.getElementById('jdf-file-input');
-  if (!zone || !input) return;
-  jdfInited = true;
-
-  zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
-  zone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    var file = e.dataTransfer.files[0];
-    if (file) jdfLoadFile(file);
-  });
-  input.addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (file) jdfLoadFile(file);
-    input.value = '';
-  });
+// ---- JDF FILE ANALYSIS ----
+var jdfPeaks=[];var jdfExcluded=[];var jdfMeta={};var jdfReady=false;
+function jdfInit(){
+  if(jdfReady)return;
+  var zone=document.getElementById("jdf-drop-zone");
+  var inp=document.getElementById("jdf-file-input");
+  if(!zone||!inp)return; jdfReady=true;
+  zone.addEventListener("dragover",function(e){e.preventDefault();zone.classList.add("drag-over");});
+  zone.addEventListener("dragleave",function(){zone.classList.remove("drag-over");});
+  zone.addEventListener("drop",function(e){e.preventDefault();zone.classList.remove("drag-over");var f=e.dataTransfer.files[0];if(f)jdfLoad(f);});
+  inp.addEventListener("change",function(e){var f=e.target.files[0];if(f)jdfLoad(f);inp.value="";});
 }
-
-function jdfLoadFile(file) {
-  var errEl = document.getElementById('jdf-error');
-  errEl.classList.remove('visible');
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      jdfParseJCAMP(e.target.result, file.name);
-    } catch(err) {
-      errEl.textContent = 'Could not parse file: ' + err.message;
-      errEl.classList.add('visible');
-    }
-  };
-  reader.onerror = function() {
-    errEl.textContent = 'Failed to read file.';
-    errEl.classList.add('visible');
-  };
-  reader.readAsText(file);
+function jdfLoad(file){
+  var err=document.getElementById("jdf-error");err.classList.remove("visible");
+  var fr=new FileReader();
+  fr.onload=function(e){try{jdfParse(e.target.result,file.name);}catch(ex){err.textContent="Parse error: "+ex.message;err.classList.add("visible");}};
+  fr.onerror=function(){err.textContent="Could not read file.";err.classList.add("visible");};
+  fr.readAsText(file);
 }
-
-function jdfParseJCAMP(text, filename) {
-  var lines = text.split(/?
-/);
-  var meta = {};
-  var xyLines = [];
-  var inXY = false;
-  var xFactor = 1, yFactor = 1;
-  var firstX = null, lastX = null, nPoints = null;
-
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-
-    if (line.indexOf('##') === 0) {
-      var eqIdx = line.indexOf('=');
-      if (eqIdx === -1) { if (line.indexOf('##END') === 0) inXY = false; continue; }
-      var label = line.slice(2, eqIdx).trim().toUpperCase().replace(/./g,'');
-      var value = line.slice(eqIdx + 1).trim();
-
-      if (label === 'XFACTOR') xFactor = parseFloat(value) || 1;
-      else if (label === 'YFACTOR') yFactor = parseFloat(value) || 1;
-      else if (label === 'FIRSTX') firstX = parseFloat(value);
-      else if (label === 'LASTX') lastX = parseFloat(value);
-      else if (label === 'NPOINTS') nPoints = parseInt(value);
-      else if (label === 'TITLE') meta.title = value;
-      else if (label === 'OBSERVE FREQUENCY' || label === 'SPECFREQ' || label === 'OBSERVEFREQUENCY') meta.freq = parseFloat(value).toFixed(0) + ' MHz';
-      else if (label === 'OBSERVE NUCLEUS' || label === 'NUCLNAME' || label === 'OBSERVENUCLEUS') meta.nucleus = value.replace(/[^A-Za-z0-9]/g,'');
-      else if (label === 'SOLVENT NAME' || label === 'SOLVENT' || label === 'SOLVENTNAME') meta.solvent = value;
-      else if (label === 'TEMPERATURE' || label === 'ACQUISITIONTEMPERATURE') meta.temp = parseFloat(value).toFixed(1) + ' K';
-
-      if (label === 'XYDATA' || label === 'PEAKTABLE' || label === 'PEAK TABLE') { inXY = true; continue; }
-      if (label === 'END') inXY = false;
-    } else if (inXY && line.length > 0 && line.indexOf('$$') !== 0) {
-      xyLines.push(line);
-    }
+function jdfParse(text,filename){
+  var nl="\n"; var rcrnl=new RegExp("\r\n","g"); var rcr=new RegExp("\r","g");
+  var lines2=text.replace(rcrnl,nl).replace(rcr,nl).split(nl);
+  var meta={},xyL=[],inXY=false,xf=1,yf=1,fx=null,lx=null,np=null;
+  for(var i=0;i<lines2.length;i++){
+    var ln=lines2[i].trim();if(!ln)continue;
+    if(ln.slice(0,2)==="##"){
+      var eq=ln.indexOf("=");
+      if(eq===-1){if(ln.indexOf("##END")===0)inXY=false;continue;}
+      var lbl=ln.slice(2,eq).trim().toUpperCase().split(".").join("").split(" ").join("");
+      var val=ln.slice(eq+1).trim();
+      if(lbl==="XFACTOR")xf=parseFloat(val)||1;
+      else if(lbl==="YFACTOR")yf=parseFloat(val)||1;
+      else if(lbl==="FIRSTX")fx=parseFloat(val);
+      else if(lbl==="LASTX")lx=parseFloat(val);
+      else if(lbl==="NPOINTS")np=parseInt(val);
+      else if(lbl==="TITLE")meta.title=val;
+      else if(lbl==="OBSERVEFREQUENCY"||lbl==="SPECFREQ")meta.freq=parseFloat(val).toFixed(0)+" MHz";
+      else if(lbl==="OBSERVENUCLEUS"||lbl==="NUCLNAME")meta.nucleus=val;
+      else if(lbl==="SOLVENTNAME"||lbl==="SOLVENT")meta.solvent=val;
+      else if(lbl==="TEMPERATURE")meta.temp=parseFloat(val).toFixed(1)+" K";
+      if(lbl==="XYDATA"||lbl==="PEAKTABLE"){inXY=true;continue;}
+      if(lbl==="END")inXY=false;
+    } else if(inXY&&ln.length&&ln.slice(0,2)!=="$$"){xyL.push(ln);}
   }
-
-  var pairs = jdfDecodeXY(xyLines, xFactor, yFactor, firstX, lastX, nPoints);
-
-  if (pairs.length === 0) {
-    throw new Error('No spectral data found. Check that this is a valid JCAMP-DX (.jdf/.dx/.jdx) file.');
-  }
-
-  var peaks = jdfFindPeaks(pairs);
-  jdfPeaks = peaks;
-  jdfExcluded = new Set();
-  jdfMeta = meta;
-  jdfShowResult(filename, meta, peaks);
+  var pairs=jdfDecode(xyL,xf,yf,fx,lx,np);
+  if(!pairs.length)throw new Error("No spectral data found.");
+  jdfPeaks=jdfPeakPick(pairs);jdfExcluded=[];jdfMeta=meta;jdfShow(filename,meta,jdfPeaks);
 }
-
-function jdfDecodeXY(lines, xFactor, yFactor, firstX, lastX, nPoints) {
-  var pairs = [];
-
-  // Try comma-separated peak table first
-  var isPeakTable = false;
-  if (lines.length > 0 && lines[0].indexOf(',') !== -1) {
-    isPeakTable = true;
-    for (var i = 0; i < lines.length; i++) {
-      var parts = lines[i].split(/[s,;]+/).filter(function(s){return s.length>0;});
-      for (var j = 0; j + 1 < parts.length; j += 2) {
-        var x = parseFloat(parts[j]) * xFactor;
-        var y = Math.abs(parseFloat(parts[j+1]) * yFactor);
-        if (!isNaN(x) && !isNaN(y)) pairs.push([x, y]);
-      }
-    }
-    if (pairs.length > 0) return pairs;
+function jdfDecode(lines,xf,yf,fx,lx,np){
+  var pairs=[],step=(np&&np>1&&fx!==null&&lx!==null)?(lx-fx)/(np-1):xf;
+  if(lines.length&&lines[0].indexOf(",")!==-1){
+    for(var i=0;i<lines.length;i++){var ps=lines[i].split(",");for(var j=0;j+1<ps.length;j+=2){var x=parseFloat(ps[j])*xf,y=Math.abs(parseFloat(ps[j+1])*yf);if(isFinite(x)&&isFinite(y))pairs.push([x,y]);}}
+    if(pairs.length)return pairs;
   }
-
-  // AFFN format: each line starts with X, followed by Y values
-  // Calculate x step from metadata
-  var xStep = 1;
-  if (nPoints && nPoints > 1 && firstX !== null && lastX !== null) {
-    xStep = (lastX - firstX) / (nPoints - 1);
+  for(var i=0;i<lines.length;i++){
+    var tok=lines[i].trim().split(" ").filter(function(s){return s.length>0;});
+    if(tok.length<2)continue;
+    var x=parseFloat(tok[0])*xf;if(!isFinite(x))continue;
+    for(var j=1;j<tok.length;j++){var y=parseFloat(tok[j])*yf;if(isFinite(y)){pairs.push([x,Math.abs(y)]);x+=step;}}
   }
-
-  for (var i = 0; i < lines.length; i++) {
-    var parts = lines[i].trim().split(/s+/);
-    if (parts.length < 2) continue;
-    var x = parseFloat(parts[0]) * xFactor;
-    if (isNaN(x)) continue;
-    for (var j = 1; j < parts.length; j++) {
-      var y = parseFloat(parts[j]) * yFactor;
-      if (!isNaN(y)) {
-        pairs.push([x, Math.abs(y)]);
-        x += xStep;
-      }
-    }
+  if(pairs.length>1&&fx!==null&&lx!==null&&np&&np>1){
+    var s=(lx-fx)/(np-1);
+    if(Math.abs(pairs[0][0]-fx)>Math.abs(fx)*0.5)for(var i=0;i<pairs.length;i++)pairs[i][0]=fx+i*s;
   }
-
-  // If x values look like indices and we have firstX/lastX, remap
-  if (pairs.length > 1 && firstX !== null && lastX !== null && nPoints && nPoints > 1) {
-    var step = (lastX - firstX) / (nPoints - 1);
-    var looks_like_index = Math.abs(pairs[0][0] - firstX * xFactor) > Math.abs(firstX) * 0.5;
-    if (looks_like_index) {
-      for (var i = 0; i < pairs.length; i++) {
-        pairs[i][0] = firstX + i * step;
-      }
-    }
-  }
-
   return pairs;
 }
-
-function jdfFindPeaks(pairs) {
-  if (pairs.length < 5) return [];
-  var sorted = pairs.slice().sort(function(a,b){return a[0]-b[0];});
-  var xs = sorted.map(function(p){return p[0];});
-  var ys = sorted.map(function(p){return p[1];});
-  var maxY = Math.max.apply(null, ys);
-  if (maxY === 0) return [];
-  var yn = ys.map(function(y){return y/maxY;});
-  var threshold = 0.03;
-  var xRange = xs[xs.length-1] - xs[0];
-  var minSep = xRange / 300;
-  var peaks = [];
-
-  for (var i = 3; i < sorted.length - 3; i++) {
-    if (yn[i] > threshold &&
-        yn[i] >= yn[i-1] && yn[i] >= yn[i+1] &&
-        yn[i] >= yn[i-2] && yn[i] >= yn[i+2] &&
-        yn[i] >= yn[i-3] && yn[i] >= yn[i+3]) {
-      var ppm = xs[i];
-      if (peaks.length === 0 || Math.abs(ppm - peaks[peaks.length-1].ppm) > minSep) {
-        peaks.push({ ppm: Math.round(ppm * 100) / 100, height: yn[i] });
-      }
+function jdfPeakPick(pairs){
+  if(pairs.length<5)return[];
+  var s=pairs.slice().sort(function(a,b){return a[0]-b[0];});
+  var xs=s.map(function(p){return p[0];}),ys=s.map(function(p){return p[1];});
+  var mx=Math.max.apply(null,ys);if(!mx)return[];
+  var yn=ys.map(function(y){return y/mx;});
+  var thr=0.03,msep=(xs[xs.length-1]-xs[0])/300,peaks=[];
+  for(var i=3;i<s.length-3;i++){
+    if(yn[i]>thr&&yn[i]>=yn[i-1]&&yn[i]>=yn[i+1]&&yn[i]>=yn[i-2]&&yn[i]>=yn[i+2]&&yn[i]>=yn[i-3]&&yn[i]>=yn[i+3]){
+      if(!peaks.length||Math.abs(xs[i]-peaks[peaks.length-1].ppm)>msep)peaks.push({ppm:Math.round(xs[i]*100)/100,h:yn[i]});
     }
   }
-
-  peaks.sort(function(a,b){return b.height - a.height;});
-  return peaks.slice(0, 30);
+  peaks.sort(function(a,b){return b.h-a.h;});return peaks.slice(0,30);
 }
-
-function jdfShowResult(filename, meta, peaks) {
-  document.getElementById('jdf-result').classList.add('visible');
-  document.getElementById('jdf-filename').textContent = filename;
-  document.getElementById('jdf-matches').classList.remove('visible');
-
-  var infos = [];
-  if (meta.nucleus) infos.push({label:'Nucleus', value:meta.nucleus});
-  if (meta.freq) infos.push({label:'Frequency', value:meta.freq});
-  if (meta.solvent) infos.push({label:'Solvent (header)', value:meta.solvent});
-  if (meta.temp) infos.push({label:'Temperature', value:meta.temp});
-  infos.push({label:'Peaks found', value:peaks.length + ' peaks'});
-
-  document.getElementById('jdf-info-row').innerHTML = infos.map(function(inf) {
-    return '<div class="jdf-info-card"><div class="jdf-info-label">'+inf.label+'</div><div class="jdf-info-value">'+inf.value+'</div></div>';
-  }).join('');
-
-  renderJdfChips();
+function jdfShow(fn,meta,peaks){
+  document.getElementById("jdf-result").classList.add("visible");
+  document.getElementById("jdf-filename").textContent=fn;
+  document.getElementById("jdf-matches").classList.remove("visible");
+  var inf=[];
+  if(meta.nucleus)inf.push({l:"Nucleus",v:meta.nucleus});
+  if(meta.freq)inf.push({l:"Frequency",v:meta.freq});
+  if(meta.solvent)inf.push({l:"Solvent (header)",v:meta.solvent});
+  if(meta.temp)inf.push({l:"Temperature",v:meta.temp});
+  inf.push({l:"Peaks found",v:peaks.length+" peaks"});
+  document.getElementById("jdf-info-row").innerHTML=inf.map(function(x){return "<div class='jdf-info-card'><div class='jdf-info-label'>"+x.l+"</div><div class='jdf-info-value'>"+x.v+"</div></div>";}).join("");
+  jdfRenderChips();
 }
-
-function renderJdfChips() {
-  var container = document.getElementById('jdf-peak-chips');
-  container.innerHTML = jdfPeaks.map(function(p, idx) {
-    var excl = jdfExcluded.has(idx);
-    return '<div class="jdf-peak-chip' + (excl?' excluded':'') + '" onclick="jdfTogglePeak('+idx+')" title="'+(excl?'Include':'Exclude')+'">'
-      + p.ppm.toFixed(2) + ' ppm <span class="chip-x">' + (excl?'+':'&times;') + '</span></div>';
-  }).join('');
+function jdfRenderChips(){
+  var el=document.getElementById("jdf-peak-chips");
+  el.innerHTML=jdfPeaks.map(function(p,i){
+    var ex=jdfExcluded.indexOf(i)!==-1;
+    var cls="jdf-peak-chip"+(ex?" excluded":"");
+    var xchar=ex?"+":"x";
+    return "<div class='"+cls+"' onclick='jdfToggle("+i+")'>"+p.ppm.toFixed(2)+" ppm <span class='chip-x'>"+xchar+"</span></div>";
+  }).join("");
 }
-
-function jdfTogglePeak(idx) {
-  if (jdfExcluded.has(idx)) jdfExcluded.delete(idx);
-  else jdfExcluded.add(idx);
-  renderJdfChips();
-}
-
-function jdfClear() {
-  jdfPeaks = [];
-  jdfExcluded = new Set();
-  jdfMeta = {};
-  jdfInited = false;
-  document.getElementById('jdf-result').classList.remove('visible');
-  document.getElementById('jdf-matches').classList.remove('visible');
-  document.getElementById('jdf-loading').classList.remove('visible');
-  document.getElementById('jdf-error').classList.remove('visible');
-  document.getElementById('jdf-file-input').value = '';
-  jdfInit();
-}
-
-function jdfGetActivePeaks() {
-  return jdfPeaks.filter(function(_, i){ return !jdfExcluded.has(i); });
-}
-
-function jdfAutoFill() {
-  var active = jdfGetActivePeaks();
-  if (!active.length) return;
-  switchTab('search');
-  document.querySelectorAll('.peak-row-wrap').forEach(function(r){r.remove();});
-  peakRowCount = 0;
-  active.slice(0, 8).forEach(function(p){ addPeakRow(p.ppm.toFixed(2), 'any'); });
-  var n = (jdfMeta.nucleus || '').toLowerCase();
-  document.getElementById('mode').value = (n.indexOf('13c') !== -1 || n.indexOf('c13') !== -1) ? 'C' : 'H';
-}
-
-function jdfAnalyze() {
-  var active = jdfGetActivePeaks();
-  if (!active.length) return;
-  document.getElementById('jdf-loading').classList.add('visible');
-  document.getElementById('jdf-matches').classList.remove('visible');
-
-  var n = (jdfMeta.nucleus || '').toLowerCase();
-  var isH = !(n.indexOf('13c') !== -1 || n.indexOf('c13') !== -1);
-  var tol = 0.15;
-  var results = [];
-  var seen = new Set();
-
-  DB.forEach(function(entry) {
-    var dbPeaks = isH ? entry.H : entry.C;
-    if (!dbPeaks.length) return;
-    var key = entry.compound + '||' + entry.solvent;
-    if (seen.has(key)) return;
-
-    var matched = 0, totalDelta = 0;
-    var matchedDetails = [];
-    active.forEach(function(ap) {
-      var best = null, bestD = Infinity;
-      dbPeaks.forEach(function(dp) {
-        var d = Math.abs(dp.ppm - ap.ppm);
-        if (d < bestD) { bestD = d; best = dp; }
-      });
-      if (best && bestD <= tol) {
-        matched++;
-        totalDelta += bestD;
-        matchedDetails.push({inputPpm: ap.ppm, dbPpm: best.ppm, mult: best.mult, delta: bestD});
-      }
-    });
-
-    if (!matched) return;
-    var fracMatched = matched / active.length;
-    var avgProx = matched > 0 ? 1 - (totalDelta / matched / tol) : 0;
-    var coverage = Math.min(matched / dbPeaks.length, 1);
-    var score = Math.round((fracMatched * 0.5 + avgProx * 0.35 + coverage * 0.15) * 100);
-    seen.add(key);
-    results.push({entry:entry, matched:matched, score:score, matchedDetails:matchedDetails, dbPeaks:dbPeaks});
+function jdfToggle(i){var idx=jdfExcluded.indexOf(i);if(idx===-1)jdfExcluded.push(i);else jdfExcluded.splice(idx,1);jdfRenderChips();}
+function jdfClear(){jdfPeaks=[];jdfExcluded=[];jdfMeta={};jdfReady=false;["jdf-result","jdf-matches","jdf-loading","jdf-error"].forEach(function(id){document.getElementById(id).classList.remove("visible");});document.getElementById("jdf-file-input").value="";jdfInit();}
+function jdfActive(){return jdfPeaks.filter(function(_,i){return jdfExcluded.indexOf(i)===-1;});}
+function jdfAutoFill(){var a=jdfActive();if(!a.length)return;switchTab("search");document.querySelectorAll(".peak-row-wrap").forEach(function(r){r.remove();});peakRowCount=0;a.slice(0,8).forEach(function(p){addPeakRow(p.ppm.toFixed(2),"any");});var n=(jdfMeta.nucleus||"").toLowerCase();document.getElementById("mode").value=(n.indexOf("13c")!==-1||n.indexOf("c13")!==-1)?"C":"H";}
+function jdfAnalyze(){
+  var active=jdfActive();if(!active.length)return;
+  document.getElementById("jdf-loading").classList.add("visible");
+  document.getElementById("jdf-matches").classList.remove("visible");
+  var n=(jdfMeta.nucleus||"").toLowerCase();
+  var isH=!(n.indexOf("13c")!==-1||n.indexOf("c13")!==-1);
+  var tol=0.15,results=[],seen={};
+  DB.forEach(function(entry){
+    var dbP=isH?entry.H:entry.C;if(!dbP.length)return;
+    var key=entry.compound+"||"+entry.solvent;if(seen[key])return;
+    var matched=0,totD=0,det=[];
+    active.forEach(function(ap){var best=null,bd=999;dbP.forEach(function(dp){var d=Math.abs(dp.ppm-ap.ppm);if(d<bd){bd=d;best=dp;}});if(best&&bd<=tol){matched++;totD+=bd;det.push({ip:ap.ppm,dp:best.ppm,m:best.mult,d:bd});}});
+    if(!matched)return;
+    var sc=Math.round(((matched/active.length)*0.5+(1-totD/matched/tol)*0.35+(Math.min(matched/dbP.length,1))*0.15)*100);
+    seen[key]=1;results.push({entry:entry,matched:matched,score:sc,det:det,dbP:dbP});
   });
-
-  results.sort(function(a,b){ return b.score - a.score || b.matched - a.matched; });
-
-  setTimeout(function() {
-    document.getElementById('jdf-loading').classList.remove('visible');
-    jdfRenderMatches(results.slice(0, 12), active, isH);
-  }, 200);
+  results.sort(function(a,b){return b.score-a.score||b.matched-a.matched;});
+  setTimeout(function(){document.getElementById("jdf-loading").classList.remove("visible");jdfShowMatches(results.slice(0,12),active,isH);},200);
 }
-
-function jdfRenderMatches(results, activePeaks, isH) {
-  var matchEl = document.getElementById('jdf-matches');
-  var listEl = document.getElementById('jdf-match-list');
-  var countEl = document.getElementById('jdf-match-count');
-
-  countEl.textContent = results.length + ' candidate' + (results.length !== 1 ? 's' : '') + ' · ' + (isH ? '1H' : '13C') + ' NMR';
-
-  if (!results.length) {
-    listEl.innerHTML = '<div class="jdf-match-card" style="color:var(--ink3);font-family:var(--mono);font-size:12px;">No matches found. Try dropping a different file or checking the nucleus type.</div>';
-  } else {
-    listEl.innerHTML = results.map(function(r, i) {
-      var conf = r.score;
-      var confColor = conf >= 70 ? '#15803d' : conf >= 45 ? '#a16207' : '#2563eb';
-      var confBg = conf >= 70 ? '#dcfce7' : conf >= 45 ? '#fef9c3' : '#eff6ff';
-      var details = r.matchedDetails.map(function(d) {
-        return d.inputPpm.toFixed(2) + '→' + d.dbPpm.toFixed(2) + '(' + d.mult + ') Δ' + d.delta.toFixed(3);
-      }).join(' | ');
-      var allPeaks = r.dbPeaks.map(function(p){ return p.ppm.toFixed(2) + '(' + p.mult + ')'; }).join(', ');
-      return '<div class="jdf-match-card' + (i===0?' top-match':'') + '">'
-        + '<div class="jdf-match-top">'
-        + '<div><div class="jdf-match-name">' + r.entry.compound + '</div>'
-        + '<div class="jdf-match-solvent">' + (SN[r.entry.solvent]||r.entry.solvent) + (r.entry.note?' &middot; '+r.entry.note:'') + '</div></div>'
-        + '<div class="jdf-match-score" style="background:'+confBg+';border-color:'+confColor+';color:'+confColor+';">' + conf + '%</div>'
-        + '</div>'
-        + '<div class="jdf-match-peaks">Matched ' + r.matched + '/' + activePeaks.length + ' peaks: ' + details + '<br>All DB: ' + allPeaks + '</div>'
-        + '</div>';
-    }).join('');
-  }
-  matchEl.classList.add('visible');
+function jdfShowMatches(results,active,isH){
+  var listEl=document.getElementById("jdf-match-list");
+  document.getElementById("jdf-match-count").textContent=results.length+" candidate"+(results.length!==1?"s":"")+" - "+(isH?"1H":"13C")+" NMR";
+  if(!results.length){listEl.innerHTML="<p style='color:var(--ink3);font-size:12px;font-family:var(--mono)'>No matches found.</p>";}
+  else{listEl.innerHTML=results.map(function(r,i){
+    var c=r.score,cc=c>=70?"#15803d":c>=45?"#a16207":"#2563eb",cb=c>=70?"#dcfce7":c>=45?"#fef9c3":"#eff6ff";
+    var det=r.det.map(function(d){return d.ip.toFixed(2)+"->"+d.dp.toFixed(2)+"("+d.m+")";}).join(" | ");
+    var all=r.dbP.map(function(p){return p.ppm.toFixed(2)+"("+p.mult+")";}).join(", ");
+    var cls="jdf-match-card"+(i===0?" top-match":"");
+    return "<div class='"+cls+"'><div class='jdf-match-top'><div><div class='jdf-match-name'>"+r.entry.compound+"</div><div class='jdf-match-solvent'>"+(SN[r.entry.solvent]||r.entry.solvent)+"</div></div><div class='jdf-match-score' style='background:"+cb+";border-color:"+cc+";color:"+cc+"'>"+c+"%</div></div><div class='jdf-match-peaks'>Matched "+r.matched+"/"+active.length+": "+det+"</div></div>";
+  }).join("");}
+  document.getElementById("jdf-matches").classList.add("visible");
 }
 
