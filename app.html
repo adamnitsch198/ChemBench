@@ -172,6 +172,234 @@ canvas#sp-canvas{width:100%;display:block;cursor:crosshair;}
 .app-footer a{color:var(--blue);text-decoration:none;}
 
 @media(max-width:520px){.grid-2,.grid-3{grid-template-columns:1fr;}.layout{padding:1.5rem 1rem 3rem;}}
+
+/* ---- JDF DROP TAB ---- */
+.jdf-drop-zone {
+  border: 2px dashed var(--blue-border);
+  border-radius: 14px;
+  background: var(--blue-light);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.jdf-drop-zone.drag-over {
+  border-color: var(--blue);
+  background: var(--blue-mid);
+  transform: scale(1.01);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+}
+.jdf-drop-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+.jdf-drop-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.jdf-drop-sub {
+  font-size: 13px;
+  color: var(--ink3);
+  font-family: var(--mono);
+}
+.jdf-file-input { display: none; }
+.jdf-browse-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 20px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.jdf-browse-btn:hover { background: var(--blue2); }
+.jdf-result {
+  background: var(--white);
+  border: 1.5px solid var(--rule);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  display: none;
+}
+.jdf-result.visible { display: block; }
+.jdf-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.jdf-filename {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink3);
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+.jdf-clear-btn {
+  font-size: 11px;
+  color: var(--ink3);
+  background: none;
+  border: 1.5px solid var(--rule);
+  border-radius: 7px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: all 0.13s;
+}
+.jdf-clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+.jdf-peaks-found {
+  margin-bottom: 1rem;
+}
+.jdf-peaks-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.jdf-peaks-label::after { content: ''; flex: 1; height: 1px; background: var(--blue-border); }
+.jdf-peak-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.jdf-peak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--blue-light);
+  border: 1px solid var(--blue-border);
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.13s;
+}
+.jdf-peak-chip:hover { background: var(--blue-mid); }
+.jdf-peak-chip.excluded { opacity: 0.4; text-decoration: line-through; }
+.jdf-peak-chip .chip-x { font-size: 14px; color: var(--blue3); line-height: 1; }
+.jdf-info-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.jdf-info-card {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  padding: 8px 12px;
+}
+.jdf-info-label { font-size: 9px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--mono); margin-bottom: 3px; }
+.jdf-info-value { font-size: 13px; font-weight: 600; color: var(--ink); font-family: var(--mono); }
+.jdf-analyze-btn {
+  width: 100%;
+  height: 42px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  margin-top: 4px;
+}
+.jdf-analyze-btn:hover { background: var(--blue2); transform: translateY(-1px); }
+.jdf-matches {
+  margin-top: 1rem;
+  display: none;
+}
+.jdf-matches.visible { display: block; }
+.jdf-match-card {
+  background: var(--bg);
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.jdf-match-card.top-match { border-left-color: var(--blue); background: var(--blue-light); }
+.jdf-match-card:hover { border-color: var(--blue-border); }
+.jdf-match-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.jdf-match-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+.jdf-match-solvent { font-size: 12px; color: var(--ink3); font-family: var(--mono); margin-top: 2px; }
+.jdf-match-score {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-light);
+  border: 1px solid var(--blue-border);
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.jdf-match-peaks {
+  font-size: 11px;
+  color: var(--ink3);
+  font-family: var(--mono);
+  line-height: 1.7;
+}
+.jdf-match-peaks span { color: var(--blue); font-weight: 600; }
+.jdf-loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ink3);
+  font-family: var(--mono);
+  font-size: 12px;
+  display: none;
+}
+.jdf-loading.visible { display: block; }
+.jdf-error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #dc2626;
+  font-family: var(--mono);
+  margin-top: 10px;
+  display: none;
+}
+.jdf-error.visible { display: block; }
+.jdf-auto-fill-btn {
+  padding: 8px 16px;
+  background: var(--white);
+  color: var(--blue);
+  border: 1.5px solid var(--blue-border);
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--sans);
+}
+.jdf-auto-fill-btn:hover { background: var(--blue-light); border-color: var(--blue); }
 </style>
 </head>
 <body>
@@ -204,6 +432,7 @@ canvas#sp-canvas{width:100%;display:block;cursor:crosshair;}
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('search')">Peak Search</button>
+    <button class="tab" onclick="switchTab('jdf')">JDF File Analysis</button>
     <button class="tab" onclick="switchTab('spectrum')">Spectrum View</button>
   </div>
 
@@ -255,6 +484,45 @@ canvas#sp-canvas{width:100%;display:block;cursor:crosshair;}
       </div>
     </div>
     <div id="browse-list"></div>
+  </div>
+
+
+  <!-- JDF FILE TAB -->
+  <div id="tab-jdf" style="display:none;">
+    <div class="card-group">
+      <div class="group-label">Upload NMR File</div>
+      <div class="jdf-drop-zone" id="jdf-drop-zone">
+        <div class="jdf-drop-icon">&#x1F9EA;</div>
+        <div class="jdf-drop-title">Drop your JDF file here</div>
+        <div class="jdf-drop-sub">JCAMP-DX / .jdf / .dx / .jdx format</div>
+        <button class="jdf-browse-btn" onclick="document.getElementById('jdf-file-input').click()">Browse files</button>
+        <input type="file" id="jdf-file-input" class="jdf-file-input" accept=".jdf,.dx,.jdx,.txt">
+      </div>
+      <div class="jdf-error" id="jdf-error"></div>
+    </div>
+
+    <div class="jdf-result" id="jdf-result">
+      <div class="jdf-result-header">
+        <span class="jdf-filename" id="jdf-filename"></span>
+        <button class="jdf-clear-btn" onclick="jdfClear()">Clear</button>
+      </div>
+      <div class="jdf-info-row" id="jdf-info-row"></div>
+      <div class="jdf-peaks-found">
+        <div class="jdf-peaks-label">Detected peaks (click to exclude)</div>
+        <div class="jdf-peak-chips" id="jdf-peak-chips"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="jdf-auto-fill-btn" onclick="jdfAutoFill()">Send peaks to Peak Search</button>
+        <button class="jdf-analyze-btn" onclick="jdfAnalyze()" style="flex:1;">Identify Solvents &amp; Impurities</button>
+      </div>
+    </div>
+
+    <div class="jdf-loading" id="jdf-loading">Analyzing peaks against database...</div>
+
+    <div class="jdf-matches" id="jdf-matches">
+      <div class="group-label" style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:0.07em;text-transform:uppercase;font-family:var(--mono);margin-bottom:12px;display:flex;align-items:center;gap:8px;">Best matches <span style="font-size:10px;color:var(--ink3);font-weight:500;" id="jdf-match-count"></span><div style="flex:1;height:1px;background:var(--blue-border);"></div></div>
+      <div id="jdf-match-list"></div>
+    </div>
   </div>
 
   <!-- SPECTRUM TAB -->
@@ -740,7 +1008,7 @@ DB.forEach(e=>{
 let browseMode='H';
 
 function switchTab(t){
-  ['search','browse','spectrum'].forEach(n=>{document.getElementById('tab-'+n).style.display=n===t?'':'none';});
+  ['search','browse','jdf','spectrum'].forEach(n=>{document.getElementById('tab-'+n).style.display=n===t?'':'none';});
   document.querySelectorAll('.tab').forEach((el,i)=>{el.classList.toggle('active',['search','spectrum'][i]===t);});
   if(t==='browse') renderBrowse();
   if(t==='spectrum'){populateSpCompound();drawSpectrum();}
@@ -1270,6 +1538,388 @@ window.addEventListener('resize',()=>{
   });
 });
 document.getElementById('ppm').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+
+// ---- JDF / JCAMP-DX PARSER & ANALYSIS ----
+
+let jdfPeaks = []; // [{ppm, excluded}]
+let jdfExcluded = new Set();
+let jdfMeta = {};
+
+function jdfInit() {
+  const zone = document.getElementById('jdf-drop-zone');
+  const input = document.getElementById('jdf-file-input');
+  if (!zone || !input) return;
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) jdfLoadFile(file);
+  });
+  input.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) jdfLoadFile(file);
+    input.value = '';
+  });
+}
+
+function jdfLoadFile(file) {
+  const errEl = document.getElementById('jdf-error');
+  errEl.classList.remove('visible');
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      jdfParseJCAMP(text, file.name);
+    } catch(err) {
+      errEl.textContent = 'Could not parse file: ' + err.message;
+      errEl.classList.add('visible');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function jdfParseJCAMP(text, filename) {
+  const lines = text.split(/\r?\n/);
+  const meta = {};
+  let xyData = [];
+  let inXY = false;
+  let xFactor = 1, yFactor = 1;
+  let firstX = null, lastX = null, nPoints = null;
+  let dataType = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    // Parse LDR (Labeled Data Record)
+    if (line.startsWith('##')) {
+      const eqIdx = line.indexOf('=');
+      if (eqIdx === -1) continue;
+      const label = line.slice(2, eqIdx).trim().toUpperCase();
+      const value = line.slice(eqIdx + 1).trim();
+
+      if (label === 'XFACTOR') xFactor = parseFloat(value) || 1;
+      else if (label === 'YFACTOR') yFactor = parseFloat(value) || 1;
+      else if (label === 'FIRSTX') firstX = parseFloat(value);
+      else if (label === 'LASTX') lastX = parseFloat(value);
+      else if (label === 'NPOINTS') nPoints = parseInt(value);
+      else if (label === 'TITLE') meta.title = value;
+      else if (label === '.OBSERVE FREQUENCY' || label === 'SPECFREQ') meta.freq = parseFloat(value) + ' MHz';
+      else if (label === '.OBSERVE NUCLEUS' || label === 'NUCLNAME') meta.nucleus = value.replace(/[^A-Za-z0-9]/g,'');
+      else if (label === '.SOLVENT NAME' || label === 'SOLVENT') meta.solvent = value;
+      else if (label === 'DATA TYPE' || label === 'DATATYPE') { dataType = value.toUpperCase(); }
+      else if (label === 'XUNITS') meta.xunits = value;
+      else if (label === 'TEMPERATURE' || label === '.TEMPERATURE') meta.temp = value + ' K';
+
+      if (label === 'XYDATA' || label === 'PEAK TABLE' || label === 'PEAKTABLE') {
+        inXY = true;
+        continue;
+      }
+      if (label === 'END') { inXY = false; }
+    } else if (inXY && line.length > 0 && !line.startsWith('$')) {
+      // Parse JCAMP data line (AFFN, SQZ, DIF, DUP formats)
+      xyData.push(line);
+    }
+  }
+
+  // Decode JCAMP data into [x, y] pairs
+  let pairs = [];
+  if (xyData.length > 0) {
+    pairs = jdfDecodeXYData(xyData, xFactor, yFactor, firstX, lastX, nPoints);
+  }
+
+  if (pairs.length === 0) {
+    throw new Error('No spectral data found in file. Make sure it is a valid JCAMP-DX file.');
+  }
+
+  // Find peaks using local maxima detection
+  const peaks = jdfFindPeaks(pairs);
+
+  jdfPeaks = peaks;
+  jdfExcluded = new Set();
+  jdfMeta = meta;
+
+  jdfShowResult(filename, meta, peaks);
+}
+
+function jdfDecodeXYData(lines, xFactor, yFactor, firstX, lastX, nPoints) {
+  // Handle JCAMP-DX AFFN (standard) format
+  const pairs = [];
+
+  for (let li = 0; li < lines.length; li++) {
+    const line = lines[li];
+    // Each line: X Y Y Y Y ... (first value is X, rest are Y values)
+    // Or: X, Y pairs
+
+    // Try comma-separated pairs first (PEAK TABLE format)
+    if (line.includes(',') && !line.match(/[A-Za-z@%]/)) {
+      const parts = line.split(/[,\s]+/).filter(s => s.length > 0);
+      for (let i = 0; i + 1 < parts.length; i += 2) {
+        const x = parseFloat(parts[i]) * xFactor;
+        const y = parseFloat(parts[i+1]) * yFactor;
+        if (!isNaN(x) && !isNaN(y)) pairs.push([x, y]);
+      }
+      continue;
+    }
+
+    // Standard AFFN: tokenize, first token = X, rest = Y values
+    // SQZ encoding: letters represent compressed numbers
+    const tokens = jdfTokenizeAFFN(line);
+    if (tokens.length < 2) continue;
+
+    let x = parseFloat(tokens[0]) * xFactor;
+    if (isNaN(x)) continue;
+
+    // Calculate x increment
+    const xStep = (nPoints && nPoints > 1 && firstX !== null && lastX !== null)
+      ? (lastX - firstX) / (nPoints - 1)
+      : (xFactor !== 0 ? xFactor : 1);
+
+    for (let i = 1; i < tokens.length; i++) {
+      const y = parseFloat(tokens[i]) * yFactor;
+      if (!isNaN(y)) {
+        pairs.push([x, Math.abs(y)]);
+        x += xStep;
+      }
+    }
+  }
+
+  // If we got pairs from firstX/lastX/nPoints but they're indices, convert
+  if (pairs.length > 0 && firstX !== null && lastX !== null && nPoints && nPoints > 1) {
+    const step = (lastX - firstX) / (nPoints - 1);
+    // Check if x values look like indices (0, 1, 2...) rather than ppm
+    if (pairs[0][0] < 10 && pairs.length > 10 && Math.abs(pairs[1][0] - pairs[0][0]) < 2) {
+      for (let i = 0; i < pairs.length; i++) {
+        pairs[i][0] = firstX + i * step;
+      }
+    }
+  }
+
+  return pairs;
+}
+
+function jdfTokenizeAFFN(line) {
+  // Basic tokenizer for space/tab separated numbers (and SQZ encoded)
+  return line.split(/\s+/).filter(s => s.length > 0);
+}
+
+function jdfFindPeaks(pairs) {
+  if (pairs.length < 3) return [];
+
+  // Sort by x (ppm), descending (NMR convention: high ppm left)
+  const sorted = [...pairs].sort((a, b) => a[0] - b[0]);
+  const xs = sorted.map(p => p[0]);
+  const ys = sorted.map(p => p[1]);
+
+  // Normalize y
+  const maxY = Math.max(...ys);
+  if (maxY === 0) return [];
+  const yn = ys.map(y => y / maxY);
+
+  // Find local maxima above threshold
+  const threshold = 0.05; // 5% of max
+  const minSeparation = (Math.max(...xs) - Math.min(...xs)) / 200; // min 0.5% of range
+  const peaks = [];
+
+  for (let i = 2; i < sorted.length - 2; i++) {
+    if (yn[i] > threshold &&
+        yn[i] >= yn[i-1] && yn[i] >= yn[i+1] &&
+        yn[i] >= yn[i-2] && yn[i] >= yn[i+2]) {
+      // Check separation from last peak
+      if (peaks.length === 0 || Math.abs(xs[i] - peaks[peaks.length-1].ppm) > minSeparation) {
+        // Interpolate to find exact peak center
+        const ppm = xs[i];
+        const relHeight = yn[i];
+        peaks.push({ ppm: Math.round(ppm * 100) / 100, height: relHeight });
+      }
+    }
+  }
+
+  // Sort by height desc, take top 30
+  peaks.sort((a, b) => b.height - a.height);
+  return peaks.slice(0, 30);
+}
+
+function jdfShowResult(filename, meta, peaks) {
+  document.getElementById('jdf-result').classList.add('visible');
+  document.getElementById('jdf-filename').textContent = filename;
+  document.getElementById('jdf-matches').classList.remove('visible');
+
+  // Info cards
+  const infoRow = document.getElementById('jdf-info-row');
+  const infos = [];
+  if (meta.nucleus) infos.push({ label: 'Nucleus', value: meta.nucleus });
+  if (meta.freq) infos.push({ label: 'Frequency', value: meta.freq });
+  if (meta.solvent) infos.push({ label: 'Solvent (header)', value: meta.solvent });
+  if (meta.temp) infos.push({ label: 'Temperature', value: meta.temp });
+  infos.push({ label: 'Peaks found', value: peaks.length + ' peaks' });
+  infoRow.innerHTML = infos.map(i =>
+    '<div class="jdf-info-card"><div class="jdf-info-label">' + i.label + '</div><div class="jdf-info-value">' + i.value + '</div></div>'
+  ).join('');
+
+  // Peak chips
+  renderJdfChips();
+}
+
+function renderJdfChips() {
+  const container = document.getElementById('jdf-peak-chips');
+  container.innerHTML = jdfPeaks.map((p, idx) => {
+    const excluded = jdfExcluded.has(idx);
+    return '<div class="jdf-peak-chip' + (excluded ? ' excluded' : '') + '" onclick="jdfTogglePeak(' + idx + ')" title="' + (excluded ? 'Click to include' : 'Click to exclude') + '">'
+      + p.ppm.toFixed(2) + ' ppm'
+      + ' <span class="chip-x">' + (excluded ? '+' : '&times;') + '</span>'
+      + '</div>';
+  }).join('');
+}
+
+function jdfTogglePeak(idx) {
+  if (jdfExcluded.has(idx)) jdfExcluded.delete(idx);
+  else jdfExcluded.add(idx);
+  renderJdfChips();
+}
+
+function jdfClear() {
+  jdfPeaks = [];
+  jdfExcluded = new Set();
+  jdfMeta = {};
+  document.getElementById('jdf-result').classList.remove('visible');
+  document.getElementById('jdf-matches').classList.remove('visible');
+  document.getElementById('jdf-loading').classList.remove('visible');
+  document.getElementById('jdf-error').classList.remove('visible');
+  document.getElementById('jdf-file-input').value = '';
+}
+
+function jdfGetActivePeaks() {
+  return jdfPeaks.filter((_, i) => !jdfExcluded.has(i));
+}
+
+function jdfAutoFill() {
+  const active = jdfGetActivePeaks();
+  if (!active.length) return;
+
+  // Switch to search tab
+  switchTab('search');
+
+  // Clear existing rows
+  document.querySelectorAll('.peak-row-wrap').forEach(r => r.remove());
+  peakRowCount = 0;
+
+  // Add a row for each active peak (up to 8)
+  active.slice(0, 8).forEach(p => addPeakRow(p.ppm.toFixed(2), 'any'));
+
+  // If nucleus detected, set mode
+  const n = (jdfMeta.nucleus || '').toLowerCase();
+  if (n.includes('13c') || n.includes('c13')) {
+    document.getElementById('mode').value = 'C';
+  } else {
+    document.getElementById('mode').value = 'H';
+  }
+}
+
+function jdfAnalyze() {
+  const active = jdfGetActivePeaks();
+  if (!active.length) return;
+
+  const loadEl = document.getElementById('jdf-loading');
+  const matchEl = document.getElementById('jdf-matches');
+  loadEl.classList.add('visible');
+  matchEl.classList.remove('visible');
+
+  // Determine mode from nucleus header or default to H
+  const n = (jdfMeta.nucleus || '').toLowerCase();
+  const isH = !(n.includes('13c') || n.includes('c13'));
+  const tol = 0.15; // slightly wider tolerance for instrument variation
+
+  // Run identification against DB
+  const results = [];
+  const seen = new Set();
+
+  DB.forEach(entry => {
+    const dbPeaks = isH ? entry.H : entry.C;
+    if (!dbPeaks.length) return;
+    const key = entry.compound + '||' + entry.solvent;
+    if (seen.has(key)) return;
+
+    // Count how many active peaks match this entry
+    let matched = 0;
+    let totalDelta = 0;
+    const matchedDetails = [];
+
+    active.forEach(ap => {
+      let best = null, bestD = Infinity;
+      dbPeaks.forEach(dp => {
+        const d = Math.abs(dp.ppm - ap.ppm);
+        if (d < bestD) { bestD = d; best = dp; }
+      });
+      if (best && bestD <= tol) {
+        matched++;
+        totalDelta += bestD;
+        matchedDetails.push({ inputPpm: ap.ppm, dbPpm: best.ppm, mult: best.mult, delta: bestD });
+      }
+    });
+
+    if (matched === 0) return;
+
+    // Score: fraction matched * ppm proximity bonus * coverage
+    const fracMatched = matched / active.length;
+    const avgProximity = matched > 0 ? 1 - (totalDelta / matched / tol) : 0;
+    const coverage = Math.min(matched / dbPeaks.length, 1);
+    const score = Math.round((fracMatched * 0.5 + avgProximity * 0.35 + coverage * 0.15) * 100);
+
+    seen.add(key);
+    results.push({ entry, matched, score, matchedDetails, isH, dbPeaks });
+  });
+
+  results.sort((a, b) => b.score - a.score || b.matched - a.matched);
+  const top = results.slice(0, 12);
+
+  setTimeout(() => {
+    loadEl.classList.remove('visible');
+    renderJdfMatches(top, active, isH);
+  }, 300);
+}
+
+function renderJdfMatches(results, activePeaks, isH) {
+  const matchEl = document.getElementById('jdf-matches');
+  const listEl = document.getElementById('jdf-match-list');
+  const countEl = document.getElementById('jdf-match-count');
+
+  countEl.textContent = results.length + ' candidate' + (results.length !== 1 ? 's' : '') + ' - ' + (isH ? '1H' : '13C') + ' NMR';
+
+  if (!results.length) {
+    listEl.innerHTML = '<div class="jdf-match-card"><div style="color:var(--ink3);font-family:var(--mono);font-size:12px;">No matches found. Try widening tolerance or checking the NMR mode.</div></div>';
+  } else {
+    listEl.innerHTML = results.map((r, i) => {
+      const conf = r.score;
+      const confColor = conf >= 70 ? '#15803d' : conf >= 45 ? '#a16207' : 'var(--blue)';
+      const confBg = conf >= 70 ? '#dcfce7' : conf >= 45 ? '#fef9c3' : 'var(--blue-light)';
+      const details = r.matchedDetails.map(d =>
+        '<span>' + d.inputPpm.toFixed(2) + ' -> <span>' + d.dbPpm.toFixed(2) + '</span> (' + d.mult + ') delta:' + d.delta.toFixed(3) + '</span>'
+      ).join(' &nbsp;|&nbsp; ');
+      const allPeaks = r.dbPeaks.map(p => p.ppm.toFixed(2) + '(' + p.mult + ')').join(', ');
+      return '<div class="jdf-match-card' + (i === 0 ? ' top-match' : '') + '">'
+        + '<div class="jdf-match-top">'
+        + '<div><div class="jdf-match-name">' + r.entry.compound + '</div>'
+        + '<div class="jdf-match-solvent">' + (SN[r.entry.solvent] || r.entry.solvent) + (r.entry.note ? ' &nbsp;&middot;&nbsp; ' + r.entry.note : '') + '</div></div>'
+        + '<div class="jdf-match-score" style="background:' + confBg + ';border-color:' + confColor + ';color:' + confColor + ';">' + conf + '%</div>'
+        + '</div>'
+        + '<div class="jdf-match-peaks">Matched ' + r.matched + '/' + activePeaks.length + ' peaks: ' + details + '<br>All DB peaks: ' + allPeaks + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  matchEl.classList.add('visible');
+}
+
+// Init JDF on page load
+document.addEventListener('DOMContentLoaded', jdfInit);
+// Also init immediately in case DOM is already ready
+if (document.readyState !== 'loading') jdfInit();
+
 </script>
 </body>
 </html>
