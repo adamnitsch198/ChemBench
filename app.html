@@ -1008,10 +1008,17 @@ DB.forEach(e=>{
 let browseMode='H';
 
 function switchTab(t){
-  ['search','browse','jdf','spectrum'].forEach(n=>{document.getElementById('tab-'+n).style.display=n===t?'':'none';});
-  document.querySelectorAll('.tab').forEach((el,i)=>{el.classList.toggle('active',['search','spectrum'][i]===t);});
-  if(t==='browse') renderBrowse();
+  ['search','browse','jdf','spectrum'].forEach(function(n){
+    var el=document.getElementById('tab-'+n);
+    if(el) el.style.display=(n===t)?'':'none';
+  });
+  document.querySelectorAll('.tab').forEach(function(btn){
+    var oc=btn.getAttribute('onclick')||'';
+    btn.classList.toggle('active', oc.indexOf("'"+t+"'")!==-1);
+  });
+  if(t==='browse')renderBrowse();
   if(t==='spectrum'){populateSpCompound();drawSpectrum();}
+  if(t==='jdf')jdfInit();
 }
 
 // ---- SEARCH ----
@@ -1543,64 +1550,73 @@ document.getElementById('ppm').addEventListener('keydown',e=>{if(e.key==='Enter'
 // ---- JDF / JCAMP-DX PARSER & ANALYSIS ----
 
 let jdfPeaks = []; // [{ppm, excluded}]
+let jdfExcluded = new S
+// ---- JDF / JCAMP-DX PARSER & ANALYSIS ----
+
+let jdfPeaks = [];
 let jdfExcluded = new Set();
 let jdfMeta = {};
+let jdfInited = false;
 
 function jdfInit() {
+  if (jdfInited) return;
   const zone = document.getElementById('jdf-drop-zone');
   const input = document.getElementById('jdf-file-input');
   if (!zone || !input) return;
+  jdfInited = true;
 
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
+  zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+  zone.addEventListener('drop', function(e) {
     e.preventDefault();
     zone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
+    var file = e.dataTransfer.files[0];
     if (file) jdfLoadFile(file);
   });
-  input.addEventListener('change', e => {
-    const file = e.target.files[0];
+  input.addEventListener('change', function(e) {
+    var file = e.target.files[0];
     if (file) jdfLoadFile(file);
     input.value = '';
   });
 }
 
 function jdfLoadFile(file) {
-  const errEl = document.getElementById('jdf-error');
+  var errEl = document.getElementById('jdf-error');
   errEl.classList.remove('visible');
-  const reader = new FileReader();
-  reader.onload = e => {
+  var reader = new FileReader();
+  reader.onload = function(e) {
     try {
-      const text = e.target.result;
-      jdfParseJCAMP(text, file.name);
+      jdfParseJCAMP(e.target.result, file.name);
     } catch(err) {
       errEl.textContent = 'Could not parse file: ' + err.message;
       errEl.classList.add('visible');
     }
   };
+  reader.onerror = function() {
+    errEl.textContent = 'Failed to read file.';
+    errEl.classList.add('visible');
+  };
   reader.readAsText(file);
 }
 
 function jdfParseJCAMP(text, filename) {
-  const lines = text.split(/\r?\n/);
-  const meta = {};
-  let xyData = [];
-  let inXY = false;
-  let xFactor = 1, yFactor = 1;
-  let firstX = null, lastX = null, nPoints = null;
-  let dataType = '';
+  var lines = text.split(/?
+/);
+  var meta = {};
+  var xyLines = [];
+  var inXY = false;
+  var xFactor = 1, yFactor = 1;
+  var firstX = null, lastX = null, nPoints = null;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
     if (!line) continue;
 
-    // Parse LDR (Labeled Data Record)
-    if (line.startsWith('##')) {
-      const eqIdx = line.indexOf('=');
-      if (eqIdx === -1) continue;
-      const label = line.slice(2, eqIdx).trim().toUpperCase();
-      const value = line.slice(eqIdx + 1).trim();
+    if (line.indexOf('##') === 0) {
+      var eqIdx = line.indexOf('=');
+      if (eqIdx === -1) { if (line.indexOf('##END') === 0) inXY = false; continue; }
+      var label = line.slice(2, eqIdx).trim().toUpperCase().replace(/./g,'');
+      var value = line.slice(eqIdx + 1).trim();
 
       if (label === 'XFACTOR') xFactor = parseFloat(value) || 1;
       else if (label === 'YFACTOR') yFactor = parseFloat(value) || 1;
@@ -1608,79 +1624,63 @@ function jdfParseJCAMP(text, filename) {
       else if (label === 'LASTX') lastX = parseFloat(value);
       else if (label === 'NPOINTS') nPoints = parseInt(value);
       else if (label === 'TITLE') meta.title = value;
-      else if (label === '.OBSERVE FREQUENCY' || label === 'SPECFREQ') meta.freq = parseFloat(value) + ' MHz';
-      else if (label === '.OBSERVE NUCLEUS' || label === 'NUCLNAME') meta.nucleus = value.replace(/[^A-Za-z0-9]/g,'');
-      else if (label === '.SOLVENT NAME' || label === 'SOLVENT') meta.solvent = value;
-      else if (label === 'DATA TYPE' || label === 'DATATYPE') { dataType = value.toUpperCase(); }
-      else if (label === 'XUNITS') meta.xunits = value;
-      else if (label === 'TEMPERATURE' || label === '.TEMPERATURE') meta.temp = value + ' K';
+      else if (label === 'OBSERVE FREQUENCY' || label === 'SPECFREQ' || label === 'OBSERVEFREQUENCY') meta.freq = parseFloat(value).toFixed(0) + ' MHz';
+      else if (label === 'OBSERVE NUCLEUS' || label === 'NUCLNAME' || label === 'OBSERVENUCLEUS') meta.nucleus = value.replace(/[^A-Za-z0-9]/g,'');
+      else if (label === 'SOLVENT NAME' || label === 'SOLVENT' || label === 'SOLVENTNAME') meta.solvent = value;
+      else if (label === 'TEMPERATURE' || label === 'ACQUISITIONTEMPERATURE') meta.temp = parseFloat(value).toFixed(1) + ' K';
 
-      if (label === 'XYDATA' || label === 'PEAK TABLE' || label === 'PEAKTABLE') {
-        inXY = true;
-        continue;
-      }
-      if (label === 'END') { inXY = false; }
-    } else if (inXY && line.length > 0 && !line.startsWith('$')) {
-      // Parse JCAMP data line (AFFN, SQZ, DIF, DUP formats)
-      xyData.push(line);
+      if (label === 'XYDATA' || label === 'PEAKTABLE' || label === 'PEAK TABLE') { inXY = true; continue; }
+      if (label === 'END') inXY = false;
+    } else if (inXY && line.length > 0 && line.indexOf('$$') !== 0) {
+      xyLines.push(line);
     }
   }
 
-  // Decode JCAMP data into [x, y] pairs
-  let pairs = [];
-  if (xyData.length > 0) {
-    pairs = jdfDecodeXYData(xyData, xFactor, yFactor, firstX, lastX, nPoints);
-  }
+  var pairs = jdfDecodeXY(xyLines, xFactor, yFactor, firstX, lastX, nPoints);
 
   if (pairs.length === 0) {
-    throw new Error('No spectral data found in file. Make sure it is a valid JCAMP-DX file.');
+    throw new Error('No spectral data found. Check that this is a valid JCAMP-DX (.jdf/.dx/.jdx) file.');
   }
 
-  // Find peaks using local maxima detection
-  const peaks = jdfFindPeaks(pairs);
-
+  var peaks = jdfFindPeaks(pairs);
   jdfPeaks = peaks;
   jdfExcluded = new Set();
   jdfMeta = meta;
-
   jdfShowResult(filename, meta, peaks);
 }
 
-function jdfDecodeXYData(lines, xFactor, yFactor, firstX, lastX, nPoints) {
-  // Handle JCAMP-DX AFFN (standard) format
-  const pairs = [];
+function jdfDecodeXY(lines, xFactor, yFactor, firstX, lastX, nPoints) {
+  var pairs = [];
 
-  for (let li = 0; li < lines.length; li++) {
-    const line = lines[li];
-    // Each line: X Y Y Y Y ... (first value is X, rest are Y values)
-    // Or: X, Y pairs
-
-    // Try comma-separated pairs first (PEAK TABLE format)
-    if (line.includes(',') && !line.match(/[A-Za-z@%]/)) {
-      const parts = line.split(/[,\s]+/).filter(s => s.length > 0);
-      for (let i = 0; i + 1 < parts.length; i += 2) {
-        const x = parseFloat(parts[i]) * xFactor;
-        const y = parseFloat(parts[i+1]) * yFactor;
+  // Try comma-separated peak table first
+  var isPeakTable = false;
+  if (lines.length > 0 && lines[0].indexOf(',') !== -1) {
+    isPeakTable = true;
+    for (var i = 0; i < lines.length; i++) {
+      var parts = lines[i].split(/[s,;]+/).filter(function(s){return s.length>0;});
+      for (var j = 0; j + 1 < parts.length; j += 2) {
+        var x = parseFloat(parts[j]) * xFactor;
+        var y = Math.abs(parseFloat(parts[j+1]) * yFactor);
         if (!isNaN(x) && !isNaN(y)) pairs.push([x, y]);
       }
-      continue;
     }
+    if (pairs.length > 0) return pairs;
+  }
 
-    // Standard AFFN: tokenize, first token = X, rest = Y values
-    // SQZ encoding: letters represent compressed numbers
-    const tokens = jdfTokenizeAFFN(line);
-    if (tokens.length < 2) continue;
+  // AFFN format: each line starts with X, followed by Y values
+  // Calculate x step from metadata
+  var xStep = 1;
+  if (nPoints && nPoints > 1 && firstX !== null && lastX !== null) {
+    xStep = (lastX - firstX) / (nPoints - 1);
+  }
 
-    let x = parseFloat(tokens[0]) * xFactor;
+  for (var i = 0; i < lines.length; i++) {
+    var parts = lines[i].trim().split(/s+/);
+    if (parts.length < 2) continue;
+    var x = parseFloat(parts[0]) * xFactor;
     if (isNaN(x)) continue;
-
-    // Calculate x increment
-    const xStep = (nPoints && nPoints > 1 && firstX !== null && lastX !== null)
-      ? (lastX - firstX) / (nPoints - 1)
-      : (xFactor !== 0 ? xFactor : 1);
-
-    for (let i = 1; i < tokens.length; i++) {
-      const y = parseFloat(tokens[i]) * yFactor;
+    for (var j = 1; j < parts.length; j++) {
+      var y = parseFloat(parts[j]) * yFactor;
       if (!isNaN(y)) {
         pairs.push([x, Math.abs(y)]);
         x += xStep;
@@ -1688,12 +1688,12 @@ function jdfDecodeXYData(lines, xFactor, yFactor, firstX, lastX, nPoints) {
     }
   }
 
-  // If we got pairs from firstX/lastX/nPoints but they're indices, convert
-  if (pairs.length > 0 && firstX !== null && lastX !== null && nPoints && nPoints > 1) {
-    const step = (lastX - firstX) / (nPoints - 1);
-    // Check if x values look like indices (0, 1, 2...) rather than ppm
-    if (pairs[0][0] < 10 && pairs.length > 10 && Math.abs(pairs[1][0] - pairs[0][0]) < 2) {
-      for (let i = 0; i < pairs.length; i++) {
+  // If x values look like indices and we have firstX/lastX, remap
+  if (pairs.length > 1 && firstX !== null && lastX !== null && nPoints && nPoints > 1) {
+    var step = (lastX - firstX) / (nPoints - 1);
+    var looks_like_index = Math.abs(pairs[0][0] - firstX * xFactor) > Math.abs(firstX) * 0.5;
+    if (looks_like_index) {
+      for (var i = 0; i < pairs.length; i++) {
         pairs[i][0] = firstX + i * step;
       }
     }
@@ -1702,45 +1702,32 @@ function jdfDecodeXYData(lines, xFactor, yFactor, firstX, lastX, nPoints) {
   return pairs;
 }
 
-function jdfTokenizeAFFN(line) {
-  // Basic tokenizer for space/tab separated numbers (and SQZ encoded)
-  return line.split(/\s+/).filter(s => s.length > 0);
-}
-
 function jdfFindPeaks(pairs) {
-  if (pairs.length < 3) return [];
-
-  // Sort by x (ppm), descending (NMR convention: high ppm left)
-  const sorted = [...pairs].sort((a, b) => a[0] - b[0]);
-  const xs = sorted.map(p => p[0]);
-  const ys = sorted.map(p => p[1]);
-
-  // Normalize y
-  const maxY = Math.max(...ys);
+  if (pairs.length < 5) return [];
+  var sorted = pairs.slice().sort(function(a,b){return a[0]-b[0];});
+  var xs = sorted.map(function(p){return p[0];});
+  var ys = sorted.map(function(p){return p[1];});
+  var maxY = Math.max.apply(null, ys);
   if (maxY === 0) return [];
-  const yn = ys.map(y => y / maxY);
+  var yn = ys.map(function(y){return y/maxY;});
+  var threshold = 0.03;
+  var xRange = xs[xs.length-1] - xs[0];
+  var minSep = xRange / 300;
+  var peaks = [];
 
-  // Find local maxima above threshold
-  const threshold = 0.05; // 5% of max
-  const minSeparation = (Math.max(...xs) - Math.min(...xs)) / 200; // min 0.5% of range
-  const peaks = [];
-
-  for (let i = 2; i < sorted.length - 2; i++) {
+  for (var i = 3; i < sorted.length - 3; i++) {
     if (yn[i] > threshold &&
         yn[i] >= yn[i-1] && yn[i] >= yn[i+1] &&
-        yn[i] >= yn[i-2] && yn[i] >= yn[i+2]) {
-      // Check separation from last peak
-      if (peaks.length === 0 || Math.abs(xs[i] - peaks[peaks.length-1].ppm) > minSeparation) {
-        // Interpolate to find exact peak center
-        const ppm = xs[i];
-        const relHeight = yn[i];
-        peaks.push({ ppm: Math.round(ppm * 100) / 100, height: relHeight });
+        yn[i] >= yn[i-2] && yn[i] >= yn[i+2] &&
+        yn[i] >= yn[i-3] && yn[i] >= yn[i+3]) {
+      var ppm = xs[i];
+      if (peaks.length === 0 || Math.abs(ppm - peaks[peaks.length-1].ppm) > minSep) {
+        peaks.push({ ppm: Math.round(ppm * 100) / 100, height: yn[i] });
       }
     }
   }
 
-  // Sort by height desc, take top 30
-  peaks.sort((a, b) => b.height - a.height);
+  peaks.sort(function(a,b){return b.height - a.height;});
   return peaks.slice(0, 30);
 }
 
@@ -1749,30 +1736,26 @@ function jdfShowResult(filename, meta, peaks) {
   document.getElementById('jdf-filename').textContent = filename;
   document.getElementById('jdf-matches').classList.remove('visible');
 
-  // Info cards
-  const infoRow = document.getElementById('jdf-info-row');
-  const infos = [];
-  if (meta.nucleus) infos.push({ label: 'Nucleus', value: meta.nucleus });
-  if (meta.freq) infos.push({ label: 'Frequency', value: meta.freq });
-  if (meta.solvent) infos.push({ label: 'Solvent (header)', value: meta.solvent });
-  if (meta.temp) infos.push({ label: 'Temperature', value: meta.temp });
-  infos.push({ label: 'Peaks found', value: peaks.length + ' peaks' });
-  infoRow.innerHTML = infos.map(i =>
-    '<div class="jdf-info-card"><div class="jdf-info-label">' + i.label + '</div><div class="jdf-info-value">' + i.value + '</div></div>'
-  ).join('');
+  var infos = [];
+  if (meta.nucleus) infos.push({label:'Nucleus', value:meta.nucleus});
+  if (meta.freq) infos.push({label:'Frequency', value:meta.freq});
+  if (meta.solvent) infos.push({label:'Solvent (header)', value:meta.solvent});
+  if (meta.temp) infos.push({label:'Temperature', value:meta.temp});
+  infos.push({label:'Peaks found', value:peaks.length + ' peaks'});
 
-  // Peak chips
+  document.getElementById('jdf-info-row').innerHTML = infos.map(function(inf) {
+    return '<div class="jdf-info-card"><div class="jdf-info-label">'+inf.label+'</div><div class="jdf-info-value">'+inf.value+'</div></div>';
+  }).join('');
+
   renderJdfChips();
 }
 
 function renderJdfChips() {
-  const container = document.getElementById('jdf-peak-chips');
-  container.innerHTML = jdfPeaks.map((p, idx) => {
-    const excluded = jdfExcluded.has(idx);
-    return '<div class="jdf-peak-chip' + (excluded ? ' excluded' : '') + '" onclick="jdfTogglePeak(' + idx + ')" title="' + (excluded ? 'Click to include' : 'Click to exclude') + '">'
-      + p.ppm.toFixed(2) + ' ppm'
-      + ' <span class="chip-x">' + (excluded ? '+' : '&times;') + '</span>'
-      + '</div>';
+  var container = document.getElementById('jdf-peak-chips');
+  container.innerHTML = jdfPeaks.map(function(p, idx) {
+    var excl = jdfExcluded.has(idx);
+    return '<div class="jdf-peak-chip' + (excl?' excluded':'') + '" onclick="jdfTogglePeak('+idx+')" title="'+(excl?'Include':'Exclude')+'">'
+      + p.ppm.toFixed(2) + ' ppm <span class="chip-x">' + (excl?'+':'&times;') + '</span></div>';
   }).join('');
 }
 
@@ -1786,142 +1769,108 @@ function jdfClear() {
   jdfPeaks = [];
   jdfExcluded = new Set();
   jdfMeta = {};
+  jdfInited = false;
   document.getElementById('jdf-result').classList.remove('visible');
   document.getElementById('jdf-matches').classList.remove('visible');
   document.getElementById('jdf-loading').classList.remove('visible');
   document.getElementById('jdf-error').classList.remove('visible');
   document.getElementById('jdf-file-input').value = '';
+  jdfInit();
 }
 
 function jdfGetActivePeaks() {
-  return jdfPeaks.filter((_, i) => !jdfExcluded.has(i));
+  return jdfPeaks.filter(function(_, i){ return !jdfExcluded.has(i); });
 }
 
 function jdfAutoFill() {
-  const active = jdfGetActivePeaks();
+  var active = jdfGetActivePeaks();
   if (!active.length) return;
-
-  // Switch to search tab
   switchTab('search');
-
-  // Clear existing rows
-  document.querySelectorAll('.peak-row-wrap').forEach(r => r.remove());
+  document.querySelectorAll('.peak-row-wrap').forEach(function(r){r.remove();});
   peakRowCount = 0;
-
-  // Add a row for each active peak (up to 8)
-  active.slice(0, 8).forEach(p => addPeakRow(p.ppm.toFixed(2), 'any'));
-
-  // If nucleus detected, set mode
-  const n = (jdfMeta.nucleus || '').toLowerCase();
-  if (n.includes('13c') || n.includes('c13')) {
-    document.getElementById('mode').value = 'C';
-  } else {
-    document.getElementById('mode').value = 'H';
-  }
+  active.slice(0, 8).forEach(function(p){ addPeakRow(p.ppm.toFixed(2), 'any'); });
+  var n = (jdfMeta.nucleus || '').toLowerCase();
+  document.getElementById('mode').value = (n.indexOf('13c') !== -1 || n.indexOf('c13') !== -1) ? 'C' : 'H';
 }
 
 function jdfAnalyze() {
-  const active = jdfGetActivePeaks();
+  var active = jdfGetActivePeaks();
   if (!active.length) return;
+  document.getElementById('jdf-loading').classList.add('visible');
+  document.getElementById('jdf-matches').classList.remove('visible');
 
-  const loadEl = document.getElementById('jdf-loading');
-  const matchEl = document.getElementById('jdf-matches');
-  loadEl.classList.add('visible');
-  matchEl.classList.remove('visible');
+  var n = (jdfMeta.nucleus || '').toLowerCase();
+  var isH = !(n.indexOf('13c') !== -1 || n.indexOf('c13') !== -1);
+  var tol = 0.15;
+  var results = [];
+  var seen = new Set();
 
-  // Determine mode from nucleus header or default to H
-  const n = (jdfMeta.nucleus || '').toLowerCase();
-  const isH = !(n.includes('13c') || n.includes('c13'));
-  const tol = 0.15; // slightly wider tolerance for instrument variation
-
-  // Run identification against DB
-  const results = [];
-  const seen = new Set();
-
-  DB.forEach(entry => {
-    const dbPeaks = isH ? entry.H : entry.C;
+  DB.forEach(function(entry) {
+    var dbPeaks = isH ? entry.H : entry.C;
     if (!dbPeaks.length) return;
-    const key = entry.compound + '||' + entry.solvent;
+    var key = entry.compound + '||' + entry.solvent;
     if (seen.has(key)) return;
 
-    // Count how many active peaks match this entry
-    let matched = 0;
-    let totalDelta = 0;
-    const matchedDetails = [];
-
-    active.forEach(ap => {
-      let best = null, bestD = Infinity;
-      dbPeaks.forEach(dp => {
-        const d = Math.abs(dp.ppm - ap.ppm);
+    var matched = 0, totalDelta = 0;
+    var matchedDetails = [];
+    active.forEach(function(ap) {
+      var best = null, bestD = Infinity;
+      dbPeaks.forEach(function(dp) {
+        var d = Math.abs(dp.ppm - ap.ppm);
         if (d < bestD) { bestD = d; best = dp; }
       });
       if (best && bestD <= tol) {
         matched++;
         totalDelta += bestD;
-        matchedDetails.push({ inputPpm: ap.ppm, dbPpm: best.ppm, mult: best.mult, delta: bestD });
+        matchedDetails.push({inputPpm: ap.ppm, dbPpm: best.ppm, mult: best.mult, delta: bestD});
       }
     });
 
-    if (matched === 0) return;
-
-    // Score: fraction matched * ppm proximity bonus * coverage
-    const fracMatched = matched / active.length;
-    const avgProximity = matched > 0 ? 1 - (totalDelta / matched / tol) : 0;
-    const coverage = Math.min(matched / dbPeaks.length, 1);
-    const score = Math.round((fracMatched * 0.5 + avgProximity * 0.35 + coverage * 0.15) * 100);
-
+    if (!matched) return;
+    var fracMatched = matched / active.length;
+    var avgProx = matched > 0 ? 1 - (totalDelta / matched / tol) : 0;
+    var coverage = Math.min(matched / dbPeaks.length, 1);
+    var score = Math.round((fracMatched * 0.5 + avgProx * 0.35 + coverage * 0.15) * 100);
     seen.add(key);
-    results.push({ entry, matched, score, matchedDetails, isH, dbPeaks });
+    results.push({entry:entry, matched:matched, score:score, matchedDetails:matchedDetails, dbPeaks:dbPeaks});
   });
 
-  results.sort((a, b) => b.score - a.score || b.matched - a.matched);
-  const top = results.slice(0, 12);
+  results.sort(function(a,b){ return b.score - a.score || b.matched - a.matched; });
 
-  setTimeout(() => {
-    loadEl.classList.remove('visible');
-    renderJdfMatches(top, active, isH);
-  }, 300);
+  setTimeout(function() {
+    document.getElementById('jdf-loading').classList.remove('visible');
+    jdfRenderMatches(results.slice(0, 12), active, isH);
+  }, 200);
 }
 
-function renderJdfMatches(results, activePeaks, isH) {
-  const matchEl = document.getElementById('jdf-matches');
-  const listEl = document.getElementById('jdf-match-list');
-  const countEl = document.getElementById('jdf-match-count');
+function jdfRenderMatches(results, activePeaks, isH) {
+  var matchEl = document.getElementById('jdf-matches');
+  var listEl = document.getElementById('jdf-match-list');
+  var countEl = document.getElementById('jdf-match-count');
 
-  countEl.textContent = results.length + ' candidate' + (results.length !== 1 ? 's' : '') + ' - ' + (isH ? '1H' : '13C') + ' NMR';
+  countEl.textContent = results.length + ' candidate' + (results.length !== 1 ? 's' : '') + ' · ' + (isH ? '1H' : '13C') + ' NMR';
 
   if (!results.length) {
-    listEl.innerHTML = '<div class="jdf-match-card"><div style="color:var(--ink3);font-family:var(--mono);font-size:12px;">No matches found. Try widening tolerance or checking the NMR mode.</div></div>';
+    listEl.innerHTML = '<div class="jdf-match-card" style="color:var(--ink3);font-family:var(--mono);font-size:12px;">No matches found. Try dropping a different file or checking the nucleus type.</div>';
   } else {
-    listEl.innerHTML = results.map((r, i) => {
-      const conf = r.score;
-      const confColor = conf >= 70 ? '#15803d' : conf >= 45 ? '#a16207' : 'var(--blue)';
-      const confBg = conf >= 70 ? '#dcfce7' : conf >= 45 ? '#fef9c3' : 'var(--blue-light)';
-      const details = r.matchedDetails.map(d =>
-        '<span>' + d.inputPpm.toFixed(2) + ' -> <span>' + d.dbPpm.toFixed(2) + '</span> (' + d.mult + ') delta:' + d.delta.toFixed(3) + '</span>'
-      ).join(' &nbsp;|&nbsp; ');
-      const allPeaks = r.dbPeaks.map(p => p.ppm.toFixed(2) + '(' + p.mult + ')').join(', ');
-      return '<div class="jdf-match-card' + (i === 0 ? ' top-match' : '') + '">'
+    listEl.innerHTML = results.map(function(r, i) {
+      var conf = r.score;
+      var confColor = conf >= 70 ? '#15803d' : conf >= 45 ? '#a16207' : '#2563eb';
+      var confBg = conf >= 70 ? '#dcfce7' : conf >= 45 ? '#fef9c3' : '#eff6ff';
+      var details = r.matchedDetails.map(function(d) {
+        return d.inputPpm.toFixed(2) + '→' + d.dbPpm.toFixed(2) + '(' + d.mult + ') Δ' + d.delta.toFixed(3);
+      }).join(' | ');
+      var allPeaks = r.dbPeaks.map(function(p){ return p.ppm.toFixed(2) + '(' + p.mult + ')'; }).join(', ');
+      return '<div class="jdf-match-card' + (i===0?' top-match':'') + '">'
         + '<div class="jdf-match-top">'
         + '<div><div class="jdf-match-name">' + r.entry.compound + '</div>'
-        + '<div class="jdf-match-solvent">' + (SN[r.entry.solvent] || r.entry.solvent) + (r.entry.note ? ' &nbsp;&middot;&nbsp; ' + r.entry.note : '') + '</div></div>'
-        + '<div class="jdf-match-score" style="background:' + confBg + ';border-color:' + confColor + ';color:' + confColor + ';">' + conf + '%</div>'
+        + '<div class="jdf-match-solvent">' + (SN[r.entry.solvent]||r.entry.solvent) + (r.entry.note?' &middot; '+r.entry.note:'') + '</div></div>'
+        + '<div class="jdf-match-score" style="background:'+confBg+';border-color:'+confColor+';color:'+confColor+';">' + conf + '%</div>'
         + '</div>'
-        + '<div class="jdf-match-peaks">Matched ' + r.matched + '/' + activePeaks.length + ' peaks: ' + details + '<br>All DB peaks: ' + allPeaks + '</div>'
+        + '<div class="jdf-match-peaks">Matched ' + r.matched + '/' + activePeaks.length + ' peaks: ' + details + '<br>All DB: ' + allPeaks + '</div>'
         + '</div>';
     }).join('');
   }
-
   matchEl.classList.add('visible');
 }
 
-// Init JDF on page load
-document.addEventListener('DOMContentLoaded', jdfInit);
-// Also init immediately in case DOM is already ready
-if (document.readyState !== 'loading') jdfInit();
-
-</script>
-</body>
-</html>
-</body>
-</html>
