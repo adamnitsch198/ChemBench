@@ -1247,6 +1247,8 @@ function toggleSvGroup(gid){
 }
 
 // initialise with one peak row
+document.addEventListener("DOMContentLoaded", function() {
+
 addPeakRow();
 
 // ---- BROWSE ----
@@ -1686,3 +1688,4 @@ function jdfShowMatches(results,active,isH){
   document.getElementById("jdf-matches").classList.add("visible");
 }
 
+});
